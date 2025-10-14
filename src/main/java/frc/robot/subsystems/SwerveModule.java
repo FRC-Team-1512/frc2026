@@ -25,6 +25,7 @@ public class SwerveModule extends SubsystemBase {
     private final TalonFXConfiguration _steerMotorConfig = new TalonFXConfiguration();
 
     private final Translation2d _moduleLocation;
+    private final int _moduleIndex;
     private SwerveModuleState _desiredModuleState;
     private double _steerAngularOffset;
 
@@ -40,35 +41,47 @@ public class SwerveModule extends SubsystemBase {
         _steerMotor.getConfigurator().apply(_steerMotorConfig);
 
         _moduleLocation = config.position;
+        _moduleIndex = config.index;
         _desiredModuleState = new SwerveModuleState(0.0, new Rotation2d(0.0));
         _steerAngularOffset = config.encoderOffset;
     }
 
-    public void setModuleState(SwerveModuleState state) {
+    public void setState(SwerveModuleState state) {
         SwerveModuleState optimizedState = state;
         optimizedState.angle = optimizedState.angle.plus(Rotation2d.fromRadians(_steerAngularOffset));
-        optimizedState.optimize(Rotation2d.fromRadians(_steerMotor.getPosition().getValue().in(Units.Radians)));
+        optimizedState.optimize(getSteerAngle());
+
         PositionDutyCycle steerRequest = new PositionDutyCycle(optimizedState.angle.getRadians());
         _steerMotor.setControl(steerRequest);
+
         VelocityDutyCycle driveRequest = new VelocityDutyCycle(optimizedState.speedMetersPerSecond);
         _driveMotor.setControl(driveRequest);
 
         _desiredModuleState = state;
     }
 
-    public SwerveModuleState getDesiredSwerveModuleState() {
+    public Rotation2d getSteerAngle() {
+        return Rotation2d.fromRadians(_steerMotor.getPosition().getValue().in(Units.Radians) - _steerAngularOffset);
+    }
+
+    public SwerveModuleState getDesiredState() {
         return _desiredModuleState;
     }
 
+    public Translation2d getLocation() {
+        return _moduleLocation;
+    }
+
+    public int getIndex() {
+        return _moduleIndex;
+    }
 
     public static class ModuleConfiguration {
         public String moduleName = "";
-
+        public int index = 0;
         public Translation2d position = new Translation2d();
-
         public double encoderOffset = 0.0;
         public boolean encoderInverted = false;
-
         public String canBus = "CANivore";
     }
 }
