@@ -4,7 +4,6 @@ package frc.robot.subsystems;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -45,18 +44,18 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
-        _modules[FL_IDX] = new SwerveModule(1, 2, 3, Constants.Drivetrain.FL_CONFIG);
-        _modules[FR_IDX] = new SwerveModule(4, 5, 6, Constants.Drivetrain.FR_CONFIG);
-        _modules[BL_IDX] = new SwerveModule(7, 8, 9, Constants.Drivetrain.BL_CONFIG);
-        _modules[BR_IDX] = new SwerveModule(10, 11, 12, Constants.Drivetrain.BR_CONFIG);
-        _gyro = new Pigeon2(RobotMap.CAN.PIGEON_CAN);
+        _modules[FL_IDX] = new SwerveModule(RobotMap.CAN.FL_STEER, RobotMap.CAN.FL_DRIVE, RobotMap.CAN.FL_ENCODER, Constants.Drivetrain.FL_CONFIG);
+        _modules[FR_IDX] = new SwerveModule(RobotMap.CAN.FR_STEER, RobotMap.CAN.FR_DRIVE, RobotMap.CAN.FR_ENCODER, Constants.Drivetrain.FR_CONFIG);
+        _modules[BL_IDX] = new SwerveModule(RobotMap.CAN.BL_STEER, RobotMap.CAN.BL_DRIVE, RobotMap.CAN.BL_ENCODER, Constants.Drivetrain.BL_CONFIG);
+        _modules[BR_IDX] = new SwerveModule(RobotMap.CAN.BR_STEER, RobotMap.CAN.BR_DRIVE, RobotMap.CAN.BR_ENCODER, Constants.Drivetrain.BR_CONFIG);
+        _gyro = new Pigeon2(RobotMap.CAN.PIGEON);
 
         _desiredChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
         _measuredStates = new SwerveModuleState[4];
         _measuredPositions = new SwerveModulePosition[4];
         _yaw = new Rotation2d(0.0);
 
-        _yawOffset = _gyro.getYaw().getValueAsDouble();
+        _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
 
         _currentPose = new Pose2d();
         _previousPose = new Pose2d();
@@ -81,6 +80,7 @@ public class Drivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         setRawSpeeds(_desiredChassisSpeeds);
+        updateOdometry();
     }
 
     private void setRawSpeeds(ChassisSpeeds speeds) {
@@ -95,17 +95,37 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void zeroIMU() {
-        _yawOffset = _gyro.getYaw().getValueAsDouble();
+        _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
         readIMU();
     }
 
     public void readIMU() {
-        double yawRobot = _gyro.getYaw().getValueAsDouble();
+        double yawRobot = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
         double yawAllianceOffset = _isRedAlliance ? 180.0 : 0.0;
         _yaw = Rotation2d.fromDegrees(yawRobot - _yawOffset + yawAllianceOffset);
     }
 
     public Rotation2d getYaw() {
         return _yaw;
+    }
+
+    public void updateOdometry() {
+        for (SwerveModule module : _modules) {
+            _measuredStates[module.getIndex()] = module.getDesiredState();
+            _measuredPositions[module.getIndex()] = module.getPosition();
+        }
+
+        _odometry.update(getYaw(), _measuredPositions);
+
+        _previousPose = _currentPose;
+        _currentPose = _odometry.getPoseMeters();
+    }
+
+    public double getVelocityMagnitude() {
+        return (_currentPose.getTranslation().getDistance(_previousPose.getTranslation())) * Constants.TICK_PER_SECOND;
+    }
+
+    public Pose2d getPose() {
+        return _currentPose;
     }
 }
