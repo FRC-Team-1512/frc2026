@@ -79,19 +79,27 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        setRawSpeeds(_desiredChassisSpeeds);
+        updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
     }
 
-    private void setRawSpeeds(ChassisSpeeds speeds) {
+    private void updateSpeeds(ChassisSpeeds speeds) {
         SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(speeds);
         for(SwerveModule module : _modules) {
             module.setState(desiredStates[module.getIndex()]);
         }
     }
     
-    public void setVelocity(ChassisSpeeds speeds) {
+    public void setRawSpeeds(ChassisSpeeds speeds) {
         _desiredChassisSpeeds = speeds;
+    }
+
+    public void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
+        ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            fieldRelativeSpeeds,
+            getYaw()
+        );
+        setRawSpeeds(robotRelativeSpeeds);
     }
 
     public void zeroIMU() {
