@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.SwerveModule.ModuleConfiguration;
 
@@ -32,21 +33,29 @@ public class Constants {
             FL_CONFIG.index = 0;
             FL_CONFIG.position = new Translation2d(FB_LENGTH / 2, LR_LENGTH / 2); // +,+
             FL_CONFIG.encoderInverted = false;
-            FL_CONFIG.encoderOffset = Math.PI * (1.0 / 2.0);}
-        static {FR_CONFIG.moduleName = "Front Left";
+            FL_CONFIG.encoderOffset = new Rotation2d(Math.PI * (3.0 / 2.0));}
+        static {FR_CONFIG.moduleName = "Front Right";
             FR_CONFIG.index = 1;
             FR_CONFIG.position = new Translation2d(FB_LENGTH / 2, -LR_LENGTH / 2); // +,-
             FR_CONFIG.encoderInverted = false;
-            FR_CONFIG.encoderOffset = Math.PI * (1.0 / 2.0);}
-        static {BL_CONFIG.moduleName = "Front Left";
+            FR_CONFIG.encoderOffset = new Rotation2d(Math.PI * (4.0 / 2.0));}
+        static {BL_CONFIG.moduleName = "Back Left";
             BL_CONFIG.index = 2;
             BL_CONFIG.position = new Translation2d(-FB_LENGTH / 2, LR_LENGTH / 2); // -,+
             BL_CONFIG.encoderInverted = false;
-            BL_CONFIG.encoderOffset = Math.PI * (1.0 / 2.0);}
-        static {BR_CONFIG.moduleName = "Front Left";
+            BL_CONFIG.encoderOffset = new Rotation2d(Math.PI * (2.0 / 2.0));}
+        static {BR_CONFIG.moduleName = "Back Right";
             BR_CONFIG.index = 3;
             BR_CONFIG.position = new Translation2d(-FB_LENGTH / 2, -LR_LENGTH / 2); // -,-
             BR_CONFIG.encoderInverted = false;
-            BR_CONFIG.encoderOffset = Math.PI * (1.0 / 2.0);}
+            BR_CONFIG.encoderOffset = new Rotation2d(Math.PI * (1.0 / 2.0));}
+        
+        public static final double STEER_KP = 0.2;
+        public static final double STEER_KI = 0.0;
+        public static final double STEER_KD = 0.07;
+        
+        public static final double DRIVE_KP = 0.2;
+        public static final double DRIVE_KI = 0.0;
+        public static final double DRIVE_KD = 0.07;
     }
 }

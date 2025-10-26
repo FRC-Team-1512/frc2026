@@ -25,7 +25,7 @@ public class SwerveModule extends SubsystemBase {
     private final Translation2d _moduleLocation;
     private final int _moduleIndex;
     private SwerveModuleState _desiredModuleState;
-    private double _steerAngularOffset;
+    private Rotation2d _steerAngularOffset;
 
     public SwerveModule(int steerPort, int drivePort, int encoderPort, ModuleConfiguration config) {
         _steerMotor = new TalonFX(steerPort, config.canBus);
@@ -36,11 +36,17 @@ public class SwerveModule extends SubsystemBase {
         _steerMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
         _steerMotorConfig.Feedback.SensorToMechanismRatio = Constants.Drivetrain.Hardware.STEER_SENSOR_TO_MECHANISM_RATIO;
         _steerMotorConfig.Feedback.RotorToSensorRatio = Constants.Drivetrain.Hardware.STEER_ROTOR_TO_SENSOR_RATIO;
+        _steerMotorConfig.Slot0.kP = Constants.Drivetrain.STEER_KP;
+        _steerMotorConfig.Slot0.kI = Constants.Drivetrain.STEER_KI;
+        _steerMotorConfig.Slot0.kD = Constants.Drivetrain.STEER_KD;
         _steerMotor.getConfigurator().apply(_steerMotorConfig);
 
         _driveMotorConfig = new TalonFXConfiguration();
         _driveMotorConfig.Feedback.SensorToMechanismRatio = Constants.Drivetrain.Hardware.DRIVE_SENSOR_TO_MECHANISM_RATIO;
         _driveMotorConfig.Feedback.RotorToSensorRatio = Constants.Drivetrain.Hardware.DRIVE_ROTOR_TO_SENSOR_RATIO;
+        _driveMotorConfig.Slot0.kP = Constants.Drivetrain.DRIVE_KP;
+        _driveMotorConfig.Slot0.kI = Constants.Drivetrain.DRIVE_KI;
+        _driveMotorConfig.Slot0.kD = Constants.Drivetrain.DRIVE_KD;
         _driveMotor.getConfigurator().apply(_driveMotorConfig);
 
         _moduleLocation = config.position;
@@ -50,9 +56,12 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public void setState(SwerveModuleState state) {
-        SwerveModuleState optimizedState = state;
-        optimizedState.angle = optimizedState.angle.plus(Rotation2d.fromRadians(_steerAngularOffset));
-        optimizedState.optimize(getSteerAngle());
+        SwerveModuleState optimizedState = new SwerveModuleState(
+            state.speedMetersPerSecond, 
+            state.angle.plus(_steerAngularOffset)
+        );
+        optimizedState.angle = optimizedState.angle.plus(_steerAngularOffset);
+        optimizedState.optimize(getSteerAngle().minus(_steerAngularOffset));
 
         PositionDutyCycle steerRequest = new PositionDutyCycle(optimizedState.angle.getRadians());
         _steerMotor.setControl(steerRequest);
@@ -64,7 +73,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public Rotation2d getSteerAngle() {
-        return Rotation2d.fromRadians(_steerMotor.getPosition().getValue().in(Units.Radians) - _steerAngularOffset);
+        return Rotation2d.fromRadians(_steerMotor.getPosition().getValue().in(Units.Radians)).minus(_steerAngularOffset);
     }
 
     public SwerveModuleState getDesiredState() {
@@ -90,7 +99,7 @@ public class SwerveModule extends SubsystemBase {
         public String moduleName = "";
         public int index = 0;
         public Translation2d position = new Translation2d();
-        public double encoderOffset = 0.0;
+        public Rotation2d encoderOffset = new Rotation2d(0.0);
         public boolean encoderInverted = false;
         public String canBus = "CANivore";
     }
