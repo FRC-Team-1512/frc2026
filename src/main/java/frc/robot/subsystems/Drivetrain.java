@@ -40,9 +40,8 @@ public class Drivetrain extends SubsystemBase {
     private ChassisSpeeds _desiredChassisSpeeds;
     private ChassisSpeeds _previousDesiredChassisSpeeds;
     private SwerveModulePosition[] _measuredPositions;
-    private Rotation2d _yaw;
 
-    private double _yawOffset;
+    private Rotation2d _headingZero;
     private Rotation2d _headingTarget;
     private final PIDController _headingController;
 
@@ -76,12 +75,11 @@ public class Drivetrain extends SubsystemBase {
         for (int i = 0; i < 4; i++) {
             _measuredPositions[i] = _modules[i].getPosition();
         }
-        _yaw = new Rotation2d(0.0);
 
-        _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
+        _headingZero = _gyro.getRotation2d();
         _headingTarget = new Rotation2d(0.0);
         _headingController = new PIDController(Constants.Drivetrain.HEADING_KP, Constants.Drivetrain.HEADING_KI, Constants.Drivetrain.HEADING_KD);
-        _headingController.enableContinuousInput(-180.0, 180.0);
+        _headingController.enableContinuousInput(-Math.PI, Math.PI);
 
         _currentPose = new Pose2d();
         _previousPose = new Pose2d();
@@ -92,7 +90,7 @@ public class Drivetrain extends SubsystemBase {
             _modules[BL_IDX].getLocation(),
             _modules[BR_IDX].getLocation());
 
-        _odometry = new SwerveDrivePoseEstimator(_kinematics, _headingTarget, _measuredPositions, _currentPose);
+        _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose);
 
         // -------------------------------------------------------------------------------------
 
@@ -138,7 +136,6 @@ public class Drivetrain extends SubsystemBase {
         updateTime();
         updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
-        readIMU();
     }
 
     // =======================================================================================
@@ -172,12 +169,12 @@ public class Drivetrain extends SubsystemBase {
 
     public void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
         _headingTarget = _headingTarget.plus(Rotation2d.fromRadians(fieldRelativeSpeeds.omegaRadiansPerSecond * getDeltaT()));
-        double headingCorrectionDegreesPerSecond = _headingController.calculate(getYaw().getDegrees(), _headingTarget.getDegrees()) * Constants.Drivetrain.HEADING_COEFF;
-        fieldRelativeSpeeds.omegaRadiansPerSecond += Radians.convertFrom(headingCorrectionDegreesPerSecond, Degrees);
+        double headingCorrectionOmegaRadiansPerSecond = _headingController.calculate(getHeading().getRadians(), _headingTarget.getRadians()) * Constants.Drivetrain.HEADING_COEFF;
+        fieldRelativeSpeeds.omegaRadiansPerSecond += headingCorrectionOmegaRadiansPerSecond;
         
         ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             fieldRelativeSpeeds,
-            getYaw()
+            getHeading()
         );
         setRobotRelativeSpeeds(robotRelativeSpeeds);
     }
@@ -240,19 +237,15 @@ public class Drivetrain extends SubsystemBase {
     // =======================================================================================
 
     public void zeroIMU() {
-        _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
-        readIMU();
+        _headingZero = _gyro.getRotation2d();
     }
 
-    public void readIMU() {
-        double yawRobot = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
-        //double yawAllianceOffset = _isRedAlliance ? 180.0 : 0.0;
-        double yawAllianceOffset = 0.0;
-        _yaw = Rotation2d.fromDegrees(yawRobot - _yawOffset + yawAllianceOffset);
-    }
-
-    public Rotation2d getYaw() {
-        return _yaw;
+    public Rotation2d getHeading() {
+        Rotation2d rawHeading = _gyro.getRotation2d();
+        if (Constants.Drivetrain.PIGEON_INVERTED) {
+            rawHeading = rawHeading.unaryMinus();
+        }
+        return rawHeading.minus(_headingZero);
     }
 
     // =======================================================================================
@@ -262,7 +255,7 @@ public class Drivetrain extends SubsystemBase {
             _measuredPositions[module.getIndex()] = module.getPosition();
         }
 
-        _odometry.updateWithTime(Timer.getFPGATimestamp(), getYaw(), _measuredPositions);
+        _odometry.updateWithTime(Timer.getFPGATimestamp(), getHeading(), _measuredPositions);
 
         _previousPose = _currentPose;
         _currentPose = _odometry.getEstimatedPosition();

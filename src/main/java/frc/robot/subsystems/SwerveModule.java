@@ -51,10 +51,13 @@ public class SwerveModule extends SubsystemBase {
         // -------------------------------------------------------------------------------------
 
         TalonFXConfiguration _steerMotorConfig = new TalonFXConfiguration();
-        switch(Constants.Drivetrain.STEER_INVERTED) {
-            case 1: _steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; break;
-            case -1: _steerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; break;
-            default: _steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; break;}
+
+        if(Constants.Drivetrain.STEER_INVERTED) {
+            _steerMotorConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        } else {
+            _steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        }
+
         _steerMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.STEER_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.STEER_PEAK_VOLTAGE));
 
@@ -70,11 +73,13 @@ public class SwerveModule extends SubsystemBase {
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.DRIVE_PEAK_VOLTAGE));
         
         CANcoderConfiguration _encoderConfig = new CANcoderConfiguration();
-        switch(Constants.Drivetrain.STEER_INVERTED) {
-            case 1: _encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive; break;
-            case -1: _encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive; break;
-            default: _encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive; break;
+
+        if (Constants.Drivetrain.STEER_INVERTED) {
+            _encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
+        }else {
+            _encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         }
+
         _encoderConfig.MagnetSensor.MagnetOffset = config.encoderOffset.getRotations();
 
         // -------------------------------------------------------------------------------------

@@ -28,8 +28,8 @@ public class Constants {
         public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 4.0;
         public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
 
-        public static final int PIGEON_INVERTED = 1; // 1 for not inverted, -1 for inverted
-        public static final int STEER_INVERTED = 1; // 1 for not inverted, -1 for inverted
+        public static final boolean PIGEON_INVERTED = false;
+        public static final boolean STEER_INVERTED = false;
 
         public static final ModuleConfiguration FL_CONFIG = new ModuleConfiguration();
         public static final ModuleConfiguration FR_CONFIG = new ModuleConfiguration();
