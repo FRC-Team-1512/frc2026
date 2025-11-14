@@ -15,11 +15,19 @@ public class Drive extends Command {
     
     @Override
     public void execute() {
-        double vx = -RobotContainer.driver.getLeftY();
-        double vy = -RobotContainer.driver.getLeftX();
+        double vx = -applyDeadband(RobotContainer.driver.getLeftY(), 0.05);
+        double vy = -applyDeadband(RobotContainer.driver.getLeftX(), 0.05);
 
-        double rot = -RobotContainer.driver.getRightX();
+        double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.05);
 
         _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
+    }
+
+    private static double applyDeadband(double input, double deadband) {
+        if (Math.abs(input) <= deadband) {
+            return 0.0;
+        }else {
+            return input;
+        }
     }
 }
