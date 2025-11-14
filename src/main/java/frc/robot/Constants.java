@@ -10,7 +10,7 @@ public class Constants {
     public static class Drivetrain {
 
         public static class Hardware {
-            public static final double WHEEL_DIAMETER_METER = 0.1016;
+            public static final double WHEEL_DIAMETER_METER = 0.1016; // 4 inches
 
             public static final double DRIVE_SENSOR_TO_MECHANISM_RATIO = 40500.0 / 5760.0; // around 7.03
             public static final double DRIVE_ROTOR_TO_SENSOR_RATIO = 1.0;
@@ -19,8 +19,8 @@ public class Constants {
             public static final double STEER_ROTOR_TO_SENSOR_RATIO = 287.0 / 11.0; // around 26.09
         }
 
-        public static final double FB_LENGTH = 0.66675;
-        public static final double LR_LENGTH = 0.66675;
+        public static final double FB_LENGTH = 0.66675; // 26.25 inches
+        public static final double LR_LENGTH = 0.66675; // 26.25 inches
 
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.0;
 
