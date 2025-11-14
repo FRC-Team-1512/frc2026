@@ -73,10 +73,13 @@ public class Drivetrain extends SubsystemBase {
         _desiredChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
         _previousDesiredChassisSpeeds = _desiredChassisSpeeds;
         _measuredPositions = new SwerveModulePosition[4];
+        for (int i = 0; i < 4; i++) {
+            _measuredPositions[i] = _modules[i].getPosition();
+        }
         _yaw = new Rotation2d(0.0);
 
         _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
-        _headingTarget = Rotation2d.fromDegrees(_yawOffset);
+        _headingTarget = new Rotation2d(0.0);
         _headingController = new PIDController(Constants.Drivetrain.HEADING_KP, Constants.Drivetrain.HEADING_KI, Constants.Drivetrain.HEADING_KD);
         _headingController.enableContinuousInput(-180.0, 180.0);
 
@@ -169,8 +172,8 @@ public class Drivetrain extends SubsystemBase {
 
     public void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
         _headingTarget = _headingTarget.plus(Rotation2d.fromRadians(fieldRelativeSpeeds.omegaRadiansPerSecond * getDeltaT()));
-        double headingCorrectionDegrees = _headingController.calculate(getYaw().getDegrees(), _headingTarget.getDegrees());
-        fieldRelativeSpeeds.omegaRadiansPerSecond += Radians.convertFrom(headingCorrectionDegrees, Degrees);
+        double headingCorrectionDegreesPerSecond = _headingController.calculate(getYaw().getDegrees(), _headingTarget.getDegrees()) * Constants.Drivetrain.HEADING_COEFF;
+        fieldRelativeSpeeds.omegaRadiansPerSecond += Radians.convertFrom(headingCorrectionDegreesPerSecond, Degrees);
         
         ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             fieldRelativeSpeeds,
@@ -230,6 +233,10 @@ public class Drivetrain extends SubsystemBase {
         return new ChassisSpeeds(vx, vy, omega);
     }
 
+    public void setHeadingTargetDegrees(double targetDegrees) {
+        _headingTarget = Rotation2d.fromDegrees(targetDegrees);
+    }
+
     // =======================================================================================
 
     public void zeroIMU() {
@@ -239,7 +246,8 @@ public class Drivetrain extends SubsystemBase {
 
     public void readIMU() {
         double yawRobot = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
-        double yawAllianceOffset = _isRedAlliance ? 180.0 : 0.0;
+        //double yawAllianceOffset = _isRedAlliance ? 180.0 : 0.0;
+        double yawAllianceOffset = 0.0;
         _yaw = Rotation2d.fromDegrees(yawRobot - _yawOffset + yawAllianceOffset);
     }
 

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
+import frc.robot.commands.Snap;
 import frc.robot.commands.ZeroIMU;
 import frc.robot.subsystems.Drivetrain;
 
@@ -23,6 +24,7 @@ public class RobotContainer {
         _drivetrain.setDefaultCommand(new Drive(_drivetrain));
 
         driver.b().onTrue(new ZeroIMU(_drivetrain));
+		driver.a().onTrue(new Snap(_drivetrain, 0));
 
 		configureBindings();
 	}

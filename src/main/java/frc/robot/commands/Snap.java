@@ -1,4 +1,4 @@
-/*package frc.robot.commands;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -25,14 +25,13 @@ public class Snap extends Command {
     public void execute() {
         // TODO Auto-generated method stub
         super.execute();
-        _drivetrain.
+        _drivetrain.setHeadingTargetDegrees(0);
     }
     @Override
     public boolean isFinished() {
         // TODO Auto-generated method stub
-        return super.isFinished();
+        return true;
     }
     
     
 }
-*/

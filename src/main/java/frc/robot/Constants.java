@@ -12,7 +12,8 @@ public class Constants {
         public static class Hardware {
             public static final double WHEEL_DIAMETER_METER = 0.1016; // 4 inches
 
-            public static final double DRIVE_SENSOR_TO_MECHANISM_RATIO = 40500.0 / 5760.0; // around 7.03
+            //public static final double DRIVE_SENSOR_TO_MECHANISM_RATIO = 40500.0 / 5760.0; // around 7.03
+            public static final double DRIVE_SENSOR_TO_MECHANISM_RATIO = 6.03;
             public static final double DRIVE_ROTOR_TO_SENSOR_RATIO = 1.0;
 
             public static final double STEER_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
@@ -22,10 +23,10 @@ public class Constants {
         public static final double FB_LENGTH = 0.66675; // 26.25 inches
         public static final double LR_LENGTH = 0.66675; // 26.25 inches
 
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.0;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 6.0;
 
         public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 4.0;
-        public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 3;
+        public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
 
         public static final int PIGEON_INVERTED = 1; // 1 for not inverted, -1 for inverted
         public static final int STEER_INVERTED = 1; // 1 for not inverted, -1 for inverted
@@ -64,9 +65,10 @@ public class Constants {
         public static final double DRIVE_KD = 0.07;
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
 
-        public static final double HEADING_KP = 0.4;
+        public static final double HEADING_COEFF = 10.0;
+        public static final double HEADING_KP = 1.2;
         public static final double HEADING_KI = 0.0;
-        public static final double HEADING_KD = 0.01;
+        public static final double HEADING_KD = 0.4;
 
         public static class Auto {
             public static final double TRANSLATION_KP = 5.0;
