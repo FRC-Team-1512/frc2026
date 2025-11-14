@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -35,6 +36,8 @@ public class Drivetrain extends SubsystemBase {
     private Rotation2d _yaw;
 
     private double _yawOffset;
+    private Rotation2d _headingTarget;
+    private final PIDController _headingController;
 
     private Pose2d _currentPose;
     private Pose2d _previousPose;
@@ -61,6 +64,8 @@ public class Drivetrain extends SubsystemBase {
         _yaw = new Rotation2d(0.0);
 
         _yawOffset = _gyro.getYaw().getValueAsDouble() * Constants.Drivetrain.PIGEON_INVERTED;
+        _headingTarget = new Rotation2d(0.0);
+        _headingController = new PIDController(0.4, 0.0, 0.01);
 
         _currentPose = new Pose2d();
         _previousPose = new Pose2d();
@@ -93,14 +98,19 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateSpeeds(ChassisSpeeds speeds) {
-        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(speeds);
-        for(SwerveModule module : _modules) {
-            module.setState(desiredStates[module.getIndex()]);
+        if(speeds == null) {
+            speeds = new ChassisSpeeds();
         }
+        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(speeds);
+        setModuleStates(desiredStates);
     }
     
-    public void setRawSpeeds(ChassisSpeeds speeds) {
+    public void setRobotRelativeSpeeds(ChassisSpeeds speeds) {
         _desiredChassisSpeeds = speeds;
+    }
+
+    public void setRobotRelativeSpeeds(double vx, double vy, double omega) {
+        setRobotRelativeSpeeds(new ChassisSpeeds(vx, vy, omega));
     }
 
     public void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
@@ -108,14 +118,23 @@ public class Drivetrain extends SubsystemBase {
             fieldRelativeSpeeds,
             getYaw()
         );
-        setRawSpeeds(robotRelativeSpeeds);
+        setRobotRelativeSpeeds(robotRelativeSpeeds);
     }
 
-    public void setModuleStates(SwerveModuleState[] states) {
+    public void setFieldRelativeSpeeds(double vx, double vy, double omega) {
+        setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, omega));
+    }
+
+    private void setModuleStates(SwerveModuleState[] states) {
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
         for(SwerveModule module : _modules) {
             module.setState(states[module.getIndex()]);
         }
         _desiredSwerveStatePublisher.set(states);
+    }
+
+    public void stop() {
+        setRobotRelativeSpeeds(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 
     public void zeroIMU() {
@@ -135,7 +154,6 @@ public class Drivetrain extends SubsystemBase {
 
     public void updateOdometry() {
         for (SwerveModule module : _modules) {
-            _measuredStates[module.getIndex()] = module.getDesiredState();
             _measuredPositions[module.getIndex()] = module.getPosition();
         }
 

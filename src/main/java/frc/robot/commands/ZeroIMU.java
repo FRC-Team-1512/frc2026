@@ -17,7 +17,7 @@ public class ZeroIMU extends Command {
 
     @Override
     public boolean isFinished() {
-        return super.isFinished();
+        return true;
     }
     
 }

@@ -168,6 +168,10 @@ public class SwerveModule extends SubsystemBase {
         );
     }
 
+    public boolean isHealthy() {
+        return _steerMotor.isAlive() && _driveMotor.isAlive() && _encoder.isConnected();
+    }
+
     public Translation2d getLocation() {
         return _moduleLocation;
     }

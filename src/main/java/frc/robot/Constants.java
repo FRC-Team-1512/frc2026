@@ -22,6 +22,8 @@ public class Constants {
         public static final double FB_LENGTH = 0.6985;
         public static final double LR_LENGTH = 0.6223;
 
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.0;
+
         public static final int PIGEON_INVERTED = 1; // 1 for not inverted, -1 for inverted
         public static final int STEER_INVERTED = 1; // 1 for not inverted, -1 for inverted
 
