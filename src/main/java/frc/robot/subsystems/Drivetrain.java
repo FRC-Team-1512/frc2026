@@ -38,6 +38,7 @@ public class Drivetrain extends SubsystemBase {
     private final Pigeon2 _gyro;
 
     private ChassisSpeeds _desiredChassisSpeeds;
+    private ChassisSpeeds _previousDesiredChassisSpeeds;
     private SwerveModulePosition[] _measuredPositions;
     private Rotation2d _yaw;
 
@@ -54,6 +55,7 @@ public class Drivetrain extends SubsystemBase {
     private final boolean _isRedAlliance;
 
     private double _lastTime;
+    private double _deltaT;
 
     StructArrayPublisher<SwerveModuleState> _desiredSwerveStatePublisher;
     StructArrayPublisher<Pose2d> _currentPosePublisher;
@@ -69,6 +71,7 @@ public class Drivetrain extends SubsystemBase {
         // -------------------------------------------------------------------------------------
 
         _desiredChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+        _previousDesiredChassisSpeeds = _desiredChassisSpeeds;
         _measuredPositions = new SwerveModulePosition[4];
         _yaw = new Rotation2d(0.0);
 
@@ -94,6 +97,7 @@ public class Drivetrain extends SubsystemBase {
         _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
 
         _lastTime = Timer.getFPGATimestamp();
+        _deltaT = 1.0 / Constants.TICK_PER_SECOND;
 
         _desiredSwerveStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct).publish();
         _currentPosePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
@@ -113,8 +117,12 @@ public class Drivetrain extends SubsystemBase {
             this::getMeasuredRelativeSpeeds,
             (speeds, feedforwards) -> setRobotRelativeSpeeds(speeds),
             new PPHolonomicDriveController(
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(Constants.Drivetrain.Auto.TRANSLATION_KP,
+                        Constants.Drivetrain.Auto.TRANSLATION_KI,
+                        Constants.Drivetrain.Auto.TRANSLATION_KD), // Translation PID constants
+                    new PIDConstants(Constants.Drivetrain.Auto.ROTATION_KP,
+                        Constants.Drivetrain.Auto.ROTATION_KI,
+                        Constants.Drivetrain.Auto.ROTATION_KD) // Rotation PID constants
             ),
             config,
             () -> _isRedAlliance,
@@ -124,6 +132,7 @@ public class Drivetrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+        updateTime();
         updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
         readIMU();
@@ -135,8 +144,19 @@ public class Drivetrain extends SubsystemBase {
         if(speeds == null) {
             speeds = new ChassisSpeeds();
         }
-        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(speeds);
+
+        ChassisSpeeds limited = limitChassisAcceleration(
+            speeds,
+            _previousDesiredChassisSpeeds,
+            getDeltaT(),
+            Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 2.0, // Max accel
+            Math.PI * 2.0 // Max angular accel
+        );
+
+        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
         setModuleStates(desiredStates);
+
+        _previousDesiredChassisSpeeds = limited;
     }
     
     public void setRobotRelativeSpeeds(ChassisSpeeds speeds) {
@@ -151,6 +171,7 @@ public class Drivetrain extends SubsystemBase {
         _headingTarget = _headingTarget.plus(Rotation2d.fromRadians(fieldRelativeSpeeds.omegaRadiansPerSecond * getDeltaT()));
         double headingCorrectionDegrees = _headingController.calculate(getYaw().getDegrees(), _headingTarget.getDegrees());
         fieldRelativeSpeeds.omegaRadiansPerSecond += Radians.convertFrom(headingCorrectionDegrees, Degrees);
+        
         ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
             fieldRelativeSpeeds,
             getYaw()
@@ -183,6 +204,30 @@ public class Drivetrain extends SubsystemBase {
             states[module.getIndex()] = module.getState();
         }
         return _kinematics.toChassisSpeeds(states);
+    }
+
+    private ChassisSpeeds limitChassisAcceleration (ChassisSpeeds desired, ChassisSpeeds previous, double dt, double maxAccel, double maxAngularAccel) {
+        double dx = desired.vxMetersPerSecond - previous.vxMetersPerSecond;
+        double dy = desired.vyMetersPerSecond - previous.vyMetersPerSecond;
+        double dw = desired.omegaRadiansPerSecond - previous.omegaRadiansPerSecond;
+
+        double deltaNorm = Math.sqrt(dx*dx + dy*dy);
+        if (deltaNorm > maxAccel * dt) {
+            double scale = maxAccel * dt / deltaNorm;
+            dx *= scale;
+            dy *= scale;
+        }
+
+        if(Math.abs(dw) > maxAngularAccel * dt) {
+            double scale = maxAngularAccel * dt / Math.abs(dw);
+            dw *= scale;
+        }
+
+        double vx = previous.vxMetersPerSecond + dx;
+        double vy = previous.vyMetersPerSecond + dy;
+        double omega = previous.omegaRadiansPerSecond + dw;
+
+        return new ChassisSpeeds(vx, vy, omega);
     }
 
     // =======================================================================================
@@ -233,10 +278,13 @@ public class Drivetrain extends SubsystemBase {
         _headingTarget = pose.getRotation();
     }
 
-    private double getDeltaT() {
+    private void updateTime() {
         double currentTime = Timer.getFPGATimestamp();
-        double dt = currentTime - _lastTime;
+        _deltaT = currentTime - _lastTime;
         _lastTime = currentTime;
-        return dt;
+    }
+
+    private double getDeltaT() {
+        return _deltaT;
     }
 }

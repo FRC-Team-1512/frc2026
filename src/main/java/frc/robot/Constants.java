@@ -64,5 +64,15 @@ public class Constants {
         public static final double HEADING_KP = 0.4;
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.01;
+
+        public static class Auto {
+            public static final double TRANSLATION_KP = 5.0;
+            public static final double TRANSLATION_KI = 0.0;
+            public static final double TRANSLATION_KD = 0.0;
+
+            public static final double ROTATION_KP = 5.0;
+            public static final double ROTATION_KI = 0.0;
+            public static final double ROTATION_KD = 0.0;
+        }
     }
 }
