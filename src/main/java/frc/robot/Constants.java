@@ -24,6 +24,9 @@ public class Constants {
 
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 4.0;
 
+        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 4.0;
+        public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 3;
+
         public static final int PIGEON_INVERTED = 1; // 1 for not inverted, -1 for inverted
         public static final int STEER_INVERTED = 1; // 1 for not inverted, -1 for inverted
 

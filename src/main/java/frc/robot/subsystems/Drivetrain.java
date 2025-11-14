@@ -149,8 +149,8 @@ public class Drivetrain extends SubsystemBase {
             speeds,
             _previousDesiredChassisSpeeds,
             getDeltaT(),
-            Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND * 2.0, // Max accel
-            Math.PI * 2.0 // Max angular accel
+            Constants.Drivetrain.MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED,
+            Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED
         );
 
         SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
