@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,7 +25,7 @@ public class RobotContainer {
         _drivetrain.setDefaultCommand(new Drive(_drivetrain));
 
         driver.b().onTrue(new ZeroIMU(_drivetrain));
-		driver.a().onTrue(new Snap(_drivetrain, 0));
+		driver.a().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(0.0)));
 
 		configureBindings();
 	}
