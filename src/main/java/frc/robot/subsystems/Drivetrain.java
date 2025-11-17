@@ -16,6 +16,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,6 +55,8 @@ public class Drivetrain extends SubsystemBase {
     private double _lastTime;
     private double _deltaT;
 
+    DoublePublisher _timePublisher;
+    StructArrayPublisher<Rotation2d> _headingPublisher;
     StructArrayPublisher<SwerveModuleState> _desiredSwerveStatePublisher;
     StructArrayPublisher<Pose2d> _currentPosePublisher;
 
@@ -97,8 +101,13 @@ public class Drivetrain extends SubsystemBase {
         _lastTime = Timer.getFPGATimestamp();
         _deltaT = 1.0 / Constants.TICK_PER_SECOND;
 
-        _desiredSwerveStatePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct).publish();
-        _currentPosePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable table = inst.getTable("drivetrain");
+
+        _desiredSwerveStatePublisher = table.getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct).publish();
+        _currentPosePublisher = table.getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
+        _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
+        _timePublisher = table.getDoubleTopic("DeltaTime").publish();
 
         // -------------------------------------------------------------------------------------
 
@@ -133,6 +142,8 @@ public class Drivetrain extends SubsystemBase {
         updateTime();
         updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
+        _headingPublisher.set(new Rotation2d[]{getHeading()});
+        _timePublisher.set(getDeltaT());
     }
 
     // =======================================================================================
@@ -225,6 +236,10 @@ public class Drivetrain extends SubsystemBase {
         double omega = previous.omegaRadiansPerSecond + dw;
 
         return new ChassisSpeeds(vx, vy, omega);
+    }
+
+    public void setHeadingTarget(Rotation2d targetRotation) {
+        _headingTarget = targetRotation;
     }
 
     public void setHeadingTargetDegrees(double targetDegrees) {

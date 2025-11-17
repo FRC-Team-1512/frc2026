@@ -11,11 +11,12 @@ public class Snap extends Command {
 
     public Snap(Drivetrain drivetrain, Rotation2d heading){
         _drivetrain = drivetrain;
+        _heading = heading;
     }
 
     @Override
     public void execute() {
-        _drivetrain.setHeadingTargetDegrees(_heading.getDegrees());
+        _drivetrain.setHeadingTarget(_heading);
     }
     
     @Override
