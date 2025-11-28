@@ -6,6 +6,7 @@ import frc.robot.subsystems.SwerveModule.ModuleConfiguration;
 
 public class Constants {
     public static final double TICK_PER_SECOND = 50.0;
+    public static final double EPSILON = 1e-9;
 
     public static class Drivetrain {
 
@@ -23,9 +24,10 @@ public class Constants {
         public static final double FB_LENGTH = 0.66675; // 26.25 inches
         public static final double LR_LENGTH = 0.66675; // 26.25 inches
 
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 6.0;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 5.0;
 
-        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 4.0;
+        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 15.0;
+        public static final double MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED = 20;
         public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
 
         public static final boolean PIGEON_INVERTED = false;
@@ -65,7 +67,7 @@ public class Constants {
         public static final double DRIVE_KD = 0.07;
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
 
-        public static final double HEADING_COEFF = 1.0;
+        public static final double HEADING_COEFF = 3.0;
         public static final double HEADING_KP = 1.2;
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.4;

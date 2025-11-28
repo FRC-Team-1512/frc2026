@@ -5,9 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "resetIMU"
+            "pathName": "Path2"
           }
         }
       ]

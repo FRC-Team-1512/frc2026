@@ -149,6 +149,9 @@ public class SwerveModule extends SubsystemBase {
 
         double driveRotationsPerSecond = _desiredModuleState.speedMetersPerSecond 
             / (Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI);
+
+        driveRotationsPerSecond /= Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI; //TODO Magic Constant!!!
+
         _driveMotor.setControl(_driveVelocityVoltage.withVelocity(driveRotationsPerSecond));
     }
 

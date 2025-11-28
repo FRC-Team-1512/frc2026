@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
+import frc.robot.utils.Vector2d;
 
 public class Drivetrain extends SubsystemBase {
     public static final int FL_IDX = 0;
@@ -62,10 +63,14 @@ public class Drivetrain extends SubsystemBase {
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
-        _modules[FL_IDX] = new SwerveModule(RobotMap.CAN.FL_STEER, RobotMap.CAN.FL_DRIVE, RobotMap.CAN.FL_ENCODER, Constants.Drivetrain.FL_CONFIG);
-        _modules[FR_IDX] = new SwerveModule(RobotMap.CAN.FR_STEER, RobotMap.CAN.FR_DRIVE, RobotMap.CAN.FR_ENCODER, Constants.Drivetrain.FR_CONFIG);
-        _modules[BL_IDX] = new SwerveModule(RobotMap.CAN.BL_STEER, RobotMap.CAN.BL_DRIVE, RobotMap.CAN.BL_ENCODER, Constants.Drivetrain.BL_CONFIG);
-        _modules[BR_IDX] = new SwerveModule(RobotMap.CAN.BR_STEER, RobotMap.CAN.BR_DRIVE, RobotMap.CAN.BR_ENCODER, Constants.Drivetrain.BR_CONFIG);
+        _modules[FL_IDX] = new SwerveModule(RobotMap.CAN.FL_STEER, RobotMap.CAN.FL_DRIVE, RobotMap.CAN.FL_ENCODER,
+                Constants.Drivetrain.FL_CONFIG);
+        _modules[FR_IDX] = new SwerveModule(RobotMap.CAN.FR_STEER, RobotMap.CAN.FR_DRIVE, RobotMap.CAN.FR_ENCODER,
+                Constants.Drivetrain.FR_CONFIG);
+        _modules[BL_IDX] = new SwerveModule(RobotMap.CAN.BL_STEER, RobotMap.CAN.BL_DRIVE, RobotMap.CAN.BL_ENCODER,
+                Constants.Drivetrain.BL_CONFIG);
+        _modules[BR_IDX] = new SwerveModule(RobotMap.CAN.BR_STEER, RobotMap.CAN.BR_DRIVE, RobotMap.CAN.BR_ENCODER,
+                Constants.Drivetrain.BR_CONFIG);
         _gyro = new Pigeon2(RobotMap.CAN.PIGEON);
 
         // -------------------------------------------------------------------------------------
@@ -79,17 +84,18 @@ public class Drivetrain extends SubsystemBase {
 
         _headingZero = _gyro.getRotation2d();
         _headingTarget = new Rotation2d(0.0);
-        _headingController = new PIDController(Constants.Drivetrain.HEADING_KP, Constants.Drivetrain.HEADING_KI, Constants.Drivetrain.HEADING_KD);
+        _headingController = new PIDController(Constants.Drivetrain.HEADING_KP, Constants.Drivetrain.HEADING_KI,
+                Constants.Drivetrain.HEADING_KD);
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
 
         _currentPose = new Pose2d();
         _previousPose = new Pose2d();
 
         _kinematics = new SwerveDriveKinematics(
-            _modules[FL_IDX].getLocation(),
-            _modules[FR_IDX].getLocation(),
-            _modules[BL_IDX].getLocation(),
-            _modules[BR_IDX].getLocation());
+                _modules[FL_IDX].getLocation(),
+                _modules[FR_IDX].getLocation(),
+                _modules[BL_IDX].getLocation(),
+                _modules[BR_IDX].getLocation());
 
         _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose);
 
@@ -104,7 +110,8 @@ public class Drivetrain extends SubsystemBase {
         NetworkTableInstance inst = NetworkTableInstance.getDefault();
         NetworkTable table = inst.getTable("drivetrain");
 
-        _desiredSwerveStatePublisher = table.getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct).publish();
+        _desiredSwerveStatePublisher = table.getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct)
+                .publish();
         _currentPosePublisher = table.getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
         _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
         _timePublisher = table.getDoubleTopic("DeltaTime").publish();
@@ -112,29 +119,28 @@ public class Drivetrain extends SubsystemBase {
         // -------------------------------------------------------------------------------------
 
         RobotConfig config = null;
-        try{
+        try {
             config = RobotConfig.fromGUISettings();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         AutoBuilder.configure(
-            this::getPose,
-            this::resetPose,
-            this::getMeasuredRelativeSpeeds,
-            (speeds, feedforwards) -> setRobotRelativeSpeeds(speeds),
-            new PPHolonomicDriveController(
-                    new PIDConstants(Constants.Drivetrain.Auto.TRANSLATION_KP,
-                        Constants.Drivetrain.Auto.TRANSLATION_KI,
-                        Constants.Drivetrain.Auto.TRANSLATION_KD), // Translation PID constants
-                    new PIDConstants(Constants.Drivetrain.Auto.ROTATION_KP,
-                        Constants.Drivetrain.Auto.ROTATION_KI,
-                        Constants.Drivetrain.Auto.ROTATION_KD) // Rotation PID constants
-            ),
-            config,
-            () -> _isRedAlliance,
-            this
-        );
+                this::getPose,
+                this::resetPose,
+                this::getMeasuredRelativeSpeeds,
+                (speeds, feedforwards) -> setRobotRelativeSpeeds(speeds),
+                new PPHolonomicDriveController(
+                        new PIDConstants(Constants.Drivetrain.Auto.TRANSLATION_KP,
+                                Constants.Drivetrain.Auto.TRANSLATION_KI,
+                                Constants.Drivetrain.Auto.TRANSLATION_KD), // Translation PID constants
+                        new PIDConstants(Constants.Drivetrain.Auto.ROTATION_KP,
+                                Constants.Drivetrain.Auto.ROTATION_KI,
+                                Constants.Drivetrain.Auto.ROTATION_KD) // Rotation PID constants
+                ),
+                config,
+                () -> _isRedAlliance,
+                this);
     }
 
     @Override
@@ -142,31 +148,31 @@ public class Drivetrain extends SubsystemBase {
         updateTime();
         updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
-        _headingPublisher.set(new Rotation2d[]{getHeading()});
+        _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
     }
 
     // =======================================================================================
 
     private void updateSpeeds(ChassisSpeeds speeds) {
-        if(speeds == null) {
+        if (speeds == null) {
             speeds = new ChassisSpeeds();
         }
 
         ChassisSpeeds limited = limitChassisAcceleration(
-            speeds,
-            _previousDesiredChassisSpeeds,
-            getDeltaT(),
-            Constants.Drivetrain.MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED,
-            Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED
-        );
+                speeds,
+                _previousDesiredChassisSpeeds,
+                getDeltaT(),
+                Constants.Drivetrain.MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED,
+                Constants.Drivetrain.MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED,
+                Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
         SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
         setModuleStates(desiredStates);
 
         _previousDesiredChassisSpeeds = limited;
     }
-    
+
     public void setRobotRelativeSpeeds(ChassisSpeeds speeds) {
         _desiredChassisSpeeds = speeds;
     }
@@ -176,14 +182,15 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void setFieldRelativeSpeeds(ChassisSpeeds fieldRelativeSpeeds) {
-        _headingTarget = _headingTarget.plus(Rotation2d.fromRadians(fieldRelativeSpeeds.omegaRadiansPerSecond * getDeltaT()));
-        double headingCorrectionOmegaRadiansPerSecond = _headingController.calculate(getHeading().getRadians(), _headingTarget.getRadians()) * Constants.Drivetrain.HEADING_COEFF;
+        _headingTarget = _headingTarget
+                .plus(Rotation2d.fromRadians(fieldRelativeSpeeds.omegaRadiansPerSecond * getDeltaT()));
+        double headingCorrectionOmegaRadiansPerSecond = _headingController.calculate(getHeading().getRadians(),
+                _headingTarget.getRadians()) * Constants.Drivetrain.HEADING_COEFF;
         fieldRelativeSpeeds.omegaRadiansPerSecond += headingCorrectionOmegaRadiansPerSecond;
-        
+
         ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            fieldRelativeSpeeds,
-            getHeading()
-        );
+                fieldRelativeSpeeds,
+                getHeading());
         setRobotRelativeSpeeds(robotRelativeSpeeds);
     }
 
@@ -193,7 +200,7 @@ public class Drivetrain extends SubsystemBase {
 
     private void setModuleStates(SwerveModuleState[] states) {
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Constants.Drivetrain.MAX_VELOCITY_METERS_PER_SECOND);
-        for(SwerveModule module : _modules) {
+        for (SwerveModule module : _modules) {
             module.setState(states[module.getIndex()]);
         }
         _desiredSwerveStatePublisher.set(states);
@@ -214,28 +221,44 @@ public class Drivetrain extends SubsystemBase {
         return _kinematics.toChassisSpeeds(states);
     }
 
-    private ChassisSpeeds limitChassisAcceleration (ChassisSpeeds desired, ChassisSpeeds previous, double dt, double maxAccel, double maxAngularAccel) {
-        double dx = desired.vxMetersPerSecond - previous.vxMetersPerSecond;
-        double dy = desired.vyMetersPerSecond - previous.vyMetersPerSecond;
+    private ChassisSpeeds limitChassisAcceleration(
+            ChassisSpeeds desired,
+            ChassisSpeeds previous,
+            double dt,
+            double maxAccel, // translational acceleration limit [m/s^2]
+            double maxLateralJerk, // lateral jerk limit [rad/s^2]
+            double maxAngularAccel // angular acceleration limit [rad/s^2]
+    ) {
+        Vector2d desiredVector = new Vector2d(desired.vxMetersPerSecond, desired.vyMetersPerSecond);
+        Vector2d previousVector = new Vector2d(previous.vxMetersPerSecond, previous.vyMetersPerSecond);
+
         double dw = desired.omegaRadiansPerSecond - previous.omegaRadiansPerSecond;
 
-        double deltaNorm = Math.sqrt(dx*dx + dy*dy);
-        if (deltaNorm > maxAccel * dt) {
-            double scale = maxAccel * dt / deltaNorm;
-            dx *= scale;
-            dy *= scale;
-        }
+        double prevMag = previousVector.norm();
+        double desiredMag = desiredVector.norm();
+        double deltaMag = desiredMag - prevMag;
 
-        if(Math.abs(dw) > maxAngularAccel * dt) {
-            double scale = maxAngularAccel * dt / Math.abs(dw);
-            dw *= scale;
-        }
+        Rotation2d prevAngle = previousVector.angle();
+        Rotation2d desiredAngle = desiredVector.angle();
+        Rotation2d deltaTheta = desiredAngle.minus(prevAngle);
 
-        double vx = previous.vxMetersPerSecond + dx;
-        double vy = previous.vyMetersPerSecond + dy;
+        double limitedMag = prevMag + Math.signum(deltaMag) * Math.min(Math.abs(deltaMag), maxAccel * dt);
+
+        double limitedDeltaTheta = Math.signum(deltaTheta.getRadians()) *
+                Math.min(Math.abs(deltaTheta.getRadians()), maxLateralJerk * dt);
+        Rotation2d limitedAngle = prevAngle.plus(Rotation2d.fromRadians(limitedDeltaTheta));
+
+        dw = Math.signum(dw) * Math.min(Math.abs(dw), maxAngularAccel * dt);
         double omega = previous.omegaRadiansPerSecond + dw;
 
-        return new ChassisSpeeds(vx, vy, omega);
+        Vector2d limitedVector;
+        if (prevMag < Constants.EPSILON) {
+            limitedVector = new Vector2d(limitedMag, 0.0).rotateBy(limitedAngle);
+        } else {
+            limitedVector = previousVector.normalized().times(limitedMag).rotateBy(limitedAngle.minus(prevAngle));
+        }
+
+        return new ChassisSpeeds(limitedVector.x(), limitedVector.y(), omega);
     }
 
     public void setHeadingTarget(Rotation2d targetRotation) {
@@ -273,7 +296,7 @@ public class Drivetrain extends SubsystemBase {
         _previousPose = _currentPose;
         _currentPose = _odometry.getEstimatedPosition();
 
-        _currentPosePublisher.set(new Pose2d[]{_currentPose});
+        _currentPosePublisher.set(new Pose2d[] { _currentPose });
     }
 
     public double getVelocityMagnitude() {

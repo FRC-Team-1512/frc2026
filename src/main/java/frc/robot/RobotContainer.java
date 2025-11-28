@@ -37,8 +37,11 @@ public class RobotContainer {
 	private void configureBindings() {
 		_drivetrain.setDefaultCommand(new Drive(_drivetrain));
 
-		driver.b().onTrue(new ZeroIMU(_drivetrain));
-		driver.a().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(0.0)));
+		driver.b().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(45.0)));
+		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
+		driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
+		driver.a().onTrue(new ZeroIMU(_drivetrain));
+
 	}
 
 	public Command getAutonomousCommand() {
