@@ -164,7 +164,6 @@ public class Drivetrain extends SubsystemBase {
                 _previousDesiredChassisSpeeds,
                 getDeltaT(),
                 Constants.Drivetrain.MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED,
-                Constants.Drivetrain.MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED,
                 Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
 
         SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
@@ -221,44 +220,28 @@ public class Drivetrain extends SubsystemBase {
         return _kinematics.toChassisSpeeds(states);
     }
 
-    private ChassisSpeeds limitChassisAcceleration(
-            ChassisSpeeds desired,
-            ChassisSpeeds previous,
-            double dt,
-            double maxAccel, // translational acceleration limit [m/s^2]
-            double maxLateralJerk, // lateral jerk limit [rad/s^2]
-            double maxAngularAccel // angular acceleration limit [rad/s^2]
-    ) {
-        Vector2d desiredVector = new Vector2d(desired.vxMetersPerSecond, desired.vyMetersPerSecond);
-        Vector2d previousVector = new Vector2d(previous.vxMetersPerSecond, previous.vyMetersPerSecond);
-
+    private ChassisSpeeds limitChassisAcceleration (ChassisSpeeds desired, ChassisSpeeds previous, double dt, double maxAccel, double maxAngularAccel) {
+        double dx = desired.vxMetersPerSecond - previous.vxMetersPerSecond;
+        double dy = desired.vyMetersPerSecond - previous.vyMetersPerSecond;
         double dw = desired.omegaRadiansPerSecond - previous.omegaRadiansPerSecond;
 
-        double prevMag = previousVector.norm();
-        double desiredMag = desiredVector.norm();
-        double deltaMag = desiredMag - prevMag;
-
-        Rotation2d prevAngle = previousVector.angle();
-        Rotation2d desiredAngle = desiredVector.angle();
-        Rotation2d deltaTheta = desiredAngle.minus(prevAngle);
-
-        double limitedMag = prevMag + Math.signum(deltaMag) * Math.min(Math.abs(deltaMag), maxAccel * dt);
-
-        double limitedDeltaTheta = Math.signum(deltaTheta.getRadians()) *
-                Math.min(Math.abs(deltaTheta.getRadians()), maxLateralJerk * dt);
-        Rotation2d limitedAngle = prevAngle.plus(Rotation2d.fromRadians(limitedDeltaTheta));
-
-        dw = Math.signum(dw) * Math.min(Math.abs(dw), maxAngularAccel * dt);
-        double omega = previous.omegaRadiansPerSecond + dw;
-
-        Vector2d limitedVector;
-        if (prevMag < Constants.EPSILON) {
-            limitedVector = new Vector2d(limitedMag, 0.0).rotateBy(limitedAngle);
-        } else {
-            limitedVector = previousVector.normalized().times(limitedMag).rotateBy(limitedAngle.minus(prevAngle));
+        double deltaNorm = Math.sqrt(dx*dx + dy*dy);
+        if (deltaNorm > maxAccel * dt) {
+            double scale = maxAccel * dt / deltaNorm;
+            dx *= scale;
+            dy *= scale;
         }
 
-        return new ChassisSpeeds(limitedVector.x(), limitedVector.y(), omega);
+        if(Math.abs(dw) > maxAngularAccel * dt) {
+            double scale = maxAngularAccel * dt / Math.abs(dw);
+            dw *= scale;
+        }
+
+        double vx = previous.vxMetersPerSecond + dx;
+        double vy = previous.vyMetersPerSecond + dy;
+        double omega = previous.omegaRadiansPerSecond + dw;
+
+        return new ChassisSpeeds(vx, vy, omega);
     }
 
     public void setHeadingTarget(Rotation2d targetRotation) {
