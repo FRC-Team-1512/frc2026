@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.IntegerPublisher;
+import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -26,6 +30,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
+import frc.robot.utils.LimelightHelpers;
 //import frc.robot.utils.Vector2d;
 
 public class Drivetrain extends SubsystemBase {
@@ -60,6 +65,10 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Rotation2d> _headingPublisher;
     StructArrayPublisher<SwerveModuleState> _desiredSwerveStatePublisher;
     StructArrayPublisher<Pose2d> _currentPosePublisher;
+    StructArrayPublisher<Pose2d> _visionPosePublisher;
+    StructArrayPublisher<Pose2d> _mt2PosePublisher;
+    StructArrayPublisher<Rotation2d> _visionHeading;
+    IntegerPublisher _visionFiducialIDPublisher;
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -115,6 +124,10 @@ public class Drivetrain extends SubsystemBase {
         _currentPosePublisher = table.getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
         _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
         _timePublisher = table.getDoubleTopic("DeltaTime").publish();
+        _visionPosePublisher = table.getStructArrayTopic("VisionPose", Pose2d.struct).publish();
+        _mt2PosePublisher = table.getStructArrayTopic("mt2 Pose", Pose2d.struct).publish();
+        _visionHeading = table.getStructArrayTopic("vision heading", Rotation2d.struct).publish();
+        _visionFiducialIDPublisher = table.getIntegerTopic("vision fiducial ID").publish();
 
         // -------------------------------------------------------------------------------------
 
@@ -141,6 +154,11 @@ public class Drivetrain extends SubsystemBase {
                 config,
                 () -> _isRedAlliance,
                 this);
+
+        // -------------------------------------------------------------------------------------
+
+        int[] validIDs = { 17, 18, 19 };
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-fl", validIDs);
     }
 
     @Override
@@ -150,6 +168,32 @@ public class Drivetrain extends SubsystemBase {
         updateOdometry();
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
+
+        var rawDetections = LimelightHelpers.getLatestResults("limelight-fl").targets_Fiducials;
+
+        _visionFiducialIDPublisher.set(rawDetections.length);
+
+        /*
+        if (rawDetections.length > 0) {
+            var best = Arrays.stream(rawDetections)
+                    .min(Comparator.comparingDouble(t -> t.ta))
+                    .orElse(null);
+            if (false) {
+                int id = (int) best.fiducialID;
+                LimelightHelpers.SetFiducialIDFiltersOverride("limelight", new int[] { id });
+                Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+
+                if (mt1 != null) {
+                    _visionHeading.set(new Rotation2d[] { mt1.getRotation() });
+                    _visionFiducialIDPublisher.set(id);
+                }
+            }
+        }*/
+        Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight-fl");
+        var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-fl");
+        Pose2d mt2Pose = mt2.pose;
+        _visionPosePublisher.set(new Pose2d[] { mt1 });
+        _mt2PosePublisher.set(new Pose2d[] { mt2Pose });
     }
 
     // =======================================================================================
@@ -220,19 +264,20 @@ public class Drivetrain extends SubsystemBase {
         return _kinematics.toChassisSpeeds(states);
     }
 
-    private ChassisSpeeds limitChassisAcceleration (ChassisSpeeds desired, ChassisSpeeds previous, double dt, double maxAccel, double maxAngularAccel) {
+    private ChassisSpeeds limitChassisAcceleration(ChassisSpeeds desired, ChassisSpeeds previous, double dt,
+            double maxAccel, double maxAngularAccel) {
         double dx = desired.vxMetersPerSecond - previous.vxMetersPerSecond;
         double dy = desired.vyMetersPerSecond - previous.vyMetersPerSecond;
         double dw = desired.omegaRadiansPerSecond - previous.omegaRadiansPerSecond;
 
-        double deltaNorm = Math.sqrt(dx*dx + dy*dy);
+        double deltaNorm = Math.sqrt(dx * dx + dy * dy);
         if (deltaNorm > maxAccel * dt) {
             double scale = maxAccel * dt / deltaNorm;
             dx *= scale;
             dy *= scale;
         }
 
-        if(Math.abs(dw) > maxAngularAccel * dt) {
+        if (Math.abs(dw) > maxAngularAccel * dt) {
             double scale = maxAngularAccel * dt / Math.abs(dw);
             dw *= scale;
         }
