@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -20,7 +18,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
-import edu.wpi.first.networktables.IntegerTopic;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -32,6 +29,7 @@ import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.utils.LimelightHelpers;
 //import frc.robot.utils.Vector2d;
+import frc.robot.utils.LimelightHelpers.RawFiducial;
 
 public class Drivetrain extends SubsystemBase {
     public static final int FL_IDX = 0;
@@ -46,7 +44,6 @@ public class Drivetrain extends SubsystemBase {
     private ChassisSpeeds _previousDesiredChassisSpeeds;
     private SwerveModulePosition[] _measuredPositions;
 
-    private Rotation2d _headingZero;
     private Rotation2d _headingTarget;
     private final PIDController _headingController;
 
@@ -57,6 +54,8 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveDrivePoseEstimator _odometry;
 
     private final boolean _isRedAlliance;
+
+    private final boolean _isSeed;
 
     private double _lastTime;
     private double _deltaT;
@@ -91,7 +90,6 @@ public class Drivetrain extends SubsystemBase {
             _measuredPositions[i] = _modules[i].getPosition();
         }
 
-        _headingZero = _gyro.getRotation2d();
         _headingTarget = new Rotation2d(0.0);
         _headingController = new PIDController(Constants.Drivetrain.HEADING_KP, Constants.Drivetrain.HEADING_KI,
                 Constants.Drivetrain.HEADING_KD);
@@ -112,6 +110,8 @@ public class Drivetrain extends SubsystemBase {
 
         Optional<Alliance> alliance = DriverStation.getAlliance();
         _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
+
+        _isSeed = false;
 
         _lastTime = Timer.getFPGATimestamp();
         _deltaT = 1.0 / Constants.TICK_PER_SECOND;
@@ -169,9 +169,14 @@ public class Drivetrain extends SubsystemBase {
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
 
-        var rawDetections = LimelightHelpers.getLatestResults("limelight-fl").targets_Fiducials;
+        /*
+        if(_isSeed) {
+            publishBestId();
+        }*/
 
-        _visionFiducialIDPublisher.set(rawDetections.length);
+        var rawFiducials = LimelightHelpers.getRawFiducials("limelight-fl");
+
+        _visionFiducialIDPublisher.set(rawFiducials.length);
 
         /*
         if (rawDetections.length > 0) {
@@ -300,16 +305,21 @@ public class Drivetrain extends SubsystemBase {
     // =======================================================================================
 
     public void zeroIMU() {
-        _headingZero = _gyro.getRotation2d();
+        setIMU(new Rotation2d(0.0));
         _headingTarget = new Rotation2d(0.0);
     }
 
+    public void setIMU(Rotation2d heading) {
+        _gyro.setYaw(heading.getDegrees());
+        _headingTarget = heading;
+    }
+
     public Rotation2d getHeading() {
-        Rotation2d rawHeading = _gyro.getRotation2d();
+        Rotation2d heading = _gyro.getRotation2d();
         if (Constants.Drivetrain.PIGEON_INVERTED) {
-            rawHeading = rawHeading.unaryMinus();
+            heading = heading.unaryMinus();
         }
-        return rawHeading.minus(_headingZero);
+        return heading;
     }
 
     // =======================================================================================

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
+import frc.robot.commands.SetIMU;
 import frc.robot.commands.ZeroIMU;
 import frc.robot.subsystems.Drivetrain;
 
@@ -37,7 +38,7 @@ public class RobotContainer {
 	private void configureBindings() {
 		_drivetrain.setDefaultCommand(new Drive(_drivetrain));
 
-		driver.b().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(45.0)));
+		driver.b().onTrue(new SetIMU(_drivetrain, Rotation2d.fromDegrees(45)));
 		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
 		driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
 		driver.a().onTrue(new ZeroIMU(_drivetrain));
