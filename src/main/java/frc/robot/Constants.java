@@ -68,7 +68,7 @@ public class Constants {
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
 
         public static final double HEADING_COEFF = 3.0;
-        public static final double HEADING_KP = 1.2;
+        public static final double HEADING_KP = 0.8;
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.4;
 

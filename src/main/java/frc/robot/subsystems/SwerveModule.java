@@ -16,7 +16,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -170,8 +169,12 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public SwerveModulePosition getPosition() {
-        return new SwerveModulePosition (
-            _driveMotor.getPosition().getValue().in(Units.Rotations) * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI,
+        double rotations = _driveMotor.getPosition().getValueAsDouble();
+        double distanceMeters = rotations
+            * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
+
+        return new SwerveModulePosition(
+            distanceMeters,
             getSteerAngle()
         );
     }

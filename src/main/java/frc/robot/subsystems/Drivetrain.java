@@ -158,7 +158,7 @@ public class Drivetrain extends SubsystemBase {
         // -------------------------------------------------------------------------------------
 
         int[] validIDs = { 17, 18, 19 };
-        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-fl", validIDs);
+        //LimelightHelpers.SetFiducialIDFiltersOverride("limelight-fl", validIDs);
     }
 
     @Override
@@ -174,9 +174,9 @@ public class Drivetrain extends SubsystemBase {
             publishBestId();
         }*/
 
-        var rawFiducials = LimelightHelpers.getRawFiducials("limelight-fl");
+        //var rawFiducials = LimelightHelpers.getRawFiducials("limelight-fl");
 
-        _visionFiducialIDPublisher.set(rawFiducials.length);
+        //_visionFiducialIDPublisher.set(rawFiducials.length);
 
         /*
         if (rawDetections.length > 0) {
@@ -194,11 +194,11 @@ public class Drivetrain extends SubsystemBase {
                 }
             }
         }*/
-        Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight-fl");
-        var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-fl");
-        Pose2d mt2Pose = mt2.pose;
-        _visionPosePublisher.set(new Pose2d[] { mt1 });
-        _mt2PosePublisher.set(new Pose2d[] { mt2Pose });
+        //Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight-fl");
+        //var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-fl");
+        //Pose2d mt2Pose = mt2.pose;
+        //_visionPosePublisher.set(new Pose2d[] { mt1 });
+        //_mt2PosePublisher.set(new Pose2d[] { mt2Pose });
     }
 
     // =======================================================================================
