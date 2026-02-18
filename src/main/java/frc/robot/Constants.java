@@ -82,4 +82,20 @@ public class Constants {
             public static final double ROTATION_KD = 0.0;
         }
     }
+
+    public static class Shooter {
+        public static final double SHOOTER_KP = 0.1;
+        public static final double SHOOTER_KI = 0.0;
+        public static final double SHOOTER_KD = 0.0;
+        public static final double SHOOTER_KV = 0.1;
+
+        public static final double HOOD_KP = 0.1;
+        public static final double HOOD_KI = 0.0;
+        public static final double HOOD_KD = 0.0;
+
+        public static class MotorConfig {
+            public static final int SHOOTER_STATOR_CURRENT_LIMIT = 40;
+            public static final int SHOOTER_SUPPLY_CURRENT_LIMIT = 50;
+        }
+    }
 }

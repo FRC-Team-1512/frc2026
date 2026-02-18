@@ -19,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.utils.ApplyConfig;
+
 import frc.robot.Constants;
 
 public class SwerveModule extends SubsystemBase {
@@ -85,7 +87,7 @@ public class SwerveModule extends SubsystemBase {
 
         // -------------------------------------------------------------------------------------
 
-        StatusCode steerMotorStatus = applyConfigWithRetry("Steer", config.moduleName, () -> _steerMotor.getConfigurator().apply(_steerMotorConfig));
+        StatusCode steerMotorStatus = ApplyConfig.applyConfigWithRetry("Steer", config.moduleName, () -> _steerMotor.getConfigurator().apply(_steerMotorConfig));
         if (!steerMotorStatus.isOK()) {
             DriverStation.reportError(
                 "Failed to apply steer motor config for module " + config.moduleName + 
@@ -93,7 +95,7 @@ public class SwerveModule extends SubsystemBase {
                 false
             );
         }
-        StatusCode driveMotorStatus = applyConfigWithRetry("Drive", config.moduleName, () -> _driveMotor.getConfigurator().apply(_driveMotorConfig));
+        StatusCode driveMotorStatus = ApplyConfig.applyConfigWithRetry("Drive", config.moduleName, () -> _driveMotor.getConfigurator().apply(_driveMotorConfig));
         if (!driveMotorStatus.isOK()) {
             DriverStation.reportError(
                 "Failed to apply drive motor config for module " + config.moduleName + 
@@ -101,7 +103,7 @@ public class SwerveModule extends SubsystemBase {
                 false
             );
         }
-        StatusCode encoderStatus = applyConfigWithRetry("Encoder", config.moduleName, () -> _encoder.getConfigurator().apply(_encoderConfig));
+        StatusCode encoderStatus = ApplyConfig.applyConfigWithRetry("Encoder", config.moduleName, () -> _encoder.getConfigurator().apply(_encoderConfig));
         if (!encoderStatus.isOK()) {
             DriverStation.reportError("Failed to apply encoder config for module " + config.moduleName + 
                 " after retries. Status: " + encoderStatus,
@@ -194,30 +196,6 @@ public class SwerveModule extends SubsystemBase {
     }
     
     // ======================================================================================
-
-    private StatusCode applyConfigWithRetry(String motorRole, String moduleName, java.util.concurrent.Callable<StatusCode> applier) {
-        final int maxAttempts = 5;
-        final long backoffMs = 25;
-        StatusCode status = StatusCode.StatusCodeNotInitialized;
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            try {
-                status = applier.call();
-            } catch (Exception e) {
-                DriverStation.reportError("Exception while applying " + motorRole + " config for module " + moduleName + ": " + e.getMessage(), false);
-                status = StatusCode.GeneralError;
-            }
-            if (status.isOK()) {
-                return status;
-            }
-            try {
-                Thread.sleep(backoffMs);
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-        }
-        return status;
-    }
 
     public static class ModuleConfiguration {
         public String moduleName = "";
