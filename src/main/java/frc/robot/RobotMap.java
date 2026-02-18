@@ -24,6 +24,8 @@ public class RobotMap {
         public static final int INTAKE_ARM = 17;
         public static final int INTAKE_WHEELS = 18;
 
+        public static final int HOOD = 19;
+
         public static final int PIGEON = 0;
     }
 }
