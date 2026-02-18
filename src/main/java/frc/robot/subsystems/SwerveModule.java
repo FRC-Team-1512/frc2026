@@ -149,8 +149,6 @@ public class SwerveModule extends SubsystemBase {
         double driveRotationsPerSecond = _desiredModuleState.speedMetersPerSecond 
             / (Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI);
 
-        driveRotationsPerSecond /= Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI; //TODO Magic Constant!!!
-
         _driveMotor.setControl(_driveVelocityVoltage.withVelocity(driveRotationsPerSecond));
     }
 
@@ -160,28 +158,30 @@ public class SwerveModule extends SubsystemBase {
         return Rotation2d.fromRotations(_encoder.getAbsolutePosition().getValueAsDouble());
     }
 
-    public double getDriveMetersPerSecond() {
-        return _driveMotor.getVelocity().getValueAsDouble();
+    public double getDriveVelocityMetersPerSecond() {
+        double rps = _driveMotor.getVelocity().getValueAsDouble();
+        return rps * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
     }
 
     public SwerveModuleState getDesiredState() {
         return _desiredModuleState;
     }
 
-    public SwerveModulePosition getPosition() {
-        double rotations = _driveMotor.getPosition().getValueAsDouble();
-        double distanceMeters = rotations
-            * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
+    public double getDrivePositionMeters() {
+         double rotations = _driveMotor.getPosition().getValueAsDouble();
+         return rotations * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
+    }
 
+    public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            distanceMeters,
+            getDrivePositionMeters(),
             getSteerAngle()
         );
     }
 
     public SwerveModuleState getState() {
         return new SwerveModuleState(
-            getDriveMetersPerSecond(),
+            getDriveVelocityMetersPerSecond(),
             getSteerAngle()
         );
     }
