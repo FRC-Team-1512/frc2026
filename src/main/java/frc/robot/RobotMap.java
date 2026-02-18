@@ -15,6 +15,15 @@ public class RobotMap {
         public static final int BL_ENCODER = 9;
         public static final int BR_ENCODER = 11;
 
-        public static final int PIGEON = 18;
+        public static final int RIGHT_SHOOTER = 13;
+        public static final int LEFT_SHOOTER = 14;
+
+        public static final int RIGHT_INDEXER = 15;
+        public static final int LEFT_INDEXER = 16;
+
+        public static final int INTAKE_ARM = 17;
+        public static final int INTAKE_WHEELS = 18;
+
+        public static final int PIGEON = 0;
     }
 }
