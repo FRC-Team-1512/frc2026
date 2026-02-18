@@ -67,6 +67,7 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Pose2d> _visionPosePublisher;
     StructArrayPublisher<Pose2d> _mt2PosePublisher;
     StructArrayPublisher<Rotation2d> _visionHeading;
+    StructArrayPublisher<Rotation2d> _desiredHeadingPublisher;
     IntegerPublisher _visionFiducialIDPublisher;
 
     public Drivetrain() {
@@ -123,6 +124,7 @@ public class Drivetrain extends SubsystemBase {
                 .publish();
         _currentPosePublisher = table.getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
         _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
+        _desiredHeadingPublisher = table.getStructArrayTopic("Desired Heading", Rotation2d.struct).publish();
         _timePublisher = table.getDoubleTopic("DeltaTime").publish();
         _visionPosePublisher = table.getStructArrayTopic("VisionPose", Pose2d.struct).publish();
         _mt2PosePublisher = table.getStructArrayTopic("mt2 Pose", Pose2d.struct).publish();
@@ -168,6 +170,8 @@ public class Drivetrain extends SubsystemBase {
         updateOdometry();
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
+
+        _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
 
         /*
         if(_isSeed) {

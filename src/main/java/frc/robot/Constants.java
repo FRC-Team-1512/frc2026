@@ -21,8 +21,8 @@ public class Constants {
             public static final double STEER_ROTOR_TO_SENSOR_RATIO = 287.0 / 11.0; // around 26.09
         }
 
-        public static final double FB_LENGTH = 0.66675; // 26.25 inches
-        public static final double LR_LENGTH = 0.66675; // 26.25 inches
+        public static final double FB_LENGTH = 0.55245; // 21.75 inches
+        public static final double LR_LENGTH = 0.55245; // 21.75 inches
 
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 5.0;
 
