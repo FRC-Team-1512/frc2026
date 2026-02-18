@@ -37,15 +37,10 @@ public class SwerveModule extends SubsystemBase {
     // ======================================================================================
 
     public SwerveModule(int steerPort, int drivePort, int encoderPort, ModuleConfiguration config) {
-        if(!config.canBus.equals("")) {
-            _steerMotor = new TalonFX(steerPort, config.canBus);
-            _driveMotor = new TalonFX(drivePort, config.canBus);
-            _encoder = new CANcoder(encoderPort, config.canBus);
-        } else {
-            _steerMotor = new TalonFX(steerPort);
-            _driveMotor = new TalonFX(drivePort);
-            _encoder = new CANcoder(encoderPort);
-        }
+
+        _steerMotor = new TalonFX(steerPort);
+        _driveMotor = new TalonFX(drivePort);
+        _encoder = new CANcoder(encoderPort);
 
         // -------------------------------------------------------------------------------------
 
@@ -229,6 +224,5 @@ public class SwerveModule extends SubsystemBase {
         public int index = 0;
         public Translation2d position = new Translation2d();
         public Rotation2d encoderOffset = new Rotation2d(0.0);
-        public String canBus = "";
     }
 }
