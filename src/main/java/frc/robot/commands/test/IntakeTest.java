@@ -1,23 +1,25 @@
 package frc.robot.commands.test;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 
-public class IndexerTest extends Command {
+public class IntakeTest extends Command {
 
-    private Indexer _indexer;
+    private final Intake _intake;
 
-    public IndexerTest(Indexer indexer){
-        _indexer = indexer;
-        addRequirements(_indexer);
+    public IntakeTest(Intake intake) {
+        _intake = intake;
+        addRequirements(_intake);
     }
 
     @Override
     public void execute() {
         double v = -applyDeadband(RobotContainer.operator.getLeftY(), 0.15);
-        _indexer.setIndexer(v * 1.0);
+        double w = -applyDeadband(RobotContainer.operator.getRightY(), 0.15);
+
+        _intake.setIntakeWheel(-v);
+        _intake.setIntakeArm(w * 0.2);
     }
 
     private static double applyDeadband(double input, double deadband) {

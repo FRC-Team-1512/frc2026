@@ -11,6 +11,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -20,6 +21,9 @@ public class Intake extends SubsystemBase {
 
     private final TalonFX _intakeWheelMotor;
     private final TalonFX _intakeArmMotor;
+
+    private double _wheelPower;
+    private double _armPower;
 
     public Intake() {
         _intakeWheelMotor = new TalonFX(RobotMap.CAN.INTAKE_WHEEL);
@@ -42,6 +46,9 @@ public class Intake extends SubsystemBase {
         if (!armStatus.isOK()) {
             DriverStation.reportError("Failed to apply config for intake arm motor: " + armStatus, false);
         }
+
+        _wheelPower = 0.0;
+        _armPower = 0.0;
     }
     
     @Override
@@ -50,15 +57,24 @@ public class Intake extends SubsystemBase {
     }
 
     public void setIntakeWheel(double power) {
-        _intakeWheelMotor.setVoltage(power * 12.0);
+        _wheelPower = power;
     }
 
     public void setIntakeArm(double power) {
-        _intakeArmMotor.setVoltage(power * 12.0);
+        _armPower = power;
     }
 
     private void updateState() {
-        // Update any necessary state here
+        _intakeWheelMotor.setVoltage(_wheelPower * 12.0);
+        _intakeArmMotor.setVoltage(_armPower * 12.0);
+    }
+
+    public Command runIntakeWheel(double power) {
+        return run(() -> setIntakeWheel(power));
+    }
+
+    public Command runIntakeArm(double power) {
+        return run(() -> setIntakeArm(power));
     }
 
 }

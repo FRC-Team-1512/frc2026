@@ -25,10 +25,12 @@ import frc.robot.commands.test.IncreaseHood;
 import frc.robot.commands.test.IndexerRun;
 import frc.robot.commands.test.IndexerStop;
 import frc.robot.commands.test.IndexerTest;
+import frc.robot.commands.test.IntakeTest;
 import frc.robot.commands.test.ShooterTest;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 
 public class RobotContainer {
 	public static final CommandXboxController driver = new CommandXboxController(0);
@@ -39,12 +41,12 @@ public class RobotContainer {
     Drivetrain _drivetrain;
     Shooter _shooter;
 	Indexer _indexer;
-
+	Intake _intake;
 	public RobotContainer() {
         _drivetrain = new Drivetrain();
 		_shooter = new Shooter();
 		_indexer = new Indexer();
-
+		_intake = new Intake();
 		autoChooser = AutoBuilder.buildAutoChooser();
 
     	SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -56,6 +58,7 @@ public class RobotContainer {
 		_drivetrain.setDefaultCommand(new Drive(_drivetrain));
 		_shooter.setDefaultCommand(new ShooterTest(_shooter));
 		_indexer.setDefaultCommand(new IndexerTest(_indexer));
+		_intake.setDefaultCommand(new IntakeTest(_intake));
 
 		driver.b().onTrue(new SetIMU(_drivetrain, Rotation2d.fromDegrees(45)));
 		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
