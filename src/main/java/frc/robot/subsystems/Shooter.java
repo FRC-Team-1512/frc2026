@@ -11,7 +11,7 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
-import com.ctre.phoenix6.controls.PositionVoltage;
+
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.math.MathUtil;
@@ -23,7 +23,7 @@ import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.lib.InterpolatingDouble;
 import frc.robot.utils.ApplyConfig;
-import frc.robot.lib.InterpolatingTreeMap;
+
 
 public class Shooter extends SubsystemBase {
 

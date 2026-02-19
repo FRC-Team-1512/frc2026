@@ -17,13 +17,10 @@ import frc.robot.commands.SetIMU;
 import frc.robot.commands.ZeroIMU;
 import frc.robot.commands.test.DecreaseFlyWheel;
 import frc.robot.commands.test.DecreaseHood;
-import frc.robot.commands.test.HoodHigh;
-import frc.robot.commands.test.HoodLow;
-import frc.robot.commands.test.HoodMid;
+
 import frc.robot.commands.test.IncreaseFlyWheel;
 import frc.robot.commands.test.IncreaseHood;
-import frc.robot.commands.test.IndexerRun;
-import frc.robot.commands.test.IndexerStop;
+
 import frc.robot.commands.test.IndexerTest;
 import frc.robot.commands.test.IntakeTest;
 import frc.robot.commands.test.ShooterTest;
