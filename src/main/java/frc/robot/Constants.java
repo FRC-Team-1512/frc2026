@@ -41,19 +41,19 @@ public class Constants {
         static {FL_CONFIG.moduleName = "Front Left";
             FL_CONFIG.index = 0;
             FL_CONFIG.position = new Translation2d(FB_LENGTH / 2, LR_LENGTH / 2); // +,+
-            FL_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.3901);}
+            FL_CONFIG.encoderOffset = Rotation2d.fromRotations(0.0955);}
         static {FR_CONFIG.moduleName = "Front Right";
             FR_CONFIG.index = 1;
             FR_CONFIG.position = new Translation2d(FB_LENGTH / 2, -LR_LENGTH / 2); // +,-
-            FR_CONFIG.encoderOffset = Rotation2d.fromRotations(0.229);}
+            FR_CONFIG.encoderOffset = Rotation2d.fromRotations(0.2302);}
         static {BL_CONFIG.moduleName = "Back Left";
             BL_CONFIG.index = 2;
             BL_CONFIG.position = new Translation2d(-FB_LENGTH / 2, LR_LENGTH / 2); // -,+
-            BL_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.260);}
+            BL_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.1323);}
         static {BR_CONFIG.moduleName = "Back Right";
             BR_CONFIG.index = 3;
             BR_CONFIG.position = new Translation2d(-FB_LENGTH / 2, -LR_LENGTH / 2); // -,-
-            BR_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.400);}
+            BR_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.0169);}
 
         public static final double STEER_KP = 1.8;
         public static final double STEER_KI = 0.0;
@@ -89,13 +89,25 @@ public class Constants {
         public static final double SHOOTER_KD = 0.0;
         public static final double SHOOTER_KV = 0.1;
 
-        public static final double HOOD_KP = 0.1;
+        public static final double HOOD_KP = 0.3;
         public static final double HOOD_KI = 0.0;
         public static final double HOOD_KD = 0.0;
 
         public static class MotorConfig {
-            public static final int SHOOTER_STATOR_CURRENT_LIMIT = 40;
-            public static final int SHOOTER_SUPPLY_CURRENT_LIMIT = 50;
+            public static final int SHOOTER_STATOR_CURRENT_LIMIT = 60;
+            public static final int SHOOTER_SUPPLY_CURRENT_LIMIT = 70;
+        }
+
+        public static class Hardware {
+            public static final double HOOD_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
+            public static final double HOOD_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0; // around 25.45
+        }
+    }
+
+    public static class Indexer {
+        public static class MotorConfig {
+            public static final int INDEXER_STATOR_CURRENT_LIMIT = 40;
+            public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 50;
         }
     }
 }

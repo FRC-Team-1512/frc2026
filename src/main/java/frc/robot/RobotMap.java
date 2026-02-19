@@ -22,7 +22,7 @@ public class RobotMap {
         public static final int LEFT_INDEXER = 16;
 
         public static final int INTAKE_ARM = 17;
-        public static final int INTAKE_WHEELS = 18;
+        public static final int INTAKE_WHEEL = 18;
 
         public static final int HOOD = 19;
 

@@ -9,9 +9,7 @@ import com.ctre.phoenix6.StatusCode;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -32,9 +30,9 @@ public class Indexer extends SubsystemBase {
         TalonFXConfiguration _indexerMotorConfig = new TalonFXConfiguration();
 
         _indexerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        //_indexerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Indexer.MotorConfig.INDEXER_STATOR_CURRENT_LIMIT;
+        _indexerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Indexer.MotorConfig.INDEXER_STATOR_CURRENT_LIMIT;
         _indexerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        //_indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.MotorConfig.INDEXER_SUPPLY_CURRENT_LIMIT;
+        _indexerMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Indexer.MotorConfig.INDEXER_SUPPLY_CURRENT_LIMIT;
         _indexerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         _indexerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         

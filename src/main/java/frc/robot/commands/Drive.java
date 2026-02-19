@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
@@ -27,6 +28,10 @@ public class Drive extends Command {
             vy *= 3.0;
             rot *= 3.0;
         }
+
+        SmartDashboard.putNumber("vx", vx);
+        SmartDashboard.putNumber("vy", vy);
+        SmartDashboard.putNumber("rot", rot);
 
         _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
     }
