@@ -21,7 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
+import frc.robot.lib.InterpolatingDouble;
 import frc.robot.utils.ApplyConfig;
+import frc.robot.lib.InterpolatingTreeMap;
 
 public class Shooter extends SubsystemBase {
 
@@ -111,6 +113,31 @@ public class Shooter extends SubsystemBase {
     }
     public double getDesiredAngle() {
         return _targetHoodAngle.getRotations();
+    }
+    public double getRPMFromDistance(double distance){ //in meters
+        if (distance >= Constants.Shooter.FAR_DISTANCE){
+            return Constants.Shooter.kRPMMapFar.getInterpolated(new InterpolatingDouble(distance)).value;
+        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
+            return Constants.Shooter.kRPMMapMiddle.getInterpolated(new InterpolatingDouble(distance)).value;
+        } else {
+            return Constants.Shooter.kRPMMapNear.getInterpolated(new InterpolatingDouble(distance)).value;
+        }
+    }
+    public void setHoodAndleFromDistance(double distance){
+         if (distance >= Constants.Shooter.FAR_DISTANCE){
+            setHoodAngle(Constants.Shooter.HOOD_FAR);
+        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
+           setHoodAngle(Constants.Shooter.HOOD_MID);
+        } else {
+           setHoodAngle(Constants.Shooter.HOOD_NEAR);
+        }
+    }
+    public void CalculateShot(double distance){
+        setShooterVelocity(getRPMFromDistance(distance));
+        setHoodAndleFromDistance(distance);
+    }
+    public void setSpeedFromDistance(){
+
     }
 
 
