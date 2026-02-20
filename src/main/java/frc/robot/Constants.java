@@ -2,9 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import frc.robot.lib.InterpolatingDouble;
 import frc.robot.subsystems.SwerveModule.ModuleConfiguration;
-import frc.robot.lib.InterpolatingTreeMap;
 
 public class Constants {
     public static final double TICK_PER_SECOND = 50.0;

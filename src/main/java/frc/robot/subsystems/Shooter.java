@@ -6,8 +6,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import static edu.wpi.first.units.Units.Rotation;
-
 import com.ctre.phoenix6.StatusCode;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
