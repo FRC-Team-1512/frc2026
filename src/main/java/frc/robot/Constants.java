@@ -94,6 +94,7 @@ public class Constants {
         public static final double HOOD_KP = 0.3;
         public static final double HOOD_KI = 0.0;
         public static final double HOOD_KD = 0.0;
+        
         public static final double NEAR_DISTANCE = 2.0;
         public static final double FAR_DISTANCE = 5.0;
         public static final Rotation2d HOOD_FAR = new Rotation2d(-1.9);
@@ -109,45 +110,6 @@ public class Constants {
             public static final double HOOD_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double HOOD_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0; // around 25.45
         }
-
-        public static double[][] kRPMValuesNear = {
-            // {meters, RPM} make a lot of vlaues. 
-           
-        };
-         public static double[][] kRPMValuesFar = {
-            // {meters, RPM} make a lot of vlaues. 
-           
-        };
-         public static double[][] kRPMValuesMiddle = {
-            // {meters, RPM} make a lot of vlaues. 
-           
-        };
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kRPMMapNear = new InterpolatingTreeMap<>();
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kRPMMapFar = new InterpolatingTreeMap<>();
-        public static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> kRPMMapMiddle = new InterpolatingTreeMap<>();
-        static {
-            for (double[] pair : kRPMValuesNear) {
-                kRPMMapNear.put(new InterpolatingDouble(pair[0]), new InterpolatingDouble(pair[1]));
-            }
-
-            // kRPMRegression = new PolynomialRegression(kRPMValues, 1);
-        }
-         static {
-            for (double[] pair : kRPMValuesFar) {
-                kRPMMapFar.put(new InterpolatingDouble(pair[0]), new InterpolatingDouble(pair[1]));
-            }
-
-            // kRPMRegression = new PolynomialRegression(kRPMValues, 1);
-        }
-
-         static {
-            for (double[] pair : kRPMValuesMiddle) {
-                kRPMMapMiddle.put(new InterpolatingDouble(pair[0]), new InterpolatingDouble(pair[1]));
-            }
-
-            // kRPMRegression = new PolynomialRegression(kRPMValues, 1);
-        }
-
 
     }
 

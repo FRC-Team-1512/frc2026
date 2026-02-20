@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
-import frc.robot.lib.InterpolatingDouble;
 import frc.robot.utils.ApplyConfig;
+import frc.robot.utils.ShooterCalc;
 
 
 public class Shooter extends SubsystemBase {
@@ -95,51 +95,35 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("FLYWHEEL VEL TARGET", _targetVelocity);
     }
 
+    public void setShooterFromDistance(double distance){
+        _targetVelocity = ShooterCalc.getRPSFromDistance(distance);
+        _targetHoodAngle = ShooterCalc.getLocalHoodAngleFromDistance(distance);
+    }
+
     public void setShooterVelocity(double velocity) {
         _targetVelocity = velocity;
     }
+
     public void setHoodAngle(Rotation2d angle){
         double clampedAngle = MathUtil.clamp(angle.getRotations(), HOOD_MIN, HOOD_MAX);
         _targetHoodAngle = Rotation2d.fromRotations(clampedAngle);
     }
+
     public double getHoodAngle(){
         return _hoodMotor.getPosition().getValueAsDouble();
     }
+
     public double getShooterVelocity(){
         return _shooterRightMotor.getVelocity().getValueAsDouble();
     }
+    
     public double getDesiredVelocity(){
         return _targetVelocity;
     }
+
     public double getDesiredAngle() {
         return _targetHoodAngle.getRotations();
     }
-    public double getRPMFromDistance(double distance){ //in meters
-        if (distance >= Constants.Shooter.FAR_DISTANCE){
-            return Constants.Shooter.kRPMMapFar.getInterpolated(new InterpolatingDouble(distance)).value;
-        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
-            return Constants.Shooter.kRPMMapMiddle.getInterpolated(new InterpolatingDouble(distance)).value;
-        } else {
-            return Constants.Shooter.kRPMMapNear.getInterpolated(new InterpolatingDouble(distance)).value;
-        }
-    }
-    public void setHoodAndleFromDistance(double distance){
-         if (distance >= Constants.Shooter.FAR_DISTANCE){
-            setHoodAngle(Constants.Shooter.HOOD_FAR);
-        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
-           setHoodAngle(Constants.Shooter.HOOD_MID);
-        } else {
-           setHoodAngle(Constants.Shooter.HOOD_NEAR);
-        }
-    }
-    public void CalculateShot(double distance){
-        setShooterVelocity(getRPMFromDistance(distance));
-        setHoodAndleFromDistance(distance);
-    }
-    public void setSpeedFromDistance(){
-
-    }
-
 
     private void updateState() {
         _shooterLeftMotor.setControl(_shooterVelocityVoltage.withVelocity(_targetVelocity));
