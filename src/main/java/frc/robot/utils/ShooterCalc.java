@@ -12,6 +12,10 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
+    public static final Rotation2d HOOD_FAR = new Rotation2d(-2.2);
+    public static final Rotation2d HOOD_MID = new Rotation2d(-1.2);
+    public static final Rotation2d HOOD_NEAR = new Rotation2d(0.4);
+
     private static double[][] _kRPSValuesNear = {
         // {meters, RPS} make a lot of values. 
     };
@@ -50,11 +54,11 @@ public class ShooterCalc {
 
     public static Rotation2d getLocalHoodAngleFromDistance(double distance){
          if (distance >= Constants.Shooter.FAR_DISTANCE){
-            return Constants.Shooter.HOOD_FAR;
+            return HOOD_FAR;
         } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
-            return Constants.Shooter.HOOD_MID;
+            return HOOD_MID;
         } else {
-            return Constants.Shooter.HOOD_NEAR;
+            return HOOD_NEAR;
         }
     }
 }

@@ -80,6 +80,22 @@ public class Intake extends SubsystemBase {
         _targetArmPosition = Rotation2d.fromRotations(clampedPosition);
     }
 
+    public void intakeArm() {
+        setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION));
+    }
+
+    public void retractArm() {
+        setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION));
+    }
+
+    public boolean isAtIntakePosition() {
+        return Math.abs(_intakeArmMotor.getPosition().getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+    }
+
+    public boolean isAtRetractPosition() {
+        return Math.abs(_intakeArmMotor.getPosition().getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+    }
+
     private void updateState() {
         _intakeWheelMotor.set(_wheelPower);
         _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));

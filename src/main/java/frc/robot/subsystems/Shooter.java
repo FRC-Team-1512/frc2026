@@ -123,6 +123,18 @@ public class Shooter extends SubsystemBase {
         return _targetHoodAngle.getRotations();
     }
 
+    public boolean isAtTargetVelocity() {
+        return Math.abs(getShooterVelocity() - _targetVelocity) < Constants.Shooter.Hardware.SHOOTER_ACCURACY_TOLERANCE;
+    }
+
+    public boolean isAtTargetHoodAngle() {
+        return Math.abs(getHoodAngle() - _targetHoodAngle.getRotations()) < Constants.Shooter.Hardware.HOOD_ACCURACY_TOLERANCE;
+    }
+
+    public boolean isReadyToShoot() {
+        return isAtTargetVelocity() && isAtTargetHoodAngle();
+    }
+
     private void updateState() {
         _shooterLeftMotor.setControl(_shooterVelocityVoltage.withVelocity(_targetVelocity));
         _shooterRightMotor.setControl(new Follower(RobotMap.CAN.LEFT_SHOOTER, MotorAlignmentValue.Opposed));

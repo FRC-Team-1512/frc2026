@@ -95,9 +95,6 @@ public class Constants {
 
         public static final double NEAR_DISTANCE = 2.0;
         public static final double FAR_DISTANCE = 5.0;
-        public static final Rotation2d HOOD_FAR = new Rotation2d(-2.2);
-        public static final Rotation2d HOOD_MID = new Rotation2d(-1.2);
-        public static final Rotation2d HOOD_NEAR = new Rotation2d(0.4);
 
         public static class MotorConfig {
             public static final int SHOOTER_STATOR_CURRENT_LIMIT = 60;
@@ -110,8 +107,10 @@ public class Constants {
 
             public static final double HOOD_MAX = 0.4;
             public static final double HOOD_MIN = -2.3;
-        }
 
+            public static final double SHOOTER_ACCURACY_TOLERANCE = 0.2; // RPS
+            public static final double HOOD_ACCURACY_TOLERANCE = 0.005; // Rotations
+        }
     }
 
     public static class Indexer {
@@ -143,6 +142,11 @@ public class Constants {
 
             public static final double INTAKE_ARM_MAX = 0.5;
             public static final double INTAKE_ARM_MIN = -0.5;
+
+            public static final double INTAKE_ARM_ACCURACY_TOLERANCE = 0.2; // Rotations
+
+            public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MIN;
+            public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MAX;
         }
     }
 }
