@@ -81,6 +81,12 @@ public class Constants {
             public static final double ROTATION_KI = 0.0;
             public static final double ROTATION_KD = 0.0;
         }
+
+        public static class Vision {
+            public static final String[] LIMELIGHT_NAMES = { "left", "right" };
+            public static final double MT1_AMBIGUITY_THRESHOLD = 0.7;
+            public static final double MAX_ANGULAR_VELOCITY_DEG_PER_SEC = 360.0;
+        }
     }
 
     public static class Shooter {

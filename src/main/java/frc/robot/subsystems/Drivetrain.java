@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
+import frc.robot.utils.LimelightHelpers;
 
 
 public class Drivetrain extends SubsystemBase {
@@ -53,8 +54,6 @@ public class Drivetrain extends SubsystemBase {
 
     private final boolean _isRedAlliance;
 
-    private final boolean _isSeed;
-
     private double _lastTime;
     private double _deltaT;
 
@@ -67,6 +66,8 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Rotation2d> _visionHeading;
     StructArrayPublisher<Rotation2d> _desiredHeadingPublisher;
     IntegerPublisher _visionFiducialIDPublisher;
+
+    private boolean _isSeed;
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -157,8 +158,7 @@ public class Drivetrain extends SubsystemBase {
 
         // -------------------------------------------------------------------------------------
 
-        int[] validIDs = { 17, 18, 19 };
-        //LimelightHelpers.SetFiducialIDFiltersOverride("limelight-fl", validIDs);
+        _isSeed = false;
     }
 
     @Override
@@ -166,41 +166,113 @@ public class Drivetrain extends SubsystemBase {
         updateTime();
         updateSpeeds(_desiredChassisSpeeds);
         updateOdometry();
+        updateVision();
+
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
-
         _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
+    }
 
-        /*
-        if(_isSeed) {
-            publishBestId();
-        }*/
+    // =======================================================================================
+    // Vision
+    // =======================================================================================
 
-        //var rawFiducials = LimelightHelpers.getRawFiducials("limelight-fl");
+    /**
+     * Sets the Limelight IMU mode for all configured Limelights.
+     * Mode 1 = EXTERNAL_SEED (use during Disabled to keep seeding Pigeon2 yaw)
+     * Mode 4 = INTERNAL_EXTERNAL_ASSIST (use during Enabled for 1kHz fusion)
+     */
+    public void setLimelightIMUMode(int mode) {
+        for (String name : Constants.Drivetrain.Vision.LIMELIGHT_NAMES) {
+            LimelightHelpers.SetIMUMode(name, mode);
+        }
+    }
 
-        //_visionFiducialIDPublisher.set(rawFiducials.length);
+    /**
+     * Forces a re-seed of the gyro heading from MT1 on the next periodic cycle.
+     * Call this from Disabled or from a command to re-calibrate heading.
+     */
+    public void forceReseed() {
+        _isSeed = false;
+    }
 
-        /*
-        if (rawDetections.length > 0) {
-            var best = Arrays.stream(rawDetections)
-                    .min(Comparator.comparingDouble(t -> t.ta))
-                    .orElse(null);
-            if (false) {
-                int id = (int) best.fiducialID;
-                LimelightHelpers.SetFiducialIDFiltersOverride("limelight", new int[] { id });
-                Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight");
+    public boolean isSeed() {
+        return _isSeed;
+    }
 
-                if (mt1 != null) {
-                    _visionHeading.set(new Rotation2d[] { mt1.getRotation() });
-                    _visionFiducialIDPublisher.set(id);
-                }
+    private void updateVision() {
+        // Manage IMU mode: Disabled -> mode 1 (external seed), Enabled -> mode 4 (fusion)
+        if (DriverStation.isDisabled()) {
+            setLimelightIMUMode(1);
+        } else {
+            setLimelightIMUMode(4);
+        }
+
+        for (String limelightName : Constants.Drivetrain.Vision.LIMELIGHT_NAMES) {
+            if (!_isSeed) {
+                // Phase 1: MT1 seed — use vision-only heading to calibrate the gyro
+                attemptMT1Seed(limelightName);
+            } else {
+                // Phase 2: MT2 continuous pose estimation
+                updateMT2(limelightName);
             }
-        }*/
-        //Pose2d mt1 = LimelightHelpers.getBotPose2d_wpiBlue("limelight-fl");
-        //var mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-fl");
-        //Pose2d mt2Pose = mt2.pose;
-        //_visionPosePublisher.set(new Pose2d[] { mt1 });
-        //_mt2PosePublisher.set(new Pose2d[] { mt2Pose });
+        }
+    }
+
+    /**
+     * Phase 1: Attempts to seed the Pigeon2 heading from a Limelight MT1 pose.
+     * MT1 computes heading purely from the image, so it does not depend on the gyro.
+     * Once a reliable reading is obtained, the gyro yaw is set and _isSeed flips to true.
+     */
+    private void attemptMT1Seed(String limelightName) {
+        LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        if (mt1 == null || mt1.tagCount == 0) {
+            return;
+        }
+
+        // Check ambiguity — reject if any tag is too ambiguous
+        for (LimelightHelpers.RawFiducial fiducial : mt1.rawFiducials) {
+            if (fiducial.ambiguity > Constants.Drivetrain.Vision.MT1_AMBIGUITY_THRESHOLD) {
+                return;
+            }
+        }
+
+        // MT1 heading is trustworthy — seed the Pigeon2
+        Rotation2d visionHeading = mt1.pose.getRotation();
+        _gyro.setYaw(visionHeading.getDegrees());
+        _headingTarget = visionHeading;
+        _isSeed = true;
+
+        _visionHeading.set(new Rotation2d[] { visionHeading });
+        _visionPosePublisher.set(new Pose2d[] { mt1.pose });
+    }
+
+    /**
+     * Phase 2: Feeds the current Pigeon2 yaw into Limelight, then reads back
+     * the MegaTag2 pose estimate and fuses it into the WPILib pose estimator.
+     */
+    private void updateMT2(String limelightName) {
+        // Tell Limelight our current heading every frame (required for MT2)
+        double yawDeg = getHeading().getDegrees();
+        double yawRateDps = _gyro.getAngularVelocityZWorld().getValueAsDouble();
+        LimelightHelpers.SetRobotOrientation(limelightName,
+                yawDeg, yawRateDps,
+                0.0, 0.0,
+                0.0, 0.0);
+
+        // Reject if spinning too fast — MT2 becomes unreliable
+        if (Math.abs(yawRateDps) > Constants.Drivetrain.Vision.MAX_ANGULAR_VELOCITY_DEG_PER_SEC) {
+            return;
+        }
+
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        if (mt2 == null || mt2.tagCount == 0) {
+            return;
+        }
+
+        _odometry.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+
+        _mt2PosePublisher.set(new Pose2d[] { mt2.pose });
     }
 
     // =======================================================================================
