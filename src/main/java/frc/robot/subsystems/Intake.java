@@ -80,12 +80,27 @@ public class Intake extends SubsystemBase {
         _targetArmPosition = Rotation2d.fromRotations(clampedPosition);
     }
 
-    public void intakeArm() {
+    public void extendArm() {
         setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION));
     }
 
     public void retractArm() {
         setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION));
+    }
+
+    public void intake() {
+        extendArm();
+        setIntakeWheel(Constants.Intake.Hardware.INTAKE_WHEEL_POWER);
+    }
+
+    public void reverseIntake() {
+        extendArm();
+        setIntakeWheel(Constants.Intake.Hardware.REVERSE_INTAKE_WHEEL_POWER);
+    }
+
+    public void retract() {
+        retractArm();
+        setIntakeWheel(Constants.Intake.Hardware.RETRACT_WHEEL_POWER);
     }
 
     public boolean isAtIntakePosition() {

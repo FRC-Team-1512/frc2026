@@ -27,25 +27,30 @@ public class SuperStructure extends SubsystemBase {
     @Override
     public void periodic() {
         if (activeStates.contains(SuperStructureState.INTAKE)) {
-            _intake.setIntakeWheel(0.5);
-            _intake.setIntakeArm(new Rotation2d(-0.25));
+            _intake.intake();
         }
         if (activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
-            _intake.setIntakeWheel(-0.5);
-            _intake.setIntakeArm(new Rotation2d());
+            _intake.reverseIntake();
+        }
+        if (!activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !activeStates.contains(SuperStructureState.INTAKE)) {
+            _intake.retract();
         }
         if (activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
+            if (_shooter.isReadyToShoot()) {
+                _indexer.setIndexer(1.0);
+            } else {
+                _indexer.setIndexer(0.0);
+            }
         }
         if (activeStates.contains(SuperStructureState.IDLE)) {
-            _intake.setIntakeWheel(0.0);
-            _intake.setIntakeArm(new Rotation2d());
+            _intake.retract();
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }
         if (activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+            _intake.extendArm();
             _intake.setIntakeWheel(0.0);
-            _intake.setIntakeArm(new Rotation2d());
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }

@@ -147,6 +147,10 @@ public class Constants {
 
             public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MIN;
             public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MAX;
+
+            public static final double INTAKE_WHEEL_POWER = 1.0;
+            public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;
+            public static final double RETRACT_WHEEL_POWER = 0.0;
         }
     }
 }
