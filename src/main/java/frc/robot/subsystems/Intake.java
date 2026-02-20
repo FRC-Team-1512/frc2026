@@ -8,12 +8,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.StatusCode;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 
-
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants;
 import frc.robot.RobotMap;
 import frc.robot.utils.ApplyConfig;
 
@@ -23,7 +25,9 @@ public class Intake extends SubsystemBase {
     private final TalonFX _intakeArmMotor;
 
     private double _wheelPower;
-    private double _armPower;
+    private Rotation2d _targetArmPosition;
+
+    private PositionDutyCycle _intakeArmPositionDutyCycle;
 
     public Intake() {
         _intakeWheelMotor = new TalonFX(RobotMap.CAN.INTAKE_WHEEL);
@@ -32,11 +36,22 @@ public class Intake extends SubsystemBase {
         TalonFXConfiguration _intakeWheelMotorConfig = new TalonFXConfiguration();
         TalonFXConfiguration _intakeArmMotorConfig = new TalonFXConfiguration();
 
+        _intakeWheelMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        _intakeWheelMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MotorConfig.INTAKE_WHEEL_STATOR_CURRENT_LIMIT;
+        _intakeWheelMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        _intakeWheelMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.MotorConfig.INTAKE_WHEEL_SUPPLY_CURRENT_LIMIT;
         _intakeWheelMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         _intakeWheelMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
+        _intakeArmMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        _intakeArmMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Intake.MotorConfig.INTAKE_ARM_STATOR_CURRENT_LIMIT;
+        _intakeArmMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        _intakeArmMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.MotorConfig.INTAKE_ARM_SUPPLY_CURRENT_LIMIT;
         _intakeArmMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         _intakeArmMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        _intakeArmMotorConfig.Slot0.kP = Constants.Intake.INTAKE_ARM_KP;
+        _intakeArmMotorConfig.Slot0.kI = Constants.Intake.INTAKE_ARM_KI;
+        _intakeArmMotorConfig.Slot0.kD = Constants.Intake.INTAKE_ARM_KD;
 
         StatusCode wheelStatus = ApplyConfig.applyConfigWithRetry("Intake Wheel", getName(), () -> _intakeWheelMotor.getConfigurator().apply(_intakeWheelMotorConfig));
         if (!wheelStatus.isOK()) {
@@ -48,7 +63,7 @@ public class Intake extends SubsystemBase {
         }
 
         _wheelPower = 0.0;
-        _armPower = 0.0;
+        _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_MIN);
     }
     
     @Override
@@ -60,21 +75,22 @@ public class Intake extends SubsystemBase {
         _wheelPower = power;
     }
 
-    public void setIntakeArm(double power) {
-        _armPower = power;
+    public void setIntakeArm(Rotation2d position) {
+        double clampedPosition = MathUtil.clamp(position.getRotations(), Constants.Intake.Hardware.INTAKE_ARM_MIN, Constants.Intake.Hardware.INTAKE_ARM_MAX);
+        _targetArmPosition = Rotation2d.fromRotations(clampedPosition);
     }
 
     private void updateState() {
-        _intakeWheelMotor.setVoltage(_wheelPower * 12.0);
-        _intakeArmMotor.setVoltage(_armPower * 12.0);
+        _intakeWheelMotor.set(_wheelPower);
+        _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));
     }
 
     public Command runIntakeWheel(double power) {
         return run(() -> setIntakeWheel(power));
     }
 
-    public Command runIntakeArm(double power) {
-        return run(() -> setIntakeArm(power));
+    public Command runIntakeArm(Rotation2d position) {
+        return run(() -> setIntakeArm(position));
     }
 
 }

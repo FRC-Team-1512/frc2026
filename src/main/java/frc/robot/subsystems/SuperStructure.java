@@ -10,6 +10,8 @@ public class SuperStructure extends SubsystemBase {
     private final Indexer _indexer;
     private final Shooter _shooter;
 
+    private double _targetDistanceMeters;
+
     private final EnumSet<SuperStructureState> activeStates = EnumSet.noneOf(SuperStructureState.class);
 
     public final DirectControl direct = new DirectControl();
@@ -18,6 +20,35 @@ public class SuperStructure extends SubsystemBase {
         _intake = intake;
         _indexer = indexer;
         _shooter = shooter;
+
+        _targetDistanceMeters = 0.0;
+    }
+
+    @Override
+    public void periodic() {
+        if (activeStates.contains(SuperStructureState.INTAKE)) {
+            _intake.setIntakeWheel(0.5);
+            _intake.setIntakeArm(new Rotation2d(-0.25));
+        }
+        if (activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
+            _intake.setIntakeWheel(-0.5);
+            _intake.setIntakeArm(new Rotation2d());
+        }
+        if (activeStates.contains(SuperStructureState.SHOOT)) {
+            _shooter.setShooterFromDistance(_targetDistanceMeters);
+        }
+        if (activeStates.contains(SuperStructureState.IDLE)) {
+            _intake.setIntakeWheel(0.0);
+            _intake.setIntakeArm(new Rotation2d());
+            _indexer.setIndexer(0.0);
+            _shooter.setShooterVelocity(0.0);
+        }
+        if (activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+            _intake.setIntakeWheel(0.0);
+            _intake.setIntakeArm(new Rotation2d());
+            _indexer.setIndexer(0.0);
+            _shooter.setShooterVelocity(0.0);
+        }
     }
 
     public void requestState(SuperStructureState state) {
@@ -29,13 +60,17 @@ public class SuperStructure extends SubsystemBase {
         sanitizeStates();
     }
 
+    public void setShootDistance(double distanceMeters) {
+        _targetDistanceMeters = distanceMeters;
+    }
+
     public class DirectControl {
         public void setIntakeWheel(double power) {
             _intake.setIntakeWheel(power);
         }
 
-        public void setIntakeArm(double power) {
-            _intake.setIntakeArm(power);
+        public void setIntakeArm(Rotation2d position) {
+            _intake.setIntakeArm(position);
         }
 
         public void setIndexer(double power) {

@@ -6,6 +6,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import com.ctre.phoenix6.StatusCode;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -34,9 +36,6 @@ public class Shooter extends SubsystemBase {
     private final VelocityVoltage _shooterVelocityVoltage;
     private final PositionDutyCycle _hoodPositionDutyCycle;
 
-    private final double HOOD_MAX = 0.4;
-    private final double HOOD_MIN = -2.3;
-
     private double _targetVelocity;
     private Rotation2d _targetHoodAngle;
 
@@ -60,6 +59,7 @@ public class Shooter extends SubsystemBase {
         _shooterMotorConfig.Slot0.kV = Constants.Shooter.SHOOTER_KV;
 
         _hoodMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        _hoodMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         _hoodMotorConfig.Slot0.kP = Constants.Shooter.HOOD_KP;
         _hoodMotorConfig.Slot0.kI = Constants.Shooter.HOOD_KI;
         _hoodMotorConfig.Slot0.kD = Constants.Shooter.HOOD_KD;
@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
         _hoodPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
         
         _targetVelocity = 0.0;
-        _targetHoodAngle = new Rotation2d();
+        _targetHoodAngle = Rotation2d.fromRotations(Constants.Shooter.Hardware.HOOD_MIN);
     }
     
     @Override
@@ -105,7 +105,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setHoodAngle(Rotation2d angle){
-        double clampedAngle = MathUtil.clamp(angle.getRotations(), HOOD_MIN, HOOD_MAX);
+        double clampedAngle = MathUtil.clamp(angle.getRotations(), Constants.Shooter.Hardware.HOOD_MIN, Constants.Shooter.Hardware.HOOD_MAX);
         _targetHoodAngle = Rotation2d.fromRotations(clampedAngle);
     }
 

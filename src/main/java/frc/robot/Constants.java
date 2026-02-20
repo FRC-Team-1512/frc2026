@@ -94,12 +94,12 @@ public class Constants {
         public static final double HOOD_KP = 0.3;
         public static final double HOOD_KI = 0.0;
         public static final double HOOD_KD = 0.0;
-        
+
         public static final double NEAR_DISTANCE = 2.0;
         public static final double FAR_DISTANCE = 5.0;
-        public static final Rotation2d HOOD_FAR = new Rotation2d(-1.9);
-        public static final Rotation2d HOOD_MID = new Rotation2d(-1.0);
-        public static final Rotation2d HOOD_NEAR = new Rotation2d(-0.4);
+        public static final Rotation2d HOOD_FAR = new Rotation2d(-2.2);
+        public static final Rotation2d HOOD_MID = new Rotation2d(-1.2);
+        public static final Rotation2d HOOD_NEAR = new Rotation2d(0.4);
 
         public static class MotorConfig {
             public static final int SHOOTER_STATOR_CURRENT_LIMIT = 60;
@@ -109,6 +109,9 @@ public class Constants {
         public static class Hardware {
             public static final double HOOD_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double HOOD_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0; // around 25.45
+
+            public static final double HOOD_MAX = 0.4;
+            public static final double HOOD_MIN = -2.3;
         }
 
     }
@@ -117,6 +120,31 @@ public class Constants {
         public static class MotorConfig {
             public static final int INDEXER_STATOR_CURRENT_LIMIT = 40;
             public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 50;
+        }
+    }
+
+    public static class Intake {
+        public static class MotorConfig {
+            public static final int INTAKE_ARM_STATOR_CURRENT_LIMIT = 30;
+            public static final int INTAKE_ARM_SUPPLY_CURRENT_LIMIT = 40;
+            public static final int INTAKE_WHEEL_STATOR_CURRENT_LIMIT = 30;
+            public static final int INTAKE_WHEEL_SUPPLY_CURRENT_LIMIT = 40;
+        }
+
+        public static final double INTAKE_WHEEL_KP = 0.1;
+        public static final double INTAKE_WHEEL_KI = 0.0;
+        public static final double INTAKE_WHEEL_KD = 0.02;
+
+        public static final double INTAKE_ARM_KP = 0.2;
+        public static final double INTAKE_ARM_KI = 0.0;
+        public static final double INTAKE_ARM_KD = 0.02;
+
+        public static class Hardware {
+            public static final double INTAKE_ARM_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
+            public static final double INTAKE_ARM_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0;
+
+            public static final double INTAKE_ARM_MAX = 0.5;
+            public static final double INTAKE_ARM_MIN = -0.5;
         }
     }
 }
