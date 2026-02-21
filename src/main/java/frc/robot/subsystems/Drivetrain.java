@@ -69,8 +69,11 @@ public class Drivetrain extends SubsystemBase {
     IntegerPublisher _visionFiducialIDPublisher;
     StructArrayPublisher<Pose2d> _limelightLeftPosePublisher;
     StructArrayPublisher<Pose2d> _limelightRightPosePublisher;
+<<<<<<< Updated upstream
 
     private boolean _isSeed;
+=======
+>>>>>>> Stashed changes
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -183,6 +186,18 @@ public class Drivetrain extends SubsystemBase {
     // Vision
     // =======================================================================================
 =======
+        // Publish raw Limelight poses (MT1, wpiBlue)
+        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
+        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
+        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
+
+        SmartDashboard.putNumber("LL Left X", leftPose.getX());
+        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
+        SmartDashboard.putNumber("LL Right X", rightPose.getX());
+        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
+        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
+
         // Publish raw Limelight poses (MT1, wpiBlue)
         Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
         Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
