@@ -24,9 +24,10 @@ public class Drive extends Command {
         double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
         if(!isSlowMode) {
-            vx *= 3.0;
-            vy *= 3.0;
-            rot *= 3.0;
+            double speed = 8.0;
+            vx *= speed;
+            vy *= speed;
+            rot *= speed;
         }
 
         SmartDashboard.putNumber("vx", vx);
