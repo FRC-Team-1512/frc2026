@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -66,6 +67,8 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Rotation2d> _visionHeading;
     StructArrayPublisher<Rotation2d> _desiredHeadingPublisher;
     IntegerPublisher _visionFiducialIDPublisher;
+    StructArrayPublisher<Pose2d> _limelightLeftPosePublisher;
+    StructArrayPublisher<Pose2d> _limelightRightPosePublisher;
 
     private boolean _isSeed;
 
@@ -129,6 +132,8 @@ public class Drivetrain extends SubsystemBase {
         _mt2PosePublisher = table.getStructArrayTopic("mt2 Pose", Pose2d.struct).publish();
         _visionHeading = table.getStructArrayTopic("vision heading", Rotation2d.struct).publish();
         _visionFiducialIDPublisher = table.getIntegerTopic("vision fiducial ID").publish();
+        _limelightLeftPosePublisher = table.getStructArrayTopic("Limelight Left Pose", Pose2d.struct).publish();
+        _limelightRightPosePublisher = table.getStructArrayTopic("Limelight Right Pose", Pose2d.struct).publish();
 
         // -------------------------------------------------------------------------------------
 
@@ -173,9 +178,28 @@ public class Drivetrain extends SubsystemBase {
         _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
     }
 
+<<<<<<< Updated upstream
     // =======================================================================================
     // Vision
     // =======================================================================================
+=======
+        // Publish raw Limelight poses (MT1, wpiBlue)
+        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
+        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
+        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
+
+        SmartDashboard.putNumber("LL Left X", leftPose.getX());
+        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
+        SmartDashboard.putNumber("LL Right X", rightPose.getX());
+        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
+        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
+
+        /*
+        if(_isSeed) {
+            publishBestId();
+        }*/
+>>>>>>> Stashed changes
 
     /**
      * Sets the Limelight IMU mode for all configured Limelights.
