@@ -20,6 +20,7 @@ public class Indexer extends SubsystemBase {
 
     private final TalonFX _indexerLeftMotor;
     private final TalonFX _indexerRightMotor;
+    private final Follower _indexerFollower;
 
     private double _motorPower;
 
@@ -46,6 +47,7 @@ public class Indexer extends SubsystemBase {
         }
 
         _motorPower = 0.0;
+        _indexerFollower = new Follower(RobotMap.CAN.LEFT_INDEXER, MotorAlignmentValue.Opposed);
     }
     
     @Override
@@ -59,6 +61,6 @@ public class Indexer extends SubsystemBase {
 
     private void updateState() {
         _indexerLeftMotor.set(_motorPower);
-        _indexerRightMotor.setControl(new Follower(RobotMap.CAN.LEFT_INDEXER, MotorAlignmentValue.Opposed));
+        _indexerRightMotor.setControl(_indexerFollower);
     }
 }

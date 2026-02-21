@@ -33,6 +33,7 @@ public class Shooter extends SubsystemBase {
 
     private final VelocityVoltage _shooterVelocityVoltage;
     private final PositionDutyCycle _hoodPositionDutyCycle;
+    private final Follower _shooterFollower;
 
     private double _targetVelocity;
     private Rotation2d _targetHoodAngle;
@@ -81,6 +82,7 @@ public class Shooter extends SubsystemBase {
 
         _shooterVelocityVoltage = new VelocityVoltage(0.0).withSlot(0);
         _hoodPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
+        _shooterFollower = new Follower(RobotMap.CAN.LEFT_SHOOTER, MotorAlignmentValue.Opposed);
         
         _targetVelocity = 0.0;
         _targetHoodAngle = Rotation2d.fromRotations(Constants.Shooter.Hardware.HOOD_MIN);
@@ -93,9 +95,9 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("FLYWHEEL VEL TARGET", _targetVelocity);
     }
 
-    public void setShooterFromDistance(double distance){
+    public void setShooterFromDistance(double distance) {
         _targetVelocity = ShooterCalc.getRPSFromDistance(distance);
-        _targetHoodAngle = ShooterCalc.getLocalHoodAngleFromDistance(distance);
+        setHoodAngle(ShooterCalc.getLocalHoodAngleFromDistance(distance));
     }
 
     public void setShooterVelocity(double velocity) {
@@ -137,7 +139,7 @@ public class Shooter extends SubsystemBase {
 
     private void updateState() {
         _shooterLeftMotor.setControl(_shooterVelocityVoltage.withVelocity(_targetVelocity));
-        _shooterRightMotor.setControl(new Follower(RobotMap.CAN.LEFT_SHOOTER, MotorAlignmentValue.Opposed));
+        _shooterRightMotor.setControl(_shooterFollower);
         _hoodMotor.setControl(_hoodPositionDutyCycle.withPosition(_targetHoodAngle.getRotations()));
     }
 }

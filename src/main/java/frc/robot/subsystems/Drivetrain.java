@@ -69,17 +69,8 @@ public class Drivetrain extends SubsystemBase {
     IntegerPublisher _visionFiducialIDPublisher;
     StructArrayPublisher<Pose2d> _limelightLeftPosePublisher;
     StructArrayPublisher<Pose2d> _limelightRightPosePublisher;
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 
     private boolean _isSeed;
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -122,8 +113,6 @@ public class Drivetrain extends SubsystemBase {
 
         Optional<Alliance> alliance = DriverStation.getAlliance();
         _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
-
-        _isSeed = false;
 
         _lastTime = Timer.getFPGATimestamp();
         _deltaT = 1.0 / Constants.TICK_PER_SECOND;
@@ -187,64 +176,9 @@ public class Drivetrain extends SubsystemBase {
         _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
     }
 
-<<<<<<< Updated upstream
     // =======================================================================================
     // Vision
     // =======================================================================================
-=======
-        // Publish raw Limelight poses (MT1, wpiBlue)
-        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
-        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
-        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
-
-        SmartDashboard.putNumber("LL Left X", leftPose.getX());
-        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
-        SmartDashboard.putNumber("LL Right X", rightPose.getX());
-        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
-        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
-
-        // Publish raw Limelight poses (MT1, wpiBlue)
-        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
-        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
-        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
-
-        SmartDashboard.putNumber("LL Left X", leftPose.getX());
-        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
-        SmartDashboard.putNumber("LL Right X", rightPose.getX());
-        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
-        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
-
-        // Publish raw Limelight poses (MT1, wpiBlue)
-        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
-        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
-        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
-
-        SmartDashboard.putNumber("LL Left X", leftPose.getX());
-        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
-        SmartDashboard.putNumber("LL Right X", rightPose.getX());
-        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
-        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
-
-        // Publish raw Limelight poses (MT1, wpiBlue)
-        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
-        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
-        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
-
-        SmartDashboard.putNumber("LL Left X", leftPose.getX());
-        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
-        SmartDashboard.putNumber("LL Right X", rightPose.getX());
-        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
-        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
-
-        /*
-        if(_isSeed) {
-            publishBestId();
-        }*/
->>>>>>> Stashed changes
 
     /**
      * Sets the Limelight IMU mode for all configured Limelights.
@@ -276,6 +210,18 @@ public class Drivetrain extends SubsystemBase {
         } else {
             setLimelightIMUMode(4);
         }
+
+        // Publish raw Limelight poses and SmartDashboard values every frame
+        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
+        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
+        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
+        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
+
+        SmartDashboard.putNumber("LL Left X", leftPose.getX());
+        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
+        SmartDashboard.putNumber("LL Right X", rightPose.getX());
+        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
+        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
 
         for (String limelightName : Constants.Drivetrain.Vision.LIMELIGHT_NAMES) {
             if (!_isSeed) {

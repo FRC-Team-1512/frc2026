@@ -12,9 +12,9 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
-    public static final Rotation2d HOOD_FAR = new Rotation2d(-2.2);
-    public static final Rotation2d HOOD_MID = new Rotation2d(-1.2);
-    public static final Rotation2d HOOD_NEAR = new Rotation2d(0.4);
+    public static final Rotation2d HOOD_FAR = Rotation2d.fromRotations(-2.2);
+    public static final Rotation2d HOOD_MID = Rotation2d.fromRotations(-1.2);
+    public static final Rotation2d HOOD_NEAR = Rotation2d.fromRotations(0.4);
 
     private static double[][] _kRPSValuesNear = {
         // {meters, RPS} make a lot of values. 
@@ -42,13 +42,13 @@ public class ShooterCalc {
         }
     }
     
-    public static double getRPSFromDistance(double distance){
-        if (distance >= Constants.Shooter.FAR_DISTANCE){
-            return _kRPSMapFar.getInterpolated(new InterpolatingDouble(distance)).value;
-        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE){
-            return _kRPSMapMiddle.getInterpolated(new InterpolatingDouble(distance)).value;
+    public static double getRPSFromDistance(double distance) {
+        if (distance >= Constants.Shooter.FAR_DISTANCE) {
+            return _kRPSMapFar.isEmpty() ? 0.0 : _kRPSMapFar.getInterpolated(new InterpolatingDouble(distance)).value;
+        } else if (Constants.Shooter.NEAR_DISTANCE < distance && distance < Constants.Shooter.FAR_DISTANCE) {
+            return _kRPSMapMiddle.isEmpty() ? 0.0 : _kRPSMapMiddle.getInterpolated(new InterpolatingDouble(distance)).value;
         } else {
-            return _kRPSMapNear.getInterpolated(new InterpolatingDouble(distance)).value;
+            return _kRPSMapNear.isEmpty() ? 0.0 : _kRPSMapNear.getInterpolated(new InterpolatingDouble(distance)).value;
         }
     }
 
