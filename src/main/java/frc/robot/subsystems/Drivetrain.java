@@ -71,6 +71,7 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Pose2d> _limelightRightPosePublisher;
 
     private boolean _isSeed;
+    private boolean _wasDisabled;
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -161,7 +162,16 @@ public class Drivetrain extends SubsystemBase {
 
         // -------------------------------------------------------------------------------------
 
+        for (int i = 0; i < Constants.Drivetrain.Vision.LIMELIGHT_NAMES.length; i++) {
+            double[] pose = Constants.Drivetrain.Vision.LIMELIGHT_POSES[i];
+            LimelightHelpers.setCameraPose_RobotSpace(
+                    Constants.Drivetrain.Vision.LIMELIGHT_NAMES[i],
+                    pose[0], pose[1], pose[2],  // forward, side, up
+                    pose[3], pose[4], pose[5]); // roll, pitch, yaw
+        }
+
         _isSeed = false;
+        _wasDisabled = true;
     }
 
     @Override
@@ -205,10 +215,17 @@ public class Drivetrain extends SubsystemBase {
 
     private void updateVision() {
         // Manage IMU mode: Disabled -> mode 1 (external seed), Enabled -> mode 4 (fusion)
-        if (DriverStation.isDisabled()) {
+        boolean isDisabled = DriverStation.isDisabled();
+        if (isDisabled) {
             setLimelightIMUMode(1);
+            // Reseed when disabled
+            if (!_wasDisabled) {
+                _isSeed = false;
+            }
+            _wasDisabled = true;
         } else {
             setLimelightIMUMode(4);
+            _wasDisabled = false;
         }
 
         // Publish raw Limelight poses and SmartDashboard values every frame
@@ -333,6 +350,17 @@ public class Drivetrain extends SubsystemBase {
 
     public void setFieldRelativeSpeeds(double vx, double vy, double omega) {
         setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, omega));
+    }
+
+    public void setFieldRelativeSpeedsWithHeading(double vx, double vy, Rotation2d targetHeading) {
+        _headingTarget = targetHeading;
+        double omega = _headingController.calculate(getHeading().getRadians(),
+                _headingTarget.getRadians()) * Constants.Drivetrain.HEADING_COEFF;
+
+        ChassisSpeeds robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+                new ChassisSpeeds(vx, vy, omega),
+                getHeading());
+        setRobotRelativeSpeeds(robotRelativeSpeeds);
     }
 
     private void setModuleStates(SwerveModuleState[] states) {

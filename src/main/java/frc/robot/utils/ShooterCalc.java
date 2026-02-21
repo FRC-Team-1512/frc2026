@@ -12,18 +12,26 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
-    public static final Rotation2d HOOD_FAR = Rotation2d.fromRotations(-2.2);
-    public static final Rotation2d HOOD_MID = Rotation2d.fromRotations(-1.2);
-    public static final Rotation2d HOOD_NEAR = Rotation2d.fromRotations(0.4);
+    public static final Rotation2d HOOD_FAR = Rotation2d.fromRotations(-1.95);
+    public static final Rotation2d HOOD_MID = Rotation2d.fromRotations(-0.7);
+    public static final Rotation2d HOOD_NEAR = Rotation2d.fromRotations(-0.35);
 
     private static double[][] _kRPSValuesNear = {
         // {meters, RPS} make a lot of values. 
+        {1.3589, 45},
+        {1.7526, 45},
     };
     private static double[][] _kRPSValuesFar = {
         // {meters, RPS} make a lot of values.   
+        {2.1336, 45},
+        {2.54, 50.25},
+        {3.2258, 56},
     };
     private static double[][] _kRPSValuesMiddle = {
         // {meters, RPS} make a lot of values. 
+        {3.7846, 50},
+        {4.2926, 54},
+        {4.8768, 57.5},
     };
 
     private static InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> _kRPSMapNear = new InterpolatingTreeMap<>();

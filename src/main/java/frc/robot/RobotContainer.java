@@ -13,8 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
-import frc.robot.commands.SetIMU;
-import frc.robot.commands.ZeroIMU;
 import frc.robot.commands.test.DecreaseFlyWheel;
 import frc.robot.commands.test.DecreaseHood;
 
@@ -28,6 +26,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.SuperStructure;
 
 public class RobotContainer {
 	public static final CommandXboxController driver = new CommandXboxController(0);
@@ -39,11 +38,13 @@ public class RobotContainer {
     Shooter _shooter;
 	Indexer _indexer;
 	Intake _intake;
+	SuperStructure _superStructure;
 	public RobotContainer() {
         _drivetrain = new Drivetrain();
 		_shooter = new Shooter();
 		_indexer = new Indexer();
 		_intake = new Intake();
+		_superStructure = new SuperStructure(_intake, _indexer, _shooter);
 		autoChooser = AutoBuilder.buildAutoChooser();
 
     	SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -52,20 +53,25 @@ public class RobotContainer {
 	}
 
 	private void configureBindings() {
-		_drivetrain.setDefaultCommand(new Drive(_drivetrain));
+		_drivetrain.setDefaultCommand(new Drive(_drivetrain, _superStructure));
 		_shooter.setDefaultCommand(new ShooterTest(_shooter));
 		_indexer.setDefaultCommand(new IndexerTest(_indexer));
 		_intake.setDefaultCommand(new IntakeTest(_intake));
 
-		driver.b().onTrue(new SetIMU(_drivetrain, Rotation2d.fromDegrees(45)));
 		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
 		driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
-		driver.a().onTrue(new ZeroIMU(_drivetrain));
 
-		operator.a().onTrue(new DecreaseFlyWheel(_shooter));
-		operator.y().onTrue(new IncreaseFlyWheel(_shooter));
-		operator.x().onTrue(new DecreaseHood(_shooter));
-		operator.b().onTrue(new IncreaseHood(_shooter));
+		driver.rightTrigger().onTrue(_superStructure.requestShoot());
+		driver.rightTrigger().onFalse(_superStructure.revokeShoot());
+		driver.leftTrigger().onTrue(_superStructure.requestIntake());
+		driver.leftTrigger().onFalse(_superStructure.revokeIntake());
+		driver.b().onTrue(_superStructure.requestIdleExpanded());
+		driver.a().onTrue(_superStructure.requestIdle());
+
+		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
+		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));
+		//operator.x().onTrue(new DecreaseHood(_shooter));
+		//operator.b().onTrue(new IncreaseHood(_shooter));
 
 	}
 

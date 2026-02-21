@@ -86,8 +86,17 @@ public class Constants {
             public static final String[] LIMELIGHT_NAMES = { "limelight-left", "limelight-right" };
             public static final double MT1_AMBIGUITY_THRESHOLD = 0.7;
             public static final double MAX_ANGULAR_VELOCITY_DEG_PER_SEC = 360.0;
+
+            // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
+            //                                  forward  side     up      roll  pitch  yaw
+            public static final double[][] LIMELIGHT_POSES = {
+                /* limelight-left  */ {         0.0,     0.0,     0.0,    0.0,  10.0,  0.0 },
+                /* limelight-right */ {         0.0,     0.0,     0.0,    0.0,  10.0,  0.0 },
+            };
         }
     }
+
+    public static final Translation2d TARGET = new Translation2d(0.0, 0.0);
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.1;
@@ -146,13 +155,13 @@ public class Constants {
             public static final double INTAKE_ARM_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double INTAKE_ARM_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0;
 
-            public static final double INTAKE_ARM_MAX = 0.5;
-            public static final double INTAKE_ARM_MIN = -0.5;
+            public static final double INTAKE_ARM_MAX = 9.3;
+            public static final double INTAKE_ARM_MIN = 0.5;
 
-            public static final double INTAKE_ARM_ACCURACY_TOLERANCE = 0.2; // Rotations
+            public static final double INTAKE_ARM_ACCURACY_TOLERANCE = 0.4; // Rotations
 
-            public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MIN;
-            public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MAX;
+            public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MAX;
+            public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MIN;
 
             public static final double INTAKE_WHEEL_POWER = 1.0;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.EnumSet;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SuperStructure extends SubsystemBase {
@@ -42,6 +43,9 @@ public class SuperStructure extends SubsystemBase {
             } else {
                 _indexer.setIndexer(0.0);
             }
+        } else if (!activeStates.contains(SuperStructureState.IDLE) && !activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+            _shooter.setShooterVelocity(0.0);
+            _indexer.setIndexer(0.0);
         }
         if (activeStates.contains(SuperStructureState.IDLE)) {
             _intake.retract();
@@ -67,6 +71,10 @@ public class SuperStructure extends SubsystemBase {
 
     public void setShootDistance(double distanceMeters) {
         _targetDistanceMeters = distanceMeters;
+    }
+
+    public boolean isShootingMode() {
+        return activeStates.contains(SuperStructureState.SHOOT);
     }
 
     public class DirectControl {
@@ -128,5 +136,33 @@ public class SuperStructure extends SubsystemBase {
             activeStates.remove(SuperStructureState.REVERSE_INTAKE);
             activeStates.remove(SuperStructureState.SHOOT);
         }
+    }
+
+    public Command requestIntake() {
+        return runOnce(() -> requestState(SuperStructureState.INTAKE));
+    }
+
+    public Command requestReverseIntake() {
+        return runOnce(() -> requestState(SuperStructureState.REVERSE_INTAKE));
+    }
+
+    public Command requestShoot() {
+        return runOnce(() -> requestState(SuperStructureState.SHOOT));
+    }
+
+    public Command requestIdle() {
+        return runOnce(() -> requestState(SuperStructureState.IDLE));
+    }
+
+    public Command requestIdleExpanded() {
+        return runOnce(() -> requestState(SuperStructureState.IDLE_EXPANDED));
+    }
+
+    public Command revokeShoot() {
+        return runOnce(() -> revokeState(SuperStructureState.SHOOT));
+    }
+
+    public Command revokeIntake() {
+        return runOnce(() -> revokeState(SuperStructureState.INTAKE));
     }
 }
