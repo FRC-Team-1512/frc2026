@@ -66,7 +66,7 @@ public class RobotContainer {
 		operator.y().onTrue(new IncreaseFlyWheel(_shooter));
 		operator.x().onTrue(new DecreaseHood(_shooter));
 		operator.b().onTrue(new IncreaseHood(_shooter));
-		operator.rightBumper().onTrue(_intake.runIntakeWheel(0.8));
+		operator.rightBumper().onTrue(_intake.runIntakeWheel(-0.8));
 		operator.rightBumper().onFalse(_intake.runIntakeWheel(0.0));
 	}
 

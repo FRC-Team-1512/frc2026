@@ -26,9 +26,9 @@ public class Constants {
         public static final double FB_LENGTH = 0.55245; // 21.75 inches
         public static final double LR_LENGTH = 0.55245; // 21.75 inches
 
-        public static final double MAX_VELOCITY_METERS_PER_SECOND = 5.0;
+        public static final double MAX_VELOCITY_METERS_PER_SECOND = 18.0;
 
-        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 15.0;
+        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 18.0;
         public static final double MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED = 20;
         public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
 

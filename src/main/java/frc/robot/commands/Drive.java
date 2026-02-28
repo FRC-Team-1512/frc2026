@@ -24,7 +24,7 @@ public class Drive extends Command {
         double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
         if(!isSlowMode) {
-            double speed = 8.0;
+            double speed = 15.0;
             vx *= speed;
             vy *= speed;
             rot *= speed;
