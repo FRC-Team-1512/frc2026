@@ -37,9 +37,9 @@ public class Drive extends Command {
         double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
         if(!isSlowMode) {
-            vx *= 3.0;
-            vy *= 3.0;
-            rot *= 3.0;
+            vx *= 10.0;
+            vy *= 10.0;
+            rot *= 2.0;
         }
         
         if (_superStructure.isShootingMode()) {

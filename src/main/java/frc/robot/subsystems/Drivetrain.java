@@ -64,6 +64,8 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<Pose2d> _currentPosePublisher;
     StructArrayPublisher<Pose2d> _visionPosePublisher;
     StructArrayPublisher<Pose2d> _mt2PosePublisher;
+    StructArrayPublisher<Pose2d> _rightMt1PosePublisher;
+    StructArrayPublisher<Pose2d> _rightMt2PosePublisher;
     StructArrayPublisher<Rotation2d> _visionHeading;
     StructArrayPublisher<Rotation2d> _desiredHeadingPublisher;
     IntegerPublisher _visionFiducialIDPublisher;
@@ -129,6 +131,8 @@ public class Drivetrain extends SubsystemBase {
         _timePublisher = table.getDoubleTopic("DeltaTime").publish();
         _visionPosePublisher = table.getStructArrayTopic("VisionPose", Pose2d.struct).publish();
         _mt2PosePublisher = table.getStructArrayTopic("mt2 Pose", Pose2d.struct).publish();
+        _rightMt1PosePublisher = table.getStructArrayTopic("Right Mt1 Pose", Pose2d.struct).publish();
+        _rightMt2PosePublisher = table.getStructArrayTopic("Right Mt2 Pose", Pose2d.struct).publish();
         _visionHeading = table.getStructArrayTopic("vision heading", Rotation2d.struct).publish();
         _visionFiducialIDPublisher = table.getIntegerTopic("vision fiducial ID").publish();
         _limelightLeftPosePublisher = table.getStructArrayTopic("Limelight Left Pose", Pose2d.struct).publish();
@@ -181,6 +185,9 @@ public class Drivetrain extends SubsystemBase {
         updateOdometry();
         updateVision();
 
+        _currentPose = _odometry.getEstimatedPosition();
+
+        _currentPosePublisher.set(new Pose2d[] { _currentPose });
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
         _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
@@ -277,6 +284,10 @@ public class Drivetrain extends SubsystemBase {
 
         _visionHeading.set(new Rotation2d[] { visionHeading });
         _visionPosePublisher.set(new Pose2d[] { mt1.pose });
+
+        if (limelightName.equals("limelight-right")) {
+            _rightMt1PosePublisher.set(new Pose2d[] { mt1.pose });
+        }
     }
 
     /**
@@ -305,6 +316,10 @@ public class Drivetrain extends SubsystemBase {
         _odometry.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
 
         _mt2PosePublisher.set(new Pose2d[] { mt2.pose });
+
+        if (limelightName.equals("limelight-right")) {
+            _rightMt2PosePublisher.set(new Pose2d[] { mt2.pose });
+        }
     }
 
     // =======================================================================================
@@ -449,9 +464,6 @@ public class Drivetrain extends SubsystemBase {
         _odometry.updateWithTime(Timer.getFPGATimestamp(), getHeading(), _measuredPositions);
 
         _previousPose = _currentPose;
-        _currentPose = _odometry.getEstimatedPosition();
-
-        _currentPosePublisher.set(new Pose2d[] { _currentPose });
     }
 
     public double getVelocityMagnitude() {
