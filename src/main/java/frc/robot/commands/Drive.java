@@ -41,6 +41,10 @@ public class Drive extends Command {
             vy *= 2.5;
             rot *= 3.0;
         }
+
+        vx*=0.2;
+        vy*=0.2;
+        rot*=0.2;
         
         if (_superStructure.isShootingMode()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
