@@ -26,8 +26,8 @@ public class Constants {
 
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 5.0;
 
-        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 15.0;
-        public static final double MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED = 20;
+        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 50.0;
+        public static final double MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED = 40;
         public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
 
         public static final boolean PIGEON_INVERTED = false;
@@ -61,7 +61,7 @@ public class Constants {
         public static final double STEER_PEAK_VOLTAGE = 14.0;
         
         public static final double DRIVE_KS = 0.1;
-        public static final double DRIVE_KV = 0.12;
+        public static final double DRIVE_KV = 0.1;
         public static final double DRIVE_KP = 0.2;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.07;
@@ -70,7 +70,7 @@ public class Constants {
         public static final double HEADING_COEFF = 3.0;
         public static final double HEADING_KP = 0.8;
         public static final double HEADING_KI = 0.0;
-        public static final double HEADING_KD = 0.4;
+        public static final double HEADING_KD = 0.35;
 
         public static class Auto {
             public static final double TRANSLATION_KP = 5.0;
@@ -86,6 +86,7 @@ public class Constants {
             public static final String[] LIMELIGHT_NAMES = { "limelight-left", "limelight-right" };
             public static final double MT1_AMBIGUITY_THRESHOLD = 0.7;
             public static final double MAX_ANGULAR_VELOCITY_DEG_PER_SEC = 360.0;
+            public static final double SEED_ACCELERATION_THRESHOLD = 0.5;
 
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
             //                                  forward  side     up      roll  pitch  yaw

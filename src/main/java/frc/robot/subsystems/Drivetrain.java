@@ -61,6 +61,7 @@ public class Drivetrain extends SubsystemBase {
     DoublePublisher _timePublisher;
     StructArrayPublisher<Rotation2d> _headingPublisher;
     StructArrayPublisher<SwerveModuleState> _desiredSwerveStatePublisher;
+    StructArrayPublisher<SwerveModuleState> _actualSwerveStatePublisher;
     StructArrayPublisher<Pose2d> _currentPosePublisher;
     StructArrayPublisher<Pose2d> _visionPosePublisher;
     StructArrayPublisher<Pose2d> _mt2PosePublisher;
@@ -125,6 +126,8 @@ public class Drivetrain extends SubsystemBase {
 
         _desiredSwerveStatePublisher = table.getStructArrayTopic("DesiredSwerveStates", SwerveModuleState.struct)
                 .publish();
+        _actualSwerveStatePublisher = table.getStructArrayTopic("ActualSwerveStates", SwerveModuleState.struct)
+                .publish();
         _currentPosePublisher = table.getStructArrayTopic("CurrentPose", Pose2d.struct).publish();
         _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
         _desiredHeadingPublisher = table.getStructArrayTopic("Desired Heading", Rotation2d.struct).publish();
@@ -185,12 +188,20 @@ public class Drivetrain extends SubsystemBase {
         updateOdometry();
         updateVision();
 
-        _currentPose = _odometry.getEstimatedPosition();
+        _currentPose = new Pose2d(
+                _odometry.getEstimatedPosition().getTranslation(),
+                getHeading());
 
         _currentPosePublisher.set(new Pose2d[] { _currentPose });
         _headingPublisher.set(new Rotation2d[] { getHeading() });
         _timePublisher.set(getDeltaT());
         _desiredHeadingPublisher.set(new Rotation2d[] { _headingTarget });
+
+        SwerveModuleState[] actualStates = new SwerveModuleState[_modules.length];
+        for (SwerveModule module : _modules) {
+            actualStates[module.getIndex()] = module.getState();
+        }
+        _actualSwerveStatePublisher.set(actualStates);
     }
 
     // =======================================================================================
@@ -221,19 +232,21 @@ public class Drivetrain extends SubsystemBase {
     }
 
     private void updateVision() {
-        // Manage IMU mode: Disabled -> mode 1 (external seed), Enabled -> mode 4 (fusion)
         boolean isDisabled = DriverStation.isDisabled();
         if (isDisabled) {
             setLimelightIMUMode(1);
-            // Reseed when disabled
-            if (!_wasDisabled) {
-                _isSeed = false;
-            }
             _wasDisabled = true;
         } else {
             setLimelightIMUMode(4);
             _wasDisabled = false;
         }
+
+        double accelX = _gyro.getAccelerationX().getValueAsDouble();
+        double accelY = _gyro.getAccelerationY().getValueAsDouble();
+        double accelMagnitude = Math.sqrt(accelX * accelX + accelY * accelY);
+        boolean isLowAcceleration = accelMagnitude < Constants.Drivetrain.Vision.SEED_ACCELERATION_THRESHOLD;
+
+        boolean shouldSeed = isDisabled || (!_isSeed && isLowAcceleration);
 
         // Publish raw Limelight poses and SmartDashboard values every frame
         Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
@@ -248,11 +261,9 @@ public class Drivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
 
         for (String limelightName : Constants.Drivetrain.Vision.LIMELIGHT_NAMES) {
-            if (!_isSeed) {
-                // Phase 1: MT1 seed — use vision-only heading to calibrate the gyro
+            if (shouldSeed) {
                 attemptMT1Seed(limelightName);
             } else {
-                // Phase 2: MT2 continuous pose estimation
                 updateMT2(limelightName);
             }
         }
@@ -313,7 +324,11 @@ public class Drivetrain extends SubsystemBase {
             return;
         }
 
-        _odometry.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
+        Pose2d visionPoseWithGyroHeading = new Pose2d(
+                mt2.pose.getTranslation(),
+                getHeading());
+
+        _odometry.addVisionMeasurement(visionPoseWithGyroHeading, mt2.timestampSeconds);
 
         _mt2PosePublisher.set(new Pose2d[] { mt2.pose });
 
