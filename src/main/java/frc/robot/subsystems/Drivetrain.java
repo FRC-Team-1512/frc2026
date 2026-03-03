@@ -75,6 +75,7 @@ public class Drivetrain extends SubsystemBase {
 
     private boolean _isSeed;
     private boolean _wasDisabled;
+    private final Timer _enableTimer = new Timer();
 
     public Drivetrain() {
         _modules = new SwerveModule[4];
@@ -179,6 +180,7 @@ public class Drivetrain extends SubsystemBase {
 
         _isSeed = false;
         _wasDisabled = true;
+        _enableTimer.start();
     }
 
     @Override
@@ -233,6 +235,15 @@ public class Drivetrain extends SubsystemBase {
 
     private void updateVision() {
         boolean isDisabled = DriverStation.isDisabled();
+
+        if (isDisabled && !_wasDisabled) {
+            _isSeed = false;
+        }
+
+        if (!isDisabled && _wasDisabled) {
+            _enableTimer.restart();
+        }
+
         if (isDisabled) {
             setLimelightIMUMode(1);
             _wasDisabled = true;
@@ -241,14 +252,17 @@ public class Drivetrain extends SubsystemBase {
             _wasDisabled = false;
         }
 
+        if (!isDisabled && !_enableTimer.hasElapsed(0.5)) {
+            return;
+        }
+
         double accelX = _gyro.getAccelerationX().getValueAsDouble();
         double accelY = _gyro.getAccelerationY().getValueAsDouble();
         double accelMagnitude = Math.sqrt(accelX * accelX + accelY * accelY);
         boolean isLowAcceleration = accelMagnitude < Constants.Drivetrain.Vision.SEED_ACCELERATION_THRESHOLD;
 
-        boolean shouldSeed = isDisabled || (!_isSeed && isLowAcceleration);
+        boolean shouldSeed = !_isSeed && isLowAcceleration;
 
-        // Publish raw Limelight poses and SmartDashboard values every frame
         Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
         Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
         _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
@@ -269,27 +283,21 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    /**
-     * Phase 1: Attempts to seed the Pigeon2 heading from a Limelight MT1 pose.
-     * MT1 computes heading purely from the image, so it does not depend on the gyro.
-     * Once a reliable reading is obtained, the gyro yaw is set and _isSeed flips to true.
-     */
     private void attemptMT1Seed(String limelightName) {
         LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
         if (mt1 == null || mt1.tagCount == 0) {
             return;
         }
 
-        // Check ambiguity — reject if any tag is too ambiguous
         for (LimelightHelpers.RawFiducial fiducial : mt1.rawFiducials) {
             if (fiducial.ambiguity > Constants.Drivetrain.Vision.MT1_AMBIGUITY_THRESHOLD) {
                 return;
             }
         }
 
-        // MT1 heading is trustworthy — seed the Pigeon2
         Rotation2d visionHeading = mt1.pose.getRotation();
-        _gyro.setYaw(visionHeading.getDegrees());
+        double yawToSet = Constants.Drivetrain.PIGEON_INVERTED ? -visionHeading.getDegrees() : visionHeading.getDegrees();
+        _gyro.setYaw(yawToSet);
         _headingTarget = visionHeading;
         _isSeed = true;
 
@@ -308,15 +316,16 @@ public class Drivetrain extends SubsystemBase {
      * the MegaTag2 pose estimate and fuses it into the WPILib pose estimator.
      */
     private void updateMT2(String limelightName) {
-        // Tell Limelight our current heading every frame (required for MT2)
         double yawDeg = getHeading().getDegrees();
         double yawRateDps = _gyro.getAngularVelocityZWorld().getValueAsDouble();
+        if (Constants.Drivetrain.PIGEON_INVERTED) {
+            yawRateDps = -yawRateDps;
+        }
         LimelightHelpers.SetRobotOrientation(limelightName,
                 yawDeg, yawRateDps,
                 0.0, 0.0,
                 0.0, 0.0);
 
-        // Reject if spinning too fast — MT2 becomes unreliable
         if (Math.abs(yawRateDps) > Constants.Drivetrain.Vision.MAX_ANGULAR_VELOCITY_DEG_PER_SEC) {
             return;
         }
@@ -459,7 +468,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void setIMU(Rotation2d heading) {
-        _gyro.setYaw(heading.getDegrees());
+        double yawToSet = Constants.Drivetrain.PIGEON_INVERTED ? -heading.getDegrees() : heading.getDegrees();
+        _gyro.setYaw(yawToSet);
         _headingTarget = heading;
     }
 
