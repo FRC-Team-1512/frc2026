@@ -293,6 +293,8 @@ public class Drivetrain extends SubsystemBase {
         _headingTarget = visionHeading;
         _isSeed = true;
 
+        resetPose(mt1.pose);
+
         _visionHeading.set(new Rotation2d[] { visionHeading });
         _visionPosePublisher.set(new Pose2d[] { mt1.pose });
 
