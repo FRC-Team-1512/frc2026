@@ -10,6 +10,8 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +25,9 @@ import frc.robot.utils.ApplyConfig;
 
 import frc.robot.Constants;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+
 public class SwerveModule extends SubsystemBase {
 
     private final TalonFX _steerMotor;
@@ -35,6 +40,10 @@ public class SwerveModule extends SubsystemBase {
     private final Translation2d _moduleLocation;
     private final int _moduleIndex;
     private SwerveModuleState _desiredModuleState;
+
+    private final StatusSignal<Angle> _drivePositionSignal;
+    private final StatusSignal<AngularVelocity> _driveVelocitySignal;
+    private final StatusSignal<Angle> _steerPositionSignal;
 
     // ======================================================================================
 
@@ -116,10 +125,22 @@ public class SwerveModule extends SubsystemBase {
         _moduleLocation = config.position;
         _moduleIndex = config.index;
         _desiredModuleState = new SwerveModuleState(0.0, new Rotation2d(0.0));
+
+        _drivePositionSignal = _driveMotor.getPosition();
+        _driveVelocitySignal = _driveMotor.getVelocity();
+        _steerPositionSignal = _encoder.getAbsolutePosition();
+        
+        // Optional: Optimize CAN bus utilization by changing update frequencies
+        _drivePositionSignal.setUpdateFrequency(Constants.TICK_PER_SECOND);
+        _driveVelocitySignal.setUpdateFrequency(Constants.TICK_PER_SECOND);
+        _steerPositionSignal.setUpdateFrequency(Constants.TICK_PER_SECOND);
     }
 
     @Override
     public void periodic() {
+        // Refresh signals together to reduce CAN bus latency and GC allocations
+        BaseStatusSignal.refreshAll(_drivePositionSignal, _driveVelocitySignal, _steerPositionSignal);
+
         updateState();
     }
 
@@ -141,7 +162,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     private void updateState() {
-        _steerMotor.set(_steerPositionSpeed.calculate(_encoder.getAbsolutePosition().getValueAsDouble(), _desiredModuleState.angle.getRotations()));
+        _steerMotor.set(_steerPositionSpeed.calculate(_steerPositionSignal.getValueAsDouble(), _desiredModuleState.angle.getRotations()));
 
         double driveRotationsPerSecond = _desiredModuleState.speedMetersPerSecond 
             / (Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI);
@@ -152,11 +173,11 @@ public class SwerveModule extends SubsystemBase {
     // ======================================================================================
 
     public Rotation2d getSteerAngle() {
-        return Rotation2d.fromRotations(_encoder.getAbsolutePosition().getValueAsDouble());
+        return Rotation2d.fromRotations(_steerPositionSignal.getValueAsDouble());
     }
 
     public double getDriveVelocityMetersPerSecond() {
-        double rps = _driveMotor.getVelocity().getValueAsDouble();
+        double rps = _driveVelocitySignal.getValueAsDouble();
         return rps * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
     }
 
@@ -165,7 +186,7 @@ public class SwerveModule extends SubsystemBase {
     }
 
     public double getDrivePositionMeters() {
-         double rotations = _driveMotor.getPosition().getValueAsDouble();
+         double rotations = _drivePositionSignal.getValueAsDouble();
          return rotations * Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI;
     }
 
