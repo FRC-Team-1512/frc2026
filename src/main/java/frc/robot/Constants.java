@@ -67,17 +67,17 @@ public class Constants {
         public static final double DRIVE_KD = 0.07;
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
 
-        public static final double HEADING_COEFF = 3.0;
-        public static final double HEADING_KP = 0.8;
+        public static final double HEADING_COEFF = 1.2;
+        public static final double HEADING_KP = 1.8;
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.35;
 
         public static class Auto {
-            public static final double TRANSLATION_KP = 5.0;
+            public static final double TRANSLATION_KP = 0.5;
             public static final double TRANSLATION_KI = 0.0;
             public static final double TRANSLATION_KD = 0.0;
 
-            public static final double ROTATION_KP = 5.0;
+            public static final double ROTATION_KP = 0.5;
             public static final double ROTATION_KI = 0.0;
             public static final double ROTATION_KD = 0.0;
         }
@@ -89,15 +89,15 @@ public class Constants {
             public static final double SEED_ACCELERATION_THRESHOLD = 0.5;
 
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
-            //                                  forward  side     up      roll  pitch  yaw
+            //                                  forward  side     up      roll  pitch  yaw (meters, degrees)
             public static final double[][] LIMELIGHT_POSES = {
-                /* limelight-left  */ {         0.0,     0.0,     0.0,    0.0,  10.0,  0.0 },
-                /* limelight-right */ {         0.0,     0.0,     0.0,    0.0,  10.0,  0.0 },
+                /* limelight-left  */ {         0.304,     -0.287,     0.215,    0.0,  10.0,  0.0 },
+                /* limelight-right */ {         0.304,     0.287,     0.215,    0.0,  10.0,  0.0 },
             };
         }
     }
 
-    public static final Translation2d TARGET = new Translation2d(0.0, 0.0);
+    public static final Translation2d TARGET = new Translation2d(4.612, 4.021);
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.1;
