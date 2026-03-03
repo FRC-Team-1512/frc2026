@@ -33,6 +33,12 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (_activeStates.contains(SuperStructureState.SHOOT)) {
+            _shooter.setShooterFromDistance(_targetDistanceMeters);
+        } else {
+            _shooter.setShooterVelocity(0.0);
+            _indexer.setIndexer(0.0);
+        }
         /*
         if (_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.intake();

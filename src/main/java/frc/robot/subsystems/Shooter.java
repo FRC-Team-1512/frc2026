@@ -99,7 +99,8 @@ public class Shooter extends SubsystemBase {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_hoodPositionSignal, _shooterVelocitySignal);
         updateState();
         SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngle.getRotations());
-        SmartDashboard.putNumber("FLYWHEEL VEL TARGET", _targetVelocity);
+        SmartDashboard.putNumber("Shooter: FLYWHEEL VEL TARGET", _targetVelocity);
+        SmartDashboard.putNumber("Shooter: FLYWHEEL ACTUAL VELOCITY", getShooterVelocity());
     }
 
     public void setShooterFromDistance(double distance) {

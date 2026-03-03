@@ -103,7 +103,7 @@ public class Constants {
         public static final double SHOOTER_KP = 0.1;
         public static final double SHOOTER_KI = 0.0;
         public static final double SHOOTER_KD = 0.0;
-        public static final double SHOOTER_KV = 0.1;
+        public static final double SHOOTER_KV = 0.124;
 
         public static final double HOOD_KP = 0.3;
         public static final double HOOD_KI = 0.0;
