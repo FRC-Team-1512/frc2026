@@ -35,6 +35,9 @@ public class Shooter extends SubsystemBase {
     private final PositionDutyCycle _hoodPositionDutyCycle;
     private final Follower _shooterFollower;
 
+    private final com.ctre.phoenix6.StatusSignal<edu.wpi.first.units.measure.Angle> _hoodPositionSignal;
+    private final com.ctre.phoenix6.StatusSignal<edu.wpi.first.units.measure.AngularVelocity> _shooterVelocitySignal;
+
     private double _targetVelocity;
     private Rotation2d _targetHoodAngle;
 
@@ -86,10 +89,14 @@ public class Shooter extends SubsystemBase {
         
         _targetVelocity = 0.0;
         _targetHoodAngle = Rotation2d.fromRotations(Constants.Shooter.Hardware.HOOD_MIN);
+
+        _hoodPositionSignal = _hoodMotor.getPosition();
+        _shooterVelocitySignal = _shooterRightMotor.getVelocity();
     }
     
     @Override
     public void periodic() {
+        com.ctre.phoenix6.BaseStatusSignal.refreshAll(_hoodPositionSignal, _shooterVelocitySignal);
         updateState();
         SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngle.getRotations());
         SmartDashboard.putNumber("FLYWHEEL VEL TARGET", _targetVelocity);
@@ -110,11 +117,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getHoodAngle(){
-        return _hoodMotor.getPosition().getValueAsDouble();
+        return _hoodPositionSignal.getValueAsDouble();
     }
 
     public double getShooterVelocity(){
-        return _shooterRightMotor.getVelocity().getValueAsDouble();
+        return _shooterVelocitySignal.getValueAsDouble();
     }
     
     public double getDesiredVelocity(){

@@ -24,6 +24,8 @@ public class Intake extends SubsystemBase {
     private final TalonFX _intakeWheelMotor;
     private final TalonFX _intakeArmMotor;
 
+    private final com.ctre.phoenix6.StatusSignal<edu.wpi.first.units.measure.Angle> _intakeArmPositionSignal;
+
     private double _wheelPower;
     private Rotation2d _targetArmPosition;
 
@@ -65,10 +67,13 @@ public class Intake extends SubsystemBase {
         _wheelPower = 0.0;
         _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_MIN);
         _intakeArmPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
+
+        _intakeArmPositionSignal = _intakeArmMotor.getPosition();
     }
     
     @Override
     public void periodic() {
+        com.ctre.phoenix6.BaseStatusSignal.refreshAll(_intakeArmPositionSignal);
         updateState();
     }
 
@@ -105,11 +110,11 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean isAtIntakePosition() {
-        return Math.abs(_intakeArmMotor.getPosition().getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+        return Math.abs(_intakeArmPositionSignal.getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
     }
 
     public boolean isAtRetractPosition() {
-        return Math.abs(_intakeArmMotor.getPosition().getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+        return Math.abs(_intakeArmPositionSignal.getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
     }
 
     private void updateState() {
