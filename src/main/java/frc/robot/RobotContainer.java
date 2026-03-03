@@ -35,16 +35,16 @@ public class RobotContainer {
 	private final SendableChooser<Command> autoChooser;
 
     Drivetrain _drivetrain;
-    Shooter _shooter;
-	Indexer _indexer;
-	Intake _intake;
+    //Shooter _shooter;
+	//Indexer _indexer;
+	//Intake _intake;
 	SuperStructure _superStructure;
 	public RobotContainer() {
         _drivetrain = new Drivetrain();
-		_shooter = new Shooter();
-		_indexer = new Indexer();
-		_intake = new Intake();
-		_superStructure = new SuperStructure(_intake, _indexer, _shooter);
+		//_shooter = new Shooter();
+		//_indexer = new Indexer();
+		//_intake = new Intake();
+		_superStructure = new SuperStructure(new Intake(), new Indexer(), new Shooter());
 		autoChooser = AutoBuilder.buildAutoChooser();
 
     	SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -54,9 +54,9 @@ public class RobotContainer {
 
 	private void configureBindings() {
 		_drivetrain.setDefaultCommand(new Drive(_drivetrain, _superStructure));
-		_shooter.setDefaultCommand(new ShooterTest(_shooter));
-		_indexer.setDefaultCommand(new IndexerTest(_indexer));
-		_intake.setDefaultCommand(new IntakeTest(_intake));
+		//_shooter.setDefaultCommand(new ShooterTest(_shooter));
+		//_indexer.setDefaultCommand(new IndexerTest(_indexer));
+		//_intake.setDefaultCommand(new IntakeTest(_intake));
 
 		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
 		driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));

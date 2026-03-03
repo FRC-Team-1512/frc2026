@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.EnumSet;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,7 +14,8 @@ public class SuperStructure extends SubsystemBase {
 
     private double _targetDistanceMeters;
 
-    private final EnumSet<SuperStructureState> activeStates = EnumSet.noneOf(SuperStructureState.class);
+    private final EnumSet<SuperStructureState> _activeStates = EnumSet.noneOf(SuperStructureState.class);
+    private SuperStructureState _defaultIdleState;;
 
     public final DirectControl direct = new DirectControl();
 
@@ -23,41 +25,57 @@ public class SuperStructure extends SubsystemBase {
         _shooter = shooter;
 
         _targetDistanceMeters = 0.0;
+
+        _defaultIdleState = SuperStructureState.IDLE;
+
+        _activeStates.add(_defaultIdleState);
     }
 
     @Override
     public void periodic() {
-        if (activeStates.contains(SuperStructureState.INTAKE)) {
+        /*
+        if (_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.intake();
         }
-        if (activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
+        if (_activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
             _intake.reverseIntake();
         }
-        if (!activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !activeStates.contains(SuperStructureState.INTAKE)) {
+        if (!_activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.retract();
         }
-        if (activeStates.contains(SuperStructureState.SHOOT)) {
+        if (_activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
                 _indexer.setIndexer(1.0);
             } else {
                 _indexer.setIndexer(0.0);
             }
-        } else if (!activeStates.contains(SuperStructureState.IDLE) && !activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+        } else if (!_activeStates.contains(SuperStructureState.IDLE) && !_activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
             _shooter.setShooterVelocity(0.0);
             _indexer.setIndexer(0.0);
         }
-        if (activeStates.contains(SuperStructureState.IDLE)) {
+        if (_activeStates.contains(SuperStructureState.IDLE)) {
             _intake.retract();
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }
-        if (activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+        if (_activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
             _intake.extendArm();
             _intake.setIntakeWheel(0.0);
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }
+        */
+
+        publishState();
+    }
+
+    public void publishState() {
+        SmartDashboard.putBoolean("SuperStructure: IDLE", _activeStates.contains(SuperStructureState.IDLE));
+        SmartDashboard.putBoolean("SuperStructure: IDLE EXPANDED", _activeStates.contains(SuperStructureState.IDLE_EXPANDED));
+        SmartDashboard.putBoolean("SuperStructure: INTAKE", _activeStates.contains(SuperStructureState.INTAKE));
+        SmartDashboard.putBoolean("SuperStructure: REVERSE_INTAKE", _activeStates.contains(SuperStructureState.REVERSE_INTAKE));
+        SmartDashboard.putBoolean("SuperStructure: SHOOT", _activeStates.contains(SuperStructureState.SHOOT));
     }
 
     public void requestState(SuperStructureState state) {
@@ -65,7 +83,7 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public void revokeState(SuperStructureState state) {
-        activeStates.remove(state);
+        _activeStates.remove(state);
         sanitizeStates();
     }
 
@@ -74,7 +92,7 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public boolean isShootingMode() {
-        return activeStates.contains(SuperStructureState.SHOOT);
+        return _activeStates.contains(SuperStructureState.SHOOT);
     }
 
     public class DirectControl {
@@ -109,32 +127,39 @@ public class SuperStructure extends SubsystemBase {
 
     private void sanitizeStates(SuperStructureState newState) {
         if (newState == SuperStructureState.REVERSE_INTAKE) {
-            activeStates.remove(SuperStructureState.INTAKE);
+            _activeStates.remove(SuperStructureState.INTAKE);
         } else if (newState == SuperStructureState.INTAKE) {
-            activeStates.remove(SuperStructureState.REVERSE_INTAKE);
+            _activeStates.remove(SuperStructureState.REVERSE_INTAKE);
+        }
+        if (newState == SuperStructureState.IDLE) {
+            _defaultIdleState = SuperStructureState.IDLE;
+            _activeStates.remove(SuperStructureState.IDLE_EXPANDED);
+        } else if (newState == SuperStructureState.IDLE_EXPANDED) {
+            _defaultIdleState = SuperStructureState.IDLE_EXPANDED;
+            _activeStates.remove(SuperStructureState.IDLE);
         }
         if (newState != SuperStructureState.IDLE && newState != SuperStructureState.IDLE_EXPANDED) {
-            activeStates.remove(SuperStructureState.IDLE);
-            activeStates.remove(SuperStructureState.IDLE_EXPANDED);
+            _activeStates.remove(SuperStructureState.IDLE);
+            _activeStates.remove(SuperStructureState.IDLE_EXPANDED);
         }
-        activeStates.add(newState);
+        _activeStates.add(newState);
         sanitizeStates();
     }
 
     private void sanitizeStates() {
-        if (activeStates.isEmpty()) {
-            activeStates.add(SuperStructureState.IDLE);
+        if (_activeStates.isEmpty()) {
+            _activeStates.add(_defaultIdleState);
         }
-        if (activeStates.contains(SuperStructureState.IDLE) && activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
-            activeStates.remove(SuperStructureState.IDLE_EXPANDED);
+        if (_activeStates.contains(SuperStructureState.IDLE) && _activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+            _activeStates.remove(SuperStructureState.IDLE_EXPANDED);
         }
-        if (activeStates.contains(SuperStructureState.INTAKE) && activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
-            activeStates.remove(SuperStructureState.REVERSE_INTAKE);
+        if (_activeStates.contains(SuperStructureState.INTAKE) && _activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
+            _activeStates.remove(SuperStructureState.REVERSE_INTAKE);
         }
-        if (activeStates.contains(SuperStructureState.IDLE) || activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
-            activeStates.remove(SuperStructureState.INTAKE);
-            activeStates.remove(SuperStructureState.REVERSE_INTAKE);
-            activeStates.remove(SuperStructureState.SHOOT);
+        if (_activeStates.contains(SuperStructureState.IDLE) || _activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
+            _activeStates.remove(SuperStructureState.INTAKE);
+            _activeStates.remove(SuperStructureState.REVERSE_INTAKE);
+            _activeStates.remove(SuperStructureState.SHOOT);
         }
     }
 
