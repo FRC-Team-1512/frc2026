@@ -22,7 +22,7 @@ public class ShooterTest extends Command {
         double angle = -applyDeadband(RobotContainer.operator.getRightY(), 0.15);
         angle *= 1.35;
         angle -= 0.95;
-        //_shooter.setHoodAngle(Rotation2d.fromRotations(angle));
+        //_shooter.setHoodAngleRotations(angle);
     }
 
     private static double applyDeadband(double input, double deadband) {

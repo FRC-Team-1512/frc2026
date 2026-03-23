@@ -15,7 +15,6 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -39,7 +38,7 @@ public class Shooter extends SubsystemBase {
     private final com.ctre.phoenix6.StatusSignal<edu.wpi.first.units.measure.AngularVelocity> _shooterVelocitySignal;
 
     private double _targetVelocity;
-    private Rotation2d _targetHoodAngle;
+    private double _targetHoodAngleRotations;
 
     public Shooter() {
         _shooterRightMotor = new TalonFX(RobotMap.CAN.RIGHT_SHOOTER);
@@ -88,7 +87,7 @@ public class Shooter extends SubsystemBase {
         _shooterFollower = new Follower(RobotMap.CAN.LEFT_SHOOTER, MotorAlignmentValue.Opposed);
         
         _targetVelocity = 0.0;
-        _targetHoodAngle = Rotation2d.fromRotations(Constants.Shooter.Hardware.HOOD_MIN);
+        _targetHoodAngleRotations = Constants.Shooter.Hardware.HOOD_MIN;
 
         _hoodPositionSignal = _hoodMotor.getPosition();
         _shooterVelocitySignal = _shooterRightMotor.getVelocity();
@@ -98,23 +97,22 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_hoodPositionSignal, _shooterVelocitySignal);
         updateState();
-        SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngle.getRotations());
+        SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngleRotations);
         SmartDashboard.putNumber("Shooter: FLYWHEEL VEL TARGET", _targetVelocity);
         SmartDashboard.putNumber("Shooter: FLYWHEEL ACTUAL VELOCITY", getShooterVelocity());
     }
 
     public void setShooterFromDistance(double distance) {
-        _targetVelocity = ShooterCalc.getRPSFromDistance(distance);
-        setHoodAngle(ShooterCalc.getLocalHoodAngleFromDistance(distance));
+        _targetVelocity = ShooterCalc.calculateRotorRPS(distance);
+        setHoodAngleRotations(ShooterCalc.calculateRotorHoodAngleRotation(distance));
     }
 
     public void setShooterVelocity(double velocity) {
         _targetVelocity = velocity;
     }
 
-    public void setHoodAngle(Rotation2d angle){
-        double clampedAngle = MathUtil.clamp(angle.getRotations(), Constants.Shooter.Hardware.HOOD_MIN, Constants.Shooter.Hardware.HOOD_MAX);
-        _targetHoodAngle = Rotation2d.fromRotations(clampedAngle);
+    public void setHoodAngleRotations(double angleRotations){
+        _targetHoodAngleRotations = MathUtil.clamp(angleRotations, Constants.Shooter.Hardware.HOOD_MIN, Constants.Shooter.Hardware.HOOD_MAX);
     }
 
     public double getHoodAngle(){
@@ -130,7 +128,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getDesiredAngle() {
-        return _targetHoodAngle.getRotations();
+        return _targetHoodAngleRotations;
     }
 
     public boolean isAtTargetVelocity() {
@@ -138,7 +136,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isAtTargetHoodAngle() {
-        return Math.abs(getHoodAngle() - _targetHoodAngle.getRotations()) < Constants.Shooter.Hardware.HOOD_ACCURACY_TOLERANCE;
+        return Math.abs(getHoodAngle() - _targetHoodAngleRotations) < Constants.Shooter.Hardware.HOOD_ACCURACY_TOLERANCE;
     }
 
     public boolean isReadyToShoot() {
@@ -148,6 +146,6 @@ public class Shooter extends SubsystemBase {
     private void updateState() {
         _shooterLeftMotor.setControl(_shooterVelocityVoltage.withVelocity(_targetVelocity));
         _shooterRightMotor.setControl(_shooterFollower);
-        _hoodMotor.setControl(_hoodPositionDutyCycle.withPosition(_targetHoodAngle.getRotations()));
+        _hoodMotor.setControl(_hoodPositionDutyCycle.withPosition(_targetHoodAngleRotations));
     }
 }

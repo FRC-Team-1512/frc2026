@@ -12,6 +12,44 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
+    static final double H = 0.762; // Height difference between target and shooter (meters)
+    static final double H_MAX = 4.0; // Height at the peak of the trajectory (meters)
+    static final double G = 9.81; // Gravitational acceleration (m/s^2)
+
+    static final double V_COEFF = 1.1; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+
+    static final double ALPHA = H_MAX + Math.sqrt(H_MAX * (H_MAX - H)); // Auxiliary variable for calculations
+
+    static public Rotation2d calculateGlobalHoodAngle (double distance) {
+        return Rotation2d.fromRadians(Math.atan((2 * ALPHA) / distance));
+    }
+
+    static public double calculateRotorHoodAngleRotation(double distance) {
+        Rotation2d globalHoodAngle = calculateGlobalHoodAngle(distance);
+        return getRotorHoodAngleRotation(globalHoodAngle);
+    }
+
+    static public double calculateGlobalRPS(double distance) {
+        return (Math.sqrt((distance * distance + 4 * ALPHA * ALPHA + 2 * G * H_MAX))) / (2 * ALPHA);
+    }
+
+    static public double calculateRotorRPS(double distance) {
+        double globalRPS = calculateGlobalRPS(distance);
+        return getRotorRPS(globalRPS);
+    }
+
+    static public double getRotorRPS(double mechanismRPS) {
+        return (mechanismRPS * 25.0) / 24.0;
+    }
+
+    static public double getRotorHoodAngleRotation(Rotation2d globalHoodAngle) {
+        return globalHoodAngle.getRotations();
+    }
+
+    /* 
+    ===============================================================
+    Legacy interpolation
+
     public static final Rotation2d HOOD_FAR = Rotation2d.fromRotations(-1.95);
     public static final Rotation2d HOOD_MID = Rotation2d.fromRotations(-0.7);
     public static final Rotation2d HOOD_NEAR = Rotation2d.fromRotations(-0.35);
@@ -69,4 +107,6 @@ public class ShooterCalc {
             return HOOD_NEAR;
         }
     }
+
+    */
 }

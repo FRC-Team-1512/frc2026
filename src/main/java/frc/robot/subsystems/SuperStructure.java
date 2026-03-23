@@ -118,8 +118,8 @@ public class SuperStructure extends SubsystemBase {
             _shooter.setShooterVelocity(velocity);
         }
 
-        public void setShooterHoodAngle(Rotation2d angle) {
-            _shooter.setHoodAngle(angle);
+        public void setShooterHoodAngle(double rotations) {
+            _shooter.setHoodAngleRotations(rotations);
         }
     }
 

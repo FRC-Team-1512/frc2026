@@ -1,6 +1,5 @@
 package frc.robot.commands.test;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
@@ -15,7 +14,7 @@ public class IncreaseHood extends Command {
     @Override
     public void execute() {
         double angle = _shooter.getDesiredAngle();
-        _shooter.setHoodAngle(Rotation2d.fromRotations(angle + 0.05));
+        _shooter.setHoodAngleRotations(angle + 0.05);
     }
 
     @Override
