@@ -30,7 +30,7 @@ public class ShooterCalc {
     }
 
     static public double calculateGlobalRPS(double distance) {
-        return (Math.sqrt((distance * distance + 4 * ALPHA * ALPHA + 2 * G * H_MAX))) / (2 * ALPHA);
+        return ((Math.sqrt((distance * distance + 4 * ALPHA * ALPHA + 2 * G * H_MAX))) / (2 * ALPHA)) * V_COEFF;
     }
 
     static public double calculateRotorRPS(double distance) {
