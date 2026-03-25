@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -16,6 +17,7 @@ public class SuperStructure extends SubsystemBase {
     private final Indexer _indexer;
     private final Shooter _shooter;
     private final Supplier<Pose2d> _poseSupplier;
+    private final Supplier<Translation2d> _velocitySupplier;
 
     private double _targetDistanceMeters;
 
@@ -24,11 +26,12 @@ public class SuperStructure extends SubsystemBase {
 
     public final DirectControl direct = new DirectControl();
 
-    public SuperStructure(Intake intake, Indexer indexer, Shooter shooter, Supplier<Pose2d> poseSupplier) {
+    public SuperStructure(Intake intake, Indexer indexer, Shooter shooter, Supplier<Pose2d> poseSupplier, Supplier<Translation2d> velocitySupplier) {
         _intake = intake;
         _indexer = indexer;
         _shooter = shooter;
         _poseSupplier = poseSupplier;
+        _velocitySupplier = velocitySupplier;
 
         _targetDistanceMeters = 0.0;
 

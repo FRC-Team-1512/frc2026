@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -495,6 +496,12 @@ public class Drivetrain extends SubsystemBase {
 
     public double getVelocityMagnitude() {
         return (_currentPose.getTranslation().getDistance(_previousPose.getTranslation())) * (1.0 / getDeltaT());
+    }
+
+    public Translation2d getVelocity() {
+        return new Translation2d(
+                (_currentPose.getTranslation().getX() - _previousPose.getTranslation().getX()) * (1.0 / getDeltaT()),
+                (_currentPose.getTranslation().getY() - _previousPose.getTranslation().getY()) * (1.0 / getDeltaT()));
     }
 
     public Pose2d getPose() {

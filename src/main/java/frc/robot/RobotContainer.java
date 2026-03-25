@@ -44,7 +44,7 @@ public class RobotContainer {
 		//_shooter = new Shooter();
 		//_indexer = new Indexer();
 		//_intake = new Intake();
-		_superStructure = new SuperStructure(new Intake(), new Indexer(), new Shooter(), _drivetrain::getPose);
+		_superStructure = new SuperStructure(new Intake(), new Indexer(), new Shooter(), _drivetrain::getPose, _drivetrain::getVelocity);
 		autoChooser = AutoBuilder.buildAutoChooser();
 
     	SmartDashboard.putData("Auto Chooser", autoChooser);
