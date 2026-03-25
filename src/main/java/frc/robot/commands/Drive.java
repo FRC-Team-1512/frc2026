@@ -25,13 +25,10 @@ public class Drive extends Command {
     @Override
     public void execute() {
         Pose2d currentPose = _drivetrain.getPose();
-        double distance = Constants.TARGET.getDistance(currentPose.getTranslation());
         Rotation2d angleToTarget = Constants.TARGET.minus(currentPose.getTranslation()).getAngle();
 
-        SmartDashboard.putNumber("Drive: distanceToTarget", distance);
         SmartDashboard.putNumber("Drive: angleToTarget", angleToTarget.getDegrees());
 
-        _superStructure.setShootDistance(distance);
         boolean isSlowMode = RobotContainer.driver.leftBumper().getAsBoolean();
 
         double vx = -applyDeadband(RobotContainer.driver.getLeftY(), 0.15);

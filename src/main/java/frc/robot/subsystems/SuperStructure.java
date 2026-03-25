@@ -1,28 +1,34 @@
 package frc.robot.subsystems;
 
 import java.util.EnumSet;
+import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants;
+
 public class SuperStructure extends SubsystemBase {
     private final Intake _intake;
     private final Indexer _indexer;
     private final Shooter _shooter;
+    private final Supplier<Pose2d> _poseSupplier;
 
     private double _targetDistanceMeters;
 
     private final EnumSet<SuperStructureState> _activeStates = EnumSet.noneOf(SuperStructureState.class);
-    private SuperStructureState _defaultIdleState;;
+    private SuperStructureState _defaultIdleState;
 
     public final DirectControl direct = new DirectControl();
 
-    public SuperStructure(Intake intake, Indexer indexer, Shooter shooter) {
+    public SuperStructure(Intake intake, Indexer indexer, Shooter shooter, Supplier<Pose2d> poseSupplier) {
         _intake = intake;
         _indexer = indexer;
         _shooter = shooter;
+        _poseSupplier = poseSupplier;
 
         _targetDistanceMeters = 0.0;
 
@@ -33,6 +39,9 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Pose2d currentPose = _poseSupplier.get();
+        _targetDistanceMeters = Constants.TARGET.getDistance(currentPose.getTranslation());
+
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
         } else {
@@ -93,9 +102,9 @@ public class SuperStructure extends SubsystemBase {
         sanitizeStates();
     }
 
-    public void setShootDistance(double distanceMeters) {
-        _targetDistanceMeters = distanceMeters;
-    }
+    // public void setShootDistance(double distanceMeters) {
+    //     _targetDistanceMeters = distanceMeters;
+    // }
 
     public boolean isShootingMode() {
         return _activeStates.contains(SuperStructureState.SHOOT);
