@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
         }
 
         _wheelPower = 0.0;
-        _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_MIN);
+        _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION);
         _intakeArmPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
 
         _intakeArmPositionSignal = _intakeArmMotor.getPosition();

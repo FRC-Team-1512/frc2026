@@ -51,7 +51,6 @@ public class SuperStructure extends SubsystemBase {
             _shooter.setShooterVelocity(0.0);
             _indexer.setIndexer(0.0);
         }
-        /*
         if (_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.intake();
         }
@@ -61,6 +60,7 @@ public class SuperStructure extends SubsystemBase {
         if (!_activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.retract();
         }
+        /*
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
@@ -83,7 +83,7 @@ public class SuperStructure extends SubsystemBase {
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }
-        */
+            */
 
         publishState();
     }
