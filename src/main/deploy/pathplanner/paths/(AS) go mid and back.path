@@ -1,0 +1,163 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.9002499545123728,
+        "y": 2.453156727620087
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.7977757118813678,
+        "y": 1.0175698803675404
+      },
+      "isLocked": false,
+      "linkedName": "Endo swipe"
+    },
+    {
+      "anchor": {
+        "x": 3.8945742358078608,
+        "y": 0.6292149404112082
+      },
+      "prevControl": {
+        "x": 3.2531434966132586,
+        "y": 0.6548083854004235
+      },
+      "nextControl": {
+        "x": 4.536004975002463,
+        "y": 0.6036214954219928
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.825228859625182,
+        "y": 0.750388862354439
+      },
+      "prevControl": {
+        "x": 5.1754305241276395,
+        "y": 0.491602897345243
+      },
+      "nextControl": {
+        "x": 6.459920908387918,
+        "y": 1.0031586608442502
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.128462859352257,
+        "y": 3.338873271470161
+      },
+      "prevControl": {
+        "x": 5.520947677856623,
+        "y": 2.736594000181951
+      },
+      "nextControl": {
+        "x": 6.728934471947288,
+        "y": 3.934169679327239
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.660041393740903,
+        "y": 3.0843581695778757
+      },
+      "prevControl": {
+        "x": 7.567670104782295,
+        "y": 3.694168133923606
+      },
+      "nextControl": {
+        "x": 7.781364913118631,
+        "y": 2.2834135052765645
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.323945824235808,
+        "y": 0.750388862354439
+      },
+      "prevControl": {
+        "x": 7.894146466056888,
+        "y": 1.2932972218990435
+      },
+      "nextControl": {
+        "x": 7.091621008460699,
+        "y": 0.5291841225436678
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.687282057405386,
+        "y": 0.6292149404112082
+      },
+      "prevControl": {
+        "x": 4.162809896685516,
+        "y": 0.5967618556451765
+      },
+      "nextControl": {
+        "x": 3.4378622287110088,
+        "y": 0.6462369571562243
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9002499545123728,
+        "y": 2.453156727620087
+      },
+      "prevControl": {
+        "x": 2.8209134484170306,
+        "y": 0.8680721774927214
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Endo swipe"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": -105.50210903792834
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": -108.86618695160887
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": 88.82336739992986
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 200.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 48.56051161760365
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 48.56051161760365
+  },
+  "useDefaultConstraints": true
+}

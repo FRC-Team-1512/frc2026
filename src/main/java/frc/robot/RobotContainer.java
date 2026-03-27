@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -70,6 +71,15 @@ public class RobotContainer {
 
 		driver.leftBumper().onTrue(_superStructure.isManual());
 		driver.leftBumper().onFalse(_superStructure.isNotManual());
+
+		NamedCommands.registerCommand("requestShoot", _superStructure.requestShoot());
+		NamedCommands.registerCommand("requestIntake", _superStructure.requestIntake());
+		NamedCommands.registerCommand("requestIdle", _superStructure.requestIdle());
+		NamedCommands.registerCommand("requestIdleExpanded", _superStructure.requestIdleExpanded());
+		NamedCommands.registerCommand("revokeShoot", _superStructure.revokeShoot());
+		NamedCommands.registerCommand("revokeIntake", _superStructure.revokeIntake());
+		NamedCommands.registerCommand("isManual", _superStructure.isManual());
+		NamedCommands.registerCommand("isNotManual", _superStructure.isNotManual());
 
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));

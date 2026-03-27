@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.4619115038209607,
+        "y": 0.6749917553675402
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.380643959443335,
+        "y": 1.323280596677432
+      },
+      "isLocked": false,
+      "linkedName": "humans"
+    },
+    {
+      "anchor": {
+        "x": 2.9002499545123728,
+        "y": 2.453156727620087
+      },
+      "prevControl": {
+        "x": 2.099844642160375,
+        "y": 1.7779492575378795
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Endo swipe"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 200.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 48.56051161760365
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

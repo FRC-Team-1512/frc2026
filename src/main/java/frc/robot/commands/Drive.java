@@ -47,22 +47,21 @@ public class Drive extends Command {
 
         SmartDashboard.putNumber("Drive: angleToTarget", angleToTarget.getDegrees());
 
-        boolean isSlowMode = RobotContainer.driver.leftBumper().getAsBoolean();
+        boolean isFastMode = RobotContainer.driver.rightBumper().getAsBoolean();
 
         double vx = -applyDeadband(RobotContainer.driver.getLeftY(), 0.15);
         double vy = -applyDeadband(RobotContainer.driver.getLeftX(), 0.15);
 
         double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
-        if(!isSlowMode) {
-            vx *= 2.5;
-            vy *= 2.5;
-            rot *= 3.0;
-        }
+        double translationCoeff = isFastMode ? 3.0 : 1.5;
+        double rotationCoeff = isFastMode ? 2.0 : 1.5;
 
-        vx*=0.2;
-        vy*=0.2;
-        rot*=0.2;
+        if(isFastMode) {
+            vx *= translationCoeff;
+            vy *= translationCoeff;
+            rot *= rotationCoeff;
+        }
         
         if (_superStructure.isShootingMode() && !RobotContainer.driver.leftBumper().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
