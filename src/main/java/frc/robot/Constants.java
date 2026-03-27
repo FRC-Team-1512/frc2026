@@ -97,7 +97,8 @@ public class Constants {
         }
     }
 
-    public static final Translation2d TARGET = new Translation2d(4.612, 4.021);
+    public static final Translation2d TARGET_BLUE = new Translation2d(4.612, 4.021);
+    public static final Translation2d TARGET_RED = new Translation2d(4.612 + 7.290, 4.021);
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.5;

@@ -1,15 +1,17 @@
 package frc.robot.subsystems;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import frc.robot.Constants;
 
 public class SuperStructure extends SubsystemBase {
@@ -43,7 +45,16 @@ public class SuperStructure extends SubsystemBase {
     @Override
     public void periodic() {
         Pose2d currentPose = _poseSupplier.get();
-        _targetDistanceMeters = Constants.TARGET.getDistance(currentPose.getTranslation());
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
+        
+        Translation2d target;
+        if(_isRedAlliance) {
+            target = Constants.TARGET_RED;
+        } else {
+            target = Constants.TARGET_BLUE;
+        }
+        _targetDistanceMeters = target.getDistance(currentPose.getTranslation());
 
         SmartDashboard.putNumber("SuperStructure: Distance Meters", _targetDistanceMeters);
 
