@@ -17,15 +17,18 @@ public class ShooterCalc {
     static final double robot_height = 0.505; //meters
 
     static final double H = hopper_height - robot_height; // Height difference between target and shooter (meters)
-    static final double H_MAX = 4.0; // Height at the peak of the trajectory (meters)
-    static final double G = 9.81; // Gravitational acceleration (m/s^2)
+    static final double H_MAX = 3.0; // Height at the peak of the trajectory (meters)
+    static final double G = 9.81; // Gravitatinal acceleration (m/s^2)
 
-    static final double V_COEFF = 1.1; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+    static final double V_COEFF = 1.82; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
 
     static final double ALPHA = H_MAX + Math.sqrt(H_MAX * (H_MAX - H)); // Auxiliary variable for calculations
 
+    public static final double T_ETA = Math.sqrt(2.0 / G) * (Math.sqrt(H_MAX) + Math.sqrt(H_MAX - H)); // Time of flight (seconds)
+
     static public Rotation2d calculateGlobalHoodAngle (double distance) {
-        return Rotation2d.fromRadians(Math.atan((2 * ALPHA) / distance));
+        Rotation2d universalAngle = Rotation2d.fromRadians(Math.atan((2 * ALPHA) / distance));
+        return Rotation2d.fromDegrees(90).minus(universalAngle);
     }
 
     static public double calculateRotorHoodAngleRotation(double distance) {

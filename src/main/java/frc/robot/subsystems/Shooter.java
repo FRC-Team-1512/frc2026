@@ -109,6 +109,8 @@ public class Shooter extends SubsystemBase {
         setHoodAngleRotations(ShooterCalc.calculateRotorHoodAngleRotation(distance));
 
         SmartDashboard.putNumber("Shooter: calc rps", _targetVelocity);
+        SmartDashboard.putNumber("Shooter: calc glob angle", ShooterCalc.calculateGlobalHoodAngle(distance).getDegrees());
+        SmartDashboard.putNumber("Shooter: calc glob angle rot", ShooterCalc.calculateGlobalHoodAngle(distance).getRotations());
         SmartDashboard.putNumber("Shooter: calc angle", ShooterCalc.calculateRotorHoodAngleRotation(distance));
         SmartDashboard.putBoolean("Shooter: shoot ready", isReadyToShoot());
     }
@@ -119,6 +121,10 @@ public class Shooter extends SubsystemBase {
 
     public void setHoodAngleRotations(double angleRotations){
         _targetHoodAngleRotations = MathUtil.clamp(angleRotations, Constants.Shooter.Hardware.HOOD_MIN, Constants.Shooter.Hardware.HOOD_MAX);
+    }
+
+    public void setHoodRest() {
+        setHoodAngleRotations(Constants.Shooter.Hardware.HOOD_MAX);
     }
 
     public double getHoodAngle(){

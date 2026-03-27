@@ -68,6 +68,9 @@ public class RobotContainer {
 		driver.b().onTrue(_superStructure.requestIdleExpanded());
 		driver.a().onTrue(_superStructure.requestIdle());
 
+		driver.leftBumper().onTrue(_superStructure.isManual());
+		driver.leftBumper().onFalse(_superStructure.isNotManual());
+
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));
 		//operator.x().onTrue(new DecreaseHood(_shooter));

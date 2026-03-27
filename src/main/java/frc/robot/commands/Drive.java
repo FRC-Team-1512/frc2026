@@ -16,6 +16,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.SuperStructure;
+import frc.robot.utils.ShooterCalc;
 
 public class Drive extends Command {
     Drivetrain _drivetrain;
@@ -40,7 +41,9 @@ public class Drive extends Command {
         } else {
             target = Constants.TARGET_BLUE;
         }
-        Rotation2d angleToTarget = target.minus(currentPose.getTranslation()).getAngle();
+
+        Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
+        Rotation2d angleToTarget = adjustedTarget.minus(currentPose.getTranslation()).getAngle();
 
         SmartDashboard.putNumber("Drive: angleToTarget", angleToTarget.getDegrees());
 
@@ -61,7 +64,7 @@ public class Drive extends Command {
         vy*=0.2;
         rot*=0.2;
         
-        if (_superStructure.isShootingMode()) {
+        if (_superStructure.isShootingMode() && !RobotContainer.driver.leftBumper().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
             _drivetrain.setFieldRelativeSpeedsWithHeading(vx, vy, angleToTarget);
         } else {

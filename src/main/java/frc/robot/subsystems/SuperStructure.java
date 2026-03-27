@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utils.ShooterCalc;
 
 public class SuperStructure extends SubsystemBase {
     private final Intake _intake;
@@ -20,6 +21,8 @@ public class SuperStructure extends SubsystemBase {
     private final Shooter _shooter;
     private final Supplier<Pose2d> _poseSupplier;
     private final Supplier<Translation2d> _velocitySupplier;
+
+    private boolean _isManual = false;
 
     private double _targetDistanceMeters;
 
@@ -54,7 +57,14 @@ public class SuperStructure extends SubsystemBase {
         } else {
             target = Constants.TARGET_BLUE;
         }
-        _targetDistanceMeters = target.getDistance(currentPose.getTranslation());
+
+        Translation2d adjustedTarget = target.minus(_velocitySupplier.get().times(ShooterCalc.T_ETA));
+
+        if(_isManual) {
+            _targetDistanceMeters = Constants.DEFAULT_DISTANCE;
+        } else {
+            _targetDistanceMeters = adjustedTarget.getDistance(currentPose.getTranslation());
+        }
 
         SmartDashboard.putNumber("SuperStructure: Distance Meters", _targetDistanceMeters);
 
@@ -82,12 +92,14 @@ public class SuperStructure extends SubsystemBase {
             _intake.retract();
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
+            _shooter.setHoodRest();
         }
         if (_activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
             _intake.extendArm();
             _intake.setIntakeWheel(0.0);
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
+            _shooter.setHoodRest();
         }
 
         publishState();
@@ -108,6 +120,10 @@ public class SuperStructure extends SubsystemBase {
     public void revokeState(SuperStructureState state) {
         _activeStates.remove(state);
         sanitizeStates();
+    }
+
+    public void setIsManual(boolean isManual) {
+        _isManual = isManual;
     }
 
     // public void setShootDistance(double distanceMeters) {
@@ -212,5 +228,13 @@ public class SuperStructure extends SubsystemBase {
 
     public Command revokeIntake() {
         return runOnce(() -> revokeState(SuperStructureState.INTAKE));
+    }
+
+    public Command isManual() {
+        return runOnce(() -> setIsManual(true));
+    }
+
+    public Command isNotManual() {
+        return runOnce(() -> setIsManual(false));
     }
 }
