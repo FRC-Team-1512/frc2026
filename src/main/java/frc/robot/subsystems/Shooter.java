@@ -100,11 +100,17 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngleRotations);
         SmartDashboard.putNumber("Shooter: FLYWHEEL VEL TARGET", _targetVelocity);
         SmartDashboard.putNumber("Shooter: FLYWHEEL ACTUAL VELOCITY", getShooterVelocity());
+        SmartDashboard.putBoolean("Shooter: FLYWHEEL READY", isAtTargetVelocity());
+        SmartDashboard.putBoolean("Shooter: HOOD READY", isAtTargetHoodAngle());
     }
 
     public void setShooterFromDistance(double distance) {
         _targetVelocity = ShooterCalc.calculateRotorRPS(distance);
         setHoodAngleRotations(ShooterCalc.calculateRotorHoodAngleRotation(distance));
+
+        SmartDashboard.putNumber("Shooter: calc rps", _targetVelocity);
+        SmartDashboard.putNumber("Shooter: calc angle", ShooterCalc.calculateRotorHoodAngleRotation(distance));
+        SmartDashboard.putBoolean("Shooter: shoot ready", isReadyToShoot());
     }
 
     public void setShooterVelocity(double velocity) {

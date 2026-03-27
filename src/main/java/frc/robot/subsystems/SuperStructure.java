@@ -35,7 +35,7 @@ public class SuperStructure extends SubsystemBase {
 
         _targetDistanceMeters = 0.0;
 
-        _defaultIdleState = SuperStructureState.IDLE;
+        _defaultIdleState = SuperStructureState.IDLE_EXPANDED;
 
         _activeStates.add(_defaultIdleState);
     }
@@ -45,22 +45,17 @@ public class SuperStructure extends SubsystemBase {
         Pose2d currentPose = _poseSupplier.get();
         _targetDistanceMeters = Constants.TARGET.getDistance(currentPose.getTranslation());
 
-        if (_activeStates.contains(SuperStructureState.SHOOT)) {
-            _shooter.setShooterFromDistance(_targetDistanceMeters);
-        } else {
-            _shooter.setShooterVelocity(0.0);
-            _indexer.setIndexer(0.0);
-        }
+        SmartDashboard.putNumber("SuperStructure: Distance Meters", _targetDistanceMeters);
+
         if (_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.intake();
         }
         if (_activeStates.contains(SuperStructureState.REVERSE_INTAKE)) {
             _intake.reverseIntake();
         }
-        if (!_activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !_activeStates.contains(SuperStructureState.INTAKE)) {
+        if (!_activeStates.contains(SuperStructureState.REVERSE_INTAKE) && !_activeStates.contains(SuperStructureState.INTAKE) && _defaultIdleState == SuperStructureState.IDLE) {
             _intake.retract();
         }
-        /*
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
@@ -83,7 +78,6 @@ public class SuperStructure extends SubsystemBase {
             _indexer.setIndexer(0.0);
             _shooter.setShooterVelocity(0.0);
         }
-            */
 
         publishState();
     }

@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -75,6 +76,8 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_intakeArmPositionSignal);
         updateState();
+        SmartDashboard.putNumber("Intake: Intake Arm Position", _intakeArmPositionSignal.getValueAsDouble());
+        SmartDashboard.putNumber("Intake: Intake Arm Desired Position", _targetArmPosition.getRotations());
     }
 
     public void setIntakeWheel(double power) {

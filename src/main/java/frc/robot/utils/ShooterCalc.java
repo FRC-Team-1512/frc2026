@@ -1,9 +1,10 @@
 package frc.robot.utils;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.robot.Constants;
-import frc.robot.lib.InterpolatingDouble;
-import frc.robot.lib.InterpolatingTreeMap;
+//import frc.robot.Constants;
+//import frc.robot.lib.InterpolatingDouble;
+//import frc.robot.lib.InterpolatingTreeMap;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterCalc {
 
@@ -12,7 +13,10 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
-    static final double H = 0.762; // Height difference between target and shooter (meters)
+    static final double hopper_height = 1.8288; //meters
+    static final double robot_height = 0.505; //meters
+
+    static final double H = hopper_height - robot_height; // Height difference between target and shooter (meters)
     static final double H_MAX = 4.0; // Height at the peak of the trajectory (meters)
     static final double G = 9.81; // Gravitational acceleration (m/s^2)
 
@@ -30,7 +34,11 @@ public class ShooterCalc {
     }
 
     static public double calculateGlobalRPS(double distance) {
-        return ((Math.sqrt((distance * distance + 4 * ALPHA * ALPHA + 2 * G * H_MAX))) / (2 * ALPHA)) * V_COEFF;
+        // Matches shooter_calc/main.py: v0 = (sqrt(L^2 + 4*alpha^2)/(2*alpha)) * sqrt(2*g*h_max)
+        double base = Math.sqrt(distance * distance + 4 * ALPHA * ALPHA) / (2.0 * ALPHA);
+        double vel = base * Math.sqrt(2.0 * G * H_MAX) * V_COEFF;
+        SmartDashboard.putNumber("Shooter: calc glob vel", vel);
+        return vel;
     }
 
     static public double calculateRotorRPS(double distance) {
@@ -39,11 +47,12 @@ public class ShooterCalc {
     }
 
     static public double getRotorRPS(double mechanismRPS) {
-        return (mechanismRPS * 25.0) / 24.0;
+        return ((mechanismRPS * 25.0) / 24.0) / (0.319);
     }
 
     static public double getRotorHoodAngleRotation(Rotation2d globalHoodAngle) {
-        return globalHoodAngle.getRotations();
+        Rotation2d X = globalHoodAngle.minus(Rotation2d.fromDegrees(3.0));
+        return 0.34 - X.getRotations() * 25.4545;
     }
 
     /* 

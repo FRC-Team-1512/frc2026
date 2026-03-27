@@ -100,7 +100,7 @@ public class Constants {
     public static final Translation2d TARGET = new Translation2d(4.612, 4.021);
 
     public static class Shooter {
-        public static final double SHOOTER_KP = 0.1;
+        public static final double SHOOTER_KP = 0.5;
         public static final double SHOOTER_KI = 0.0;
         public static final double SHOOTER_KD = 0.0;
         public static final double SHOOTER_KV = 0.124;
@@ -121,11 +121,11 @@ public class Constants {
             public static final double HOOD_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double HOOD_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0; // around 25.45
 
-            public static final double HOOD_MAX = 0.4;
-            public static final double HOOD_MIN = -2.3;
+            public static final double HOOD_MAX = 0.34;
+            public static final double HOOD_MIN = -2.33;
 
-            public static final double SHOOTER_ACCURACY_TOLERANCE = 0.2; // RPS
-            public static final double HOOD_ACCURACY_TOLERANCE = 0.005; // Rotations
+            public static final double SHOOTER_ACCURACY_TOLERANCE = 0.7; // RPS
+            public static final double HOOD_ACCURACY_TOLERANCE = 0.1; // Rotations
         }
     }
 
@@ -148,7 +148,7 @@ public class Constants {
         public static final double INTAKE_WHEEL_KI = 0.0;
         public static final double INTAKE_WHEEL_KD = 0.02;
 
-        public static final double INTAKE_ARM_KP = 0.2;
+        public static final double INTAKE_ARM_KP = 1.2;
         public static final double INTAKE_ARM_KI = 0.0;
         public static final double INTAKE_ARM_KD = 0.02;
 
@@ -156,15 +156,15 @@ public class Constants {
             public static final double INTAKE_ARM_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double INTAKE_ARM_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0;
 
-            public static final double INTAKE_ARM_MAX = -0.9;
-            public static final double INTAKE_ARM_MIN = 9.1;
+            public static final double INTAKE_ARM_MIN = -8.0;
+            public static final double INTAKE_ARM_MAX = -0.5;
 
             public static final double INTAKE_ARM_ACCURACY_TOLERANCE = 0.4; // Rotations
 
-            public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MIN;
-            public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MAX;
+            public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MAX;
+            public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MIN;
 
-            public static final double INTAKE_WHEEL_POWER = -0.3;
+            public static final double INTAKE_WHEEL_POWER = -0.5;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;
             public static final double RETRACT_WHEEL_POWER = 0.0;
         }
