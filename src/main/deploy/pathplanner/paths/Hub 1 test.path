@@ -1,0 +1,140 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.317128138646288,
+        "y": 4.048862695596799
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.8292274062954026,
+        "y": 3.856302727913742
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.002106274987616,
+        "y": 3.915098125125499
+      },
+      "prevControl": {
+        "x": 1.9813522510987671,
+        "y": 4.319498541660142
+      },
+      "nextControl": {
+        "x": 2.0149195326045928,
+        "y": 3.6654267001901633
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.7496477538227966,
+        "y": 3.353725601495272
+      },
+      "prevControl": {
+        "x": 2.4652135269376596,
+        "y": 3.497919514197546
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.8671046087533155,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 200.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "requestIntake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "requestIntake"
+        }
+      }
+    },
+    {
+      "name": "isNotManual",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "isNotManual"
+        }
+      }
+    },
+    {
+      "name": "requestIdleExpanded",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "requestIdleExpanded"
+        }
+      }
+    },
+    {
+      "name": "revokeIntake",
+      "waypointRelativePos": 0.9006962864721489,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "revokeIntake"
+        }
+      }
+    },
+    {
+      "name": "requestShoot",
+      "waypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "requestShoot"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 200.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 21.98486465973751
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -0.15936702201361716
+  },
+  "useDefaultConstraints": true
+}

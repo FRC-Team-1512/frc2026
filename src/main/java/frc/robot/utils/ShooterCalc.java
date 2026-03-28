@@ -17,7 +17,7 @@ public class ShooterCalc {
     static final double robot_height = 0.505; //meters
 
     static final double H = hopper_height - robot_height; // Height difference between target and shooter (meters)
-    static final double H_MAX = 3.0; // Height at the peak of the trajectory (meters)
+    static final double H_MAX = 2.2; // Height at the peak of the trajectory (meters)
     static final double G = 9.81; // Gravitatinal acceleration (m/s^2)
 
     static final double V_COEFF = 1.82; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
