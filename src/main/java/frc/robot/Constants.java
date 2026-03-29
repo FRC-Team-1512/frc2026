@@ -84,15 +84,15 @@ public class Constants {
 
         public static class Vision {
             public static final String[] LIMELIGHT_NAMES = { "limelight-left", "limelight-right" };
-            public static final double MT1_AMBIGUITY_THRESHOLD = 0.7;
+            public static final double MT1_AMBIGUITY_THRESHOLD = 0.75;
             public static final double MAX_ANGULAR_VELOCITY_DEG_PER_SEC = 360.0;
             public static final double SEED_ACCELERATION_THRESHOLD = 0.5;
 
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
             //                                  forward  side     up      roll  pitch  yaw (meters, degrees)
             public static final double[][] LIMELIGHT_POSES = {
-                /* limelight-left  */ {         0.304,     -0.287,     0.215,    0.0,  10.0,  0.0 },
-                /* limelight-right */ {         0.304,     0.287,     0.215,    0.0,  10.0,  0.0 },
+                /* limelight-left  */ {         0.287,     -0.266,     0.215,    0.0,  10.0,  0.0 },
+                /* limelight-right */ {         0.287,     0.266,     0.215,    0.0,  10.0,  0.0 },
             };
         }
     }
@@ -101,7 +101,7 @@ public class Constants {
     //public static final Translation2d TARGET_BLUE = new Translation2d(0.0, 0.0);
     public static final Translation2d TARGET_RED = new Translation2d(4.612 + 7.290, 4.021);
 
-    public static final double DEFAULT_DISTANCE = 5.0; //meters
+    public static final double DEFAULT_DISTANCE = 9.0; //meters
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.5;
@@ -128,7 +128,7 @@ public class Constants {
             public static final double HOOD_MAX = 0.34;
             public static final double HOOD_MIN = -2.33;
 
-            public static final double SHOOTER_ACCURACY_TOLERANCE = 7.0; // RPS
+            public static final double SHOOTER_ACCURACY_TOLERANCE =  4.0; // RPS
             public static final double HOOD_ACCURACY_TOLERANCE = 0.1; // Rotations
         }
     }
@@ -164,7 +164,7 @@ public class Constants {
             public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MAX;
             public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MIN;
 
-            public static final double INTAKE_WHEEL_POWER = -1.0;
+            public static final double INTAKE_WHEEL_POWER = -0.8;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;
             public static final double RETRACT_WHEEL_POWER = 0.0;
         }

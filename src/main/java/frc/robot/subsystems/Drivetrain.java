@@ -8,6 +8,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
@@ -336,11 +340,18 @@ public class Drivetrain extends SubsystemBase {
             return;
         }
 
+        if(rejectVision(mt2.pose.getX(), mt2.pose.getY(), mt2.avgTagDist, mt2.tagCount)) {return;}
+
         Pose2d visionPoseWithGyroHeading = new Pose2d(
                 mt2.pose.getTranslation(),
                 getHeading());
 
-        _odometry.addVisionMeasurement(visionPoseWithGyroHeading, mt2.timestampSeconds);
+        double avgDist = mt2.avgTagDist;
+        double xyStdDev = (Math.pow(avgDist, 2.0) / mt2.tagCount) * 0.02;
+
+        Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStdDev, xyStdDev, 9999999.0);
+
+        _odometry.addVisionMeasurement(visionPoseWithGyroHeading, mt2.timestampSeconds, visionMeasurementStdDevs);
 
         _mt2PosePublisher.set(new Pose2d[] { mt2.pose });
 
@@ -524,5 +535,23 @@ public class Drivetrain extends SubsystemBase {
 
     private double getDeltaT() {
         return _deltaT;
+    }
+
+    private boolean rejectVision(double x, double y, double avgDistance, int tagCount) {
+        if (x < 0 || x > 16.540988 || y < 0 || y > 8.069326) { // in field
+            return true;
+        }
+        /*
+        double distanceImpossibleSquared = 4.0;
+        if ((_currentPose.getX() - x) * (_currentPose.getX() - x) + (_currentPose.getY() - y) * (_currentPose.getY() - y) > distanceImpossibleSquared) {
+            return true;
+        }
+        */
+
+        if (avgDistance > 5.0) {
+            return true;
+        }
+
+        return false;
     }
 }

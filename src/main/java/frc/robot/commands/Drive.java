@@ -34,6 +34,11 @@ public class Drive extends Command {
         
         Optional<Alliance> alliance = DriverStation.getAlliance();
         boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
+
+        int invert = 1;
+        if(_isRedAlliance) {
+            invert = -1;
+        }
         
         Translation2d target;
         if(_isRedAlliance) {
@@ -42,28 +47,31 @@ public class Drive extends Command {
             target = Constants.TARGET_BLUE;
         }
 
-        Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
+        //Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
+        Translation2d adjustedTarget = target; // no shoot on move
+
         Rotation2d angleToTarget = adjustedTarget.minus(currentPose.getTranslation()).getAngle();
 
         SmartDashboard.putNumber("Drive: angleToTarget", angleToTarget.getDegrees());
 
-        boolean isFastMode = RobotContainer.driver.rightBumper().getAsBoolean();
+        boolean isSlowMode = RobotContainer.driver.leftBumper().getAsBoolean();
 
         double vx = -applyDeadband(RobotContainer.driver.getLeftY(), 0.15);
         double vy = -applyDeadband(RobotContainer.driver.getLeftX(), 0.15);
 
         double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
-        double translationCoeff = isFastMode ? 3.0 : 1.5;
-        double rotationCoeff = isFastMode ? 2.0 : 1.5;
+        double translationCoeff = isSlowMode ? 1.2 : 3.2;
+        double rotationCoeff = isSlowMode ? 1.2 : 2.0;
 
-        if(isFastMode) {
-            vx *= translationCoeff;
-            vy *= translationCoeff;
-            rot *= rotationCoeff;
-        }
+        vx *= translationCoeff;
+        vy *= translationCoeff;
+        rot *= rotationCoeff;
+
+        vx *= invert;
+        vy *= invert;
         
-        if (_superStructure.isShootingMode() && !RobotContainer.driver.leftBumper().getAsBoolean()) {
+        if (_superStructure.isShootingMode() && !RobotContainer.driver.rightBumper().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
             _drivetrain.setFieldRelativeSpeedsWithHeading(vx, vy, angleToTarget);
         } else {

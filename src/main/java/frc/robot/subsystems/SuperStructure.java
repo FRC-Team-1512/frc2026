@@ -58,7 +58,8 @@ public class SuperStructure extends SubsystemBase {
             target = Constants.TARGET_BLUE;
         }
 
-        Translation2d adjustedTarget = target.minus(_velocitySupplier.get().times(ShooterCalc.T_ETA));
+        //Translation2d adjustedTarget = target.minus(_velocitySupplier.get().times(ShooterCalc.T_ETA));
+        Translation2d adjustedTarget = target; // no shoot on move
 
         if(_isManual) {
             _targetDistanceMeters = Constants.DEFAULT_DISTANCE;
@@ -80,7 +81,7 @@ public class SuperStructure extends SubsystemBase {
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
-                _indexer.setIndexer(1.0);
+                _indexer.setIndexer(1.8);
             } else {
                 _indexer.setIndexer(0.0);
             }
