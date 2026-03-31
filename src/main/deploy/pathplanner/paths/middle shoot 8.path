@@ -30,11 +30,11 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.23368112664473686,
+      "waypointRelativePos": 0.18289131030701744,
       "rotationDegrees": 180.0
     },
     {
-      "waypointRelativePos": 0.7348033168859651,
+      "waypointRelativePos": 0.564710115131579,
       "rotationDegrees": 5.0
     }
   ],
@@ -78,17 +78,6 @@
       }
     },
     {
-      "name": "requestIdleExpanded",
-      "waypointRelativePos": 0.646727868037135,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "requestIdleExpanded"
-        }
-      }
-    },
-    {
       "name": "requestShoot",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
@@ -103,8 +92,8 @@
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
-    "maxAngularVelocity": 200.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAngularVelocity": 100.0,
+    "maxAngularAcceleration": 27.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

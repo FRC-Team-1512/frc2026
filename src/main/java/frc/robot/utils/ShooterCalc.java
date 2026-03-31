@@ -20,7 +20,7 @@ public class ShooterCalc {
     static final double H_MAX = 2.2; // Height at the peak of the trajectory (meters)
     static final double G = 9.81; // Gravitatinal acceleration (m/s^2)
 
-    static final double V_COEFF = 1.86; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+    static final double V_COEFF = 1.865; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
 
     static final double ALPHA = H_MAX + Math.sqrt(H_MAX * (H_MAX - H)); // Auxiliary variable for calculations
 

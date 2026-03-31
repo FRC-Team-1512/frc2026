@@ -74,6 +74,14 @@ public class SwerveModule extends SubsystemBase {
         _driveMotorConfig.Slot0.kP = Constants.Drivetrain.DRIVE_KP;
         _driveMotorConfig.Slot0.kI = Constants.Drivetrain.DRIVE_KI;
         _driveMotorConfig.Slot0.kD = Constants.Drivetrain.DRIVE_KD;
+
+        //==== hard code ====
+        _driveMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        _driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 60;
+        _driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        _driveMotorConfig.CurrentLimits.StatorCurrentLimit = 100;
+
+
         _driveMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.DRIVE_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.DRIVE_PEAK_VOLTAGE));
         

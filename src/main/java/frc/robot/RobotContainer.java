@@ -16,6 +16,7 @@ import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
 import frc.robot.commands.SnapHead;
 import frc.robot.commands.SnapTail;
+import frc.robot.commands.ZeroIMU;
 import frc.robot.commands.test.DecreaseFlyWheel;
 import frc.robot.commands.test.DecreaseHood;
 
@@ -81,11 +82,13 @@ public class RobotContainer {
 		driver.b().onTrue(_superStructure.requestIdleExpanded());
 		driver.a().onTrue(_superStructure.requestIdle());
 
+		driver.x().onTrue(new ZeroIMU(_drivetrain));
+
 		driver.povUp().onTrue(new SnapHead(_drivetrain));
 		driver.povDown().onTrue(new SnapTail(_drivetrain));
 
 		driver.rightBumper().onTrue(_superStructure.isManual());
-		driver.rightBumper().onFalse(_superStructure.isNotManual());
+		//driver.rightBumper().onFalse(_superStructure.isNotManual());
 
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));

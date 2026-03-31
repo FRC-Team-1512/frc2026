@@ -22,7 +22,7 @@ public class SuperStructure extends SubsystemBase {
     private final Supplier<Pose2d> _poseSupplier;
     private final Supplier<Translation2d> _velocitySupplier;
 
-    private boolean _isManual = false;
+    private boolean _isManual = true;
 
     private double _targetDistanceMeters;
 

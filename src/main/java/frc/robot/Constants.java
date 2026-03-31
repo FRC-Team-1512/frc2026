@@ -26,9 +26,9 @@ public class Constants {
 
         public static final double MAX_VELOCITY_METERS_PER_SECOND = 5.0;
 
-        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 50.0;
+        public static final double MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED = 80.0;
         public static final double MAX_LATERAL_JERK_RADIANS_PER_SECOND_SQUARED = 40;
-        public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 300;
+        public static final double MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED = 1000000;
 
         public static final boolean PIGEON_INVERTED = false;
         public static final boolean STEER_INVERTED = false;
@@ -77,7 +77,7 @@ public class Constants {
             public static final double TRANSLATION_KI = 0.0;
             public static final double TRANSLATION_KD = 0.0;
 
-            public static final double ROTATION_KP = 0.5;
+            public static final double ROTATION_KP = 0.9;
             public static final double ROTATION_KI = 0.0;
             public static final double ROTATION_KD = 0.0;
         }
@@ -91,7 +91,7 @@ public class Constants {
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
             //                                  forward  side     up      roll  pitch  yaw (meters, degrees)
             public static final double[][] LIMELIGHT_POSES = {
-                /* limelight-left  */ {         0.287,     -0.266,     0.215,    0.0,  10.0,  0.0 },
+                /* limelight-left  */ {         0.28967,     0.265605,     0.197709,    180.0,  10.0,  0.0 },
                 /* limelight-right */ {         0.287,     0.266,     0.215,    0.0,  10.0,  0.0 },
             };
         }
@@ -101,12 +101,12 @@ public class Constants {
     //public static final Translation2d TARGET_BLUE = new Translation2d(0.0, 0.0);
     public static final Translation2d TARGET_RED = new Translation2d(4.612 + 7.290, 4.021);
 
-    public static final double DEFAULT_DISTANCE = 9.0; //meters
+    public static final double DEFAULT_DISTANCE = 4.0; //meters
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.5;
         public static final double SHOOTER_KI = 0.0;
-        public static final double SHOOTER_KD = 0.0;
+        public static final double SHOOTER_KD = 0.001;
         public static final double SHOOTER_KV = 0.124;
 
         public static final double HOOD_KP = 0.3;

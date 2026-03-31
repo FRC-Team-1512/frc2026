@@ -36,10 +36,11 @@ public class Drive extends Command {
         boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
 
         int invert = 1;
+        /*
         if(_isRedAlliance) {
             invert = -1;
         }
-        
+        */        
         Translation2d target;
         if(_isRedAlliance) {
             target = Constants.TARGET_RED;
@@ -70,6 +71,8 @@ public class Drive extends Command {
 
         vx *= invert;
         vy *= invert;
+
+        /*
         
         if (_superStructure.isShootingMode() && !RobotContainer.driver.rightBumper().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
@@ -77,6 +80,9 @@ public class Drive extends Command {
         } else {
             _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
         }
+
+        */
+        _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
 
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);
