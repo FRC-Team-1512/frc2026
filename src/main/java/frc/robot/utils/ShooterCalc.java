@@ -13,20 +13,27 @@ public class ShooterCalc {
 
     // LocalHoodAngle : Rotations of the hood motor rotor
 
-    static final double hopper_height = 1.8288; //meters
-    static final double robot_height = 0.505; //meters
-
-    static final double H = hopper_height - robot_height; // Height difference between target and shooter (meters)
-    static final double H_MAX = 2.2; // Height at the peak of the trajectory (meters)
-    static final double G = 9.81; // Gravitatinal acceleration (m/s^2)
+    //===============================================================================================
 
     static final double V_COEFF = 1.865; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+    static final double H_MAX_FROM_GROUND = 2.1;
+
+    //===============================================================================================
+
+    static final double hopper_height = 1.8288; //meters
+    static final double robot_height = 0.505; //meters
+    static final double robot_half_width = 0.27305; //meters
+
+    static final double H = hopper_height - robot_height; // Height difference between target and shooter (meters)
+    static final double H_MAX = H_MAX_FROM_GROUND - robot_height; // Height at the peak of the trajectory (meters)
+    static final double G = 9.81; // Gravitatinal acceleration (m/s^2)
 
     static final double ALPHA = H_MAX + Math.sqrt(H_MAX * (H_MAX - H)); // Auxiliary variable for calculations
 
     public static final double T_ETA = Math.sqrt(2.0 / G) * (Math.sqrt(H_MAX) + Math.sqrt(H_MAX - H)); // Time of flight (seconds)
 
     static public Rotation2d calculateGlobalHoodAngle (double distance) {
+        distance -= robot_half_width;
         Rotation2d universalAngle = Rotation2d.fromRadians(Math.atan((2 * ALPHA) / distance));
         return Rotation2d.fromDegrees(90).minus(universalAngle);
     }
@@ -37,7 +44,7 @@ public class ShooterCalc {
     }
 
     static public double calculateGlobalRPS(double distance) {
-        // Matches shooter_calc/main.py: v0 = (sqrt(L^2 + 4*alpha^2)/(2*alpha)) * sqrt(2*g*h_max)
+        distance -= robot_half_width;
         double base = Math.sqrt(distance * distance + 4 * ALPHA * ALPHA) / (2.0 * ALPHA);
         double vel = base * Math.sqrt(2.0 * G * H_MAX) * V_COEFF;
         SmartDashboard.putNumber("Shooter: calc glob vel", vel);

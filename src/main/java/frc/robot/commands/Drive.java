@@ -36,11 +36,9 @@ public class Drive extends Command {
         boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
 
         int invert = 1;
-        /*
         if(_isRedAlliance) {
             invert = -1;
-        }
-        */        
+        }     
         Translation2d target;
         if(_isRedAlliance) {
             target = Constants.TARGET_RED;
@@ -48,12 +46,10 @@ public class Drive extends Command {
             target = Constants.TARGET_BLUE;
         }
 
-        //Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
-        Translation2d adjustedTarget = target; // no shoot on move
+        Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
+        //Translation2d adjustedTarget = target; // when no shoot on move
 
         Rotation2d angleToTarget = adjustedTarget.minus(currentPose.getTranslation()).getAngle();
-
-        SmartDashboard.putNumber("Drive: angleToTarget", angleToTarget.getDegrees());
 
         boolean isSlowMode = RobotContainer.driver.leftBumper().getAsBoolean();
 
@@ -72,17 +68,12 @@ public class Drive extends Command {
         vx *= invert;
         vy *= invert;
 
-        /*
-        
-        if (_superStructure.isShootingMode() && !RobotContainer.driver.rightBumper().getAsBoolean()) {
+        if (_superStructure.isShootingMode() && !RobotContainer.driver.leftTrigger().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
             _drivetrain.setFieldRelativeSpeedsWithHeading(vx, vy, angleToTarget);
         } else {
             _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
         }
-
-        */
-        _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
 
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);

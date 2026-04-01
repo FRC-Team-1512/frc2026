@@ -506,13 +506,17 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public double getVelocityMagnitude() {
-        return (_currentPose.getTranslation().getDistance(_previousPose.getTranslation())) * (1.0 / getDeltaT());
+        return getVelocity().getNorm();
     }
 
     public Translation2d getVelocity() {
-        return new Translation2d(
-                (_currentPose.getTranslation().getX() - _previousPose.getTranslation().getX()) * (1.0 / getDeltaT()),
-                (_currentPose.getTranslation().getY() - _previousPose.getTranslation().getY()) * (1.0 / getDeltaT()));
+        return getFieldRelativeVelocity();
+    }
+
+    public Translation2d getFieldRelativeVelocity() {
+        ChassisSpeeds robotSpeeds = getMeasuredRelativeSpeeds();
+        return new Translation2d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond)
+            .rotateBy(getHeading());
     }
 
     public Pose2d getPose() {

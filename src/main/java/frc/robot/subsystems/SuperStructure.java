@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utils.ShooterCalc;
@@ -22,7 +23,7 @@ public class SuperStructure extends SubsystemBase {
     private final Supplier<Pose2d> _poseSupplier;
     private final Supplier<Translation2d> _velocitySupplier;
 
-    private boolean _isManual = true;
+    private boolean _isManual = false;
 
     private double _targetDistanceMeters;
 
@@ -40,7 +41,7 @@ public class SuperStructure extends SubsystemBase {
 
         _targetDistanceMeters = 0.0;
 
-        _defaultIdleState = SuperStructureState.IDLE_EXPANDED;
+        _defaultIdleState = SuperStructureState.IDLE;
 
         _activeStates.add(_defaultIdleState);
     }
@@ -58,8 +59,8 @@ public class SuperStructure extends SubsystemBase {
             target = Constants.TARGET_BLUE;
         }
 
-        //Translation2d adjustedTarget = target.minus(_velocitySupplier.get().times(ShooterCalc.T_ETA));
-        Translation2d adjustedTarget = target; // no shoot on move
+        Translation2d adjustedTarget = target.minus(_velocitySupplier.get().times(ShooterCalc.T_ETA));
+        //Translation2d adjustedTarget = target; // when no shoot on move
 
         if(_isManual) {
             _targetDistanceMeters = Constants.DEFAULT_DISTANCE;
@@ -79,6 +80,16 @@ public class SuperStructure extends SubsystemBase {
             _intake.retract();
         }
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
+            double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+            // 0.6 sec period, Robot Mormonism
+            boolean isExtended = (currentTime % 0.6) < 0.3; 
+
+            if (isExtended) {
+                _intake.extendArm();
+            } else {
+                _intake.extendHalfArm();
+            }
+
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
                 _indexer.setIndexer(1.8);

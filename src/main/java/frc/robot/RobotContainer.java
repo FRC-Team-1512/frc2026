@@ -77,8 +77,8 @@ public class RobotContainer {
 
 		driver.rightTrigger().onTrue(_superStructure.requestShoot());
 		driver.rightTrigger().onFalse(_superStructure.revokeShoot());
-		driver.leftTrigger().onTrue(_superStructure.requestIntake());
-		driver.leftTrigger().onFalse(_superStructure.revokeIntake());
+		driver.rightBumper().onTrue(_superStructure.requestIntake());
+		driver.rightBumper().onFalse(_superStructure.revokeIntake());
 		driver.b().onTrue(_superStructure.requestIdleExpanded());
 		driver.a().onTrue(_superStructure.requestIdle());
 
@@ -87,8 +87,8 @@ public class RobotContainer {
 		driver.povUp().onTrue(new SnapHead(_drivetrain));
 		driver.povDown().onTrue(new SnapTail(_drivetrain));
 
-		driver.rightBumper().onTrue(_superStructure.isManual());
-		//driver.rightBumper().onFalse(_superStructure.isNotManual());
+		driver.leftTrigger().onTrue(_superStructure.isManual());
+		driver.leftTrigger().onFalse(_superStructure.isNotManual());
 
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));

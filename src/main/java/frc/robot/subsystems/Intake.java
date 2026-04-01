@@ -97,6 +97,10 @@ public class Intake extends SubsystemBase {
         setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION));
     }
 
+    public void extendHalfArm() {
+        setIntakeArm(Rotation2d.fromRotations((Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION + Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) / 2.0));
+    }
+
     public void intake() {
         extendArm();
         setIntakeWheel(Constants.Intake.Hardware.INTAKE_WHEEL_POWER);
@@ -133,4 +137,15 @@ public class Intake extends SubsystemBase {
         return run(() -> setIntakeArm(position));
     }
 
+    public Command requestExtendArm() {
+        return runOnce(this::extendArm);
+    }
+
+    public Command requestRetractArm() {
+        return runOnce(this::retractArm);
+    }
+
+    public Command requestExtendHalfArm() {
+        return runOnce(this::extendHalfArm);
+    }
 }
