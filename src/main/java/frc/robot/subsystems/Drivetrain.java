@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
-
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -27,7 +25,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -54,7 +51,6 @@ public class Drivetrain extends SubsystemBase {
     private final PIDController _headingController;
 
     private Pose2d _currentPose;
-    private Pose2d _previousPose;
 
     private final SwerveDriveKinematics _kinematics;
     private final SwerveDrivePoseEstimator _odometry;
@@ -108,7 +104,6 @@ public class Drivetrain extends SubsystemBase {
         _headingController.enableContinuousInput(-Math.PI, Math.PI);
 
         _currentPose = new Pose2d();
-        _previousPose = new Pose2d();
 
         _kinematics = new SwerveDriveKinematics(
                 _modules[FL_IDX].getLocation(),
@@ -497,8 +492,6 @@ public class Drivetrain extends SubsystemBase {
         }
 
         _odometry.updateWithTime(Timer.getFPGATimestamp(), getHeading(), _measuredPositions);
-
-        _previousPose = _currentPose;
     }
 
     public double getVelocityMagnitude() {
@@ -520,9 +513,8 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void resetPose(Pose2d pose) {
-        _odometry.resetPose(pose);
+        _odometry.resetPosition(getHeading(), _measuredPositions, pose);
         _currentPose = pose;
-        _previousPose = pose;
         _lastTime = Timer.getFPGATimestamp();
         _headingTarget = pose.getRotation();
     }

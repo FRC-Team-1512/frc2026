@@ -91,8 +91,8 @@ public class Constants {
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
             //                                  forward  side     up      roll  pitch  yaw (meters, degrees)
             public static final double[][] LIMELIGHT_POSES = {
-                /* limelight-left  */ {         0.28967,     0.265605,     0.197709,    180.0,  10.0,  0.0 },
-                /* limelight-right */ {         0.287,     0.266,     0.215,    0.0,  10.0,  0.0 },
+                /* limelight-left  */ {         0.28967,     0.265605,     0.197709,    180.0,  10.0,  0.0 }, // its actually mounted on the right
+                /* limelight-right */ {         0.287,     -0.266,     0.215,    0.0,  10.0,  0.0 }, // its actually mounted on the left
             };
         }
     }
