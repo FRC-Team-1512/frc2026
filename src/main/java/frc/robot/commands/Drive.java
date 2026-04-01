@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -53,10 +54,13 @@ public class Drive extends Command {
 
         boolean isSlowMode = RobotContainer.driver.leftBumper().getAsBoolean();
 
-        double vx = -applyDeadband(RobotContainer.driver.getLeftY(), 0.15);
-        double vy = -applyDeadband(RobotContainer.driver.getLeftX(), 0.15);
+        double vx = -MathUtil.applyDeadband(RobotContainer.driver.getLeftY(), 0.15);
+        double vy = -MathUtil.applyDeadband(RobotContainer.driver.getLeftX(), 0.15);
+        double rot = -MathUtil.applyDeadband(RobotContainer.driver.getRightX(), 0.15);
 
-        double rot = -applyDeadband(RobotContainer.driver.getRightX(), 0.15);
+        vx = Math.copySign(vx * vx, vx);
+        vy = Math.copySign(vy * vy, vy);
+        rot = Math.copySign(rot * rot, rot);
 
         double translationCoeff = isSlowMode ? 1.2 : 3.2;
         double rotationCoeff = isSlowMode ? 1.2 : 2.0;
@@ -78,13 +82,5 @@ public class Drive extends Command {
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);
         SmartDashboard.putNumber("rot", rot);
-    }
-
-    private static double applyDeadband(double input, double deadband) {
-        if (Math.abs(input) <= deadband) {
-            return 0.0;
-        }else {
-            return input;
-        }
     }
 }
