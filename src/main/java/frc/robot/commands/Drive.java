@@ -33,8 +33,7 @@ public class Drive extends Command {
     public void execute() {
         Pose2d currentPose = _drivetrain.getPose();
         
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
+        boolean _isRedAlliance = RobotContainer.isRedAlliance();
 
         int invert = 1;
         if(_isRedAlliance) {

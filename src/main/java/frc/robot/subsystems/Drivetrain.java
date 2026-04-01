@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.utils.LimelightHelpers;
 
@@ -57,8 +58,6 @@ public class Drivetrain extends SubsystemBase {
 
     private final SwerveDriveKinematics _kinematics;
     private final SwerveDrivePoseEstimator _odometry;
-
-    private final boolean _isRedAlliance;
 
     private double _lastTime;
     private double _deltaT;
@@ -120,10 +119,7 @@ public class Drivetrain extends SubsystemBase {
         _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose);
 
         // -------------------------------------------------------------------------------------
-
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
-
+        
         _lastTime = Timer.getFPGATimestamp();
         _deltaT = 1.0 / Constants.TICK_PER_SECOND;
 
@@ -170,7 +166,7 @@ public class Drivetrain extends SubsystemBase {
                                 Constants.Drivetrain.Auto.ROTATION_KD) // Rotation PID constants
                 ),
                 config,
-                () -> _isRedAlliance,
+                () -> RobotContainer.isRedAlliance(),
                 this);
 
         // -------------------------------------------------------------------------------------

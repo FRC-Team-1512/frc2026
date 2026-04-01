@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.utils.ShooterCalc;
 
 public class SuperStructure extends SubsystemBase {
@@ -49,9 +50,9 @@ public class SuperStructure extends SubsystemBase {
     @Override
     public void periodic() {
         Pose2d currentPose = _poseSupplier.get();
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        boolean _isRedAlliance = alliance.filter(value -> value == Alliance.Red).isPresent();
-        
+
+        boolean _isRedAlliance = RobotContainer.isRedAlliance();
+
         Translation2d target;
         if(_isRedAlliance) {
             target = Constants.TARGET_RED;

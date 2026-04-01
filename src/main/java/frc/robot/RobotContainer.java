@@ -4,10 +4,14 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -99,5 +103,10 @@ public class RobotContainer {
 
 	public Command getAutonomousCommand() {
 		return autoChooser.getSelected();
+	}
+
+	public static boolean isRedAlliance() {
+		Optional<Alliance> alliance = DriverStation.getAlliance();
+        return alliance.filter(value -> value == Alliance.Red).isPresent();
 	}
 }
