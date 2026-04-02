@@ -38,7 +38,7 @@ public class SuperStructure extends SubsystemBase {
 
         _targetDistanceMeters = 0.0;
 
-        _defaultIdleState = SuperStructureState.IDLE;
+        _defaultIdleState = SuperStructureState.IDLE_EXPANDED;
 
         _activeStates.add(_defaultIdleState);
     }
@@ -79,6 +79,8 @@ public class SuperStructure extends SubsystemBase {
         if (_activeStates.contains(SuperStructureState.SHOOT)) {
             double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
             // 0.6 sec period, Robot Mormonism
+
+            /*
             boolean isExtended = (currentTime % 0.6) < 0.3; 
 
             if (isExtended) {
@@ -86,6 +88,7 @@ public class SuperStructure extends SubsystemBase {
             } else {
                 _intake.extendHalfArm();
             }
+            */
 
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
