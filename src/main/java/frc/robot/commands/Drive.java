@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +23,10 @@ import frc.robot.utils.ShooterCalc;
 public class Drive extends Command {
     Drivetrain _drivetrain;
     SuperStructure _superStructure;
+
+    SlewRateLimiter _vxLimiter = new SlewRateLimiter(16.0);
+    SlewRateLimiter _vyLimiter = new SlewRateLimiter(16.0);
+    SlewRateLimiter _rotLimiter = new SlewRateLimiter(10.0);
     
     public Drive(Drivetrain drivetrain, SuperStructure superStructure) {
         _drivetrain = drivetrain;
@@ -70,6 +75,10 @@ public class Drive extends Command {
 
         vx *= invert;
         vy *= invert;
+
+        vx = _vxLimiter.calculate(vx);
+        vy = _vyLimiter.calculate(vy);
+        rot = _rotLimiter.calculate(rot);
 
         if (_superStructure.isShootingMode() && !RobotContainer.driver.leftTrigger().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
