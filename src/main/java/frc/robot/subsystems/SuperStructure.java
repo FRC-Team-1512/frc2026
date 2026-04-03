@@ -80,7 +80,6 @@ public class SuperStructure extends SubsystemBase {
             double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
             // 0.6 sec period, Robot Mormonism
 
-            /*
             boolean isExtended = (currentTime % 0.6) < 0.3; 
 
             if (isExtended) {
@@ -88,7 +87,6 @@ public class SuperStructure extends SubsystemBase {
             } else {
                 _intake.extendHalfArm();
             }
-            */
 
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {

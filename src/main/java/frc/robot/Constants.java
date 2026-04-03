@@ -156,7 +156,7 @@ public class Constants {
             public static final double INTAKE_ARM_SENSOR_TO_MECHANISM_RATIO = 1.0 / 1.0;
             public static final double INTAKE_ARM_ROTOR_TO_SENSOR_RATIO = 1.0 / 1.0;
 
-            public static final double INTAKE_ARM_MIN = -9.0;
+            public static final double INTAKE_ARM_MIN = -12.857;
             public static final double INTAKE_ARM_MAX = 0.0;
 
             public static final double INTAKE_ARM_ACCURACY_TOLERANCE = 0.4; // Rotations
@@ -164,7 +164,7 @@ public class Constants {
             public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MAX;
             public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MIN;
 
-            public static final double INTAKE_WHEEL_POWER = -0.8;
+            public static final double INTAKE_WHEEL_POWER = -1.0;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;
             public static final double RETRACT_WHEEL_POWER = 0.0;
         }
