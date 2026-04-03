@@ -142,8 +142,8 @@ public class Constants {
 
     public static class Intake {
         public static class MotorConfig {
-            public static final int INTAKE_ARM_STATOR_CURRENT_LIMIT = 50;
-            public static final int INTAKE_ARM_SUPPLY_CURRENT_LIMIT = 60;
+            public static final int INTAKE_ARM_STATOR_CURRENT_LIMIT = 35;
+            public static final int INTAKE_ARM_SUPPLY_CURRENT_LIMIT = 45;
             public static final int INTAKE_WHEEL_STATOR_CURRENT_LIMIT = 60;
             public static final int INTAKE_WHEEL_SUPPLY_CURRENT_LIMIT = 70;
         }
@@ -164,9 +164,9 @@ public class Constants {
             // public static final double INTAKE_ARM_INTAKE_POSITION = INTAKE_ARM_MAX;
             // public static final double INTAKE_ARM_RETRACT_POSITION = INTAKE_ARM_MIN;
 
-            public static final double INTAKE_ARM_EXTEND_POWER = 0.2; // Adjust carefully
-            public static final double INTAKE_ARM_RETRACT_POWER = -0.2; // Adjust carefully
-            public static final double INTAKE_ARM_CURRENT_THRESHOLD = 20.0; // Amps (Threshold for hard stop)
+            public static final double INTAKE_ARM_EXTEND_POWER = 0.25; // Adjust carefully
+            public static final double INTAKE_ARM_RETRACT_POWER = -0.25; // Adjust carefully
+            public static final double INTAKE_ARM_CURRENT_THRESHOLD = 35.0; // Amps (Threshold for hard stop)
 
             public static final double INTAKE_WHEEL_POWER = -1.0;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;

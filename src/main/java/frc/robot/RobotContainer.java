@@ -76,8 +76,8 @@ public class RobotContainer {
 		//_indexer.setDefaultCommand(new IndexerTest(_indexer));
 		//_intake.setDefaultCommand(new IntakeTest(_intake));
 
-		driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
-		driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
+		//driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
+		//driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
 
 		driver.rightTrigger().onTrue(_superStructure.requestShoot());
 		driver.rightTrigger().onFalse(_superStructure.revokeShoot());
@@ -93,6 +93,8 @@ public class RobotContainer {
 
 		driver.leftTrigger().onTrue(_superStructure.isManual());
 		driver.leftTrigger().onFalse(_superStructure.isNotManual());
+
+		driver.start().onTrue(_drivetrain.ForceReseed());
 
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));

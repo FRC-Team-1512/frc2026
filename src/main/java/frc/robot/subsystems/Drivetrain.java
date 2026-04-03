@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.ejml.equation.MatrixConstructor;
+
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -27,6 +29,8 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -111,7 +115,8 @@ public class Drivetrain extends SubsystemBase {
                 _modules[BL_IDX].getLocation(),
                 _modules[BR_IDX].getLocation());
 
-        _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose);
+        _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose
+                , VecBuilder.fill(0.35, 0.35, 0.001), VecBuilder.fill(0.05, 0.05, 99999999.9));
 
         // -------------------------------------------------------------------------------------
         
@@ -338,7 +343,7 @@ public class Drivetrain extends SubsystemBase {
                 getHeading());
 
         double avgDist = mt2.avgTagDist;
-        double xyStdDev = (Math.pow(avgDist, 2.0) / mt2.tagCount) * 0.02;
+        double xyStdDev = (Math.pow(avgDist, 2.0) / mt2.tagCount) * 0.015;
 
         Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStdDev, xyStdDev, 9999999.0);
 
@@ -549,5 +554,13 @@ public class Drivetrain extends SubsystemBase {
         }
 
         return false;
+    }
+
+    public Command ForceReseed() {
+        return runOnce(() -> {
+            if (getVelocityMagnitude() < 0.5) {
+                forceReseed();
+            }
+        });
     }
 }

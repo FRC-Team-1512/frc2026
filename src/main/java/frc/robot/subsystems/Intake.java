@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 // import edu.wpi.first.math.MathUtil;
 // import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +39,7 @@ public class Intake extends SubsystemBase {
 
     private ArmState _armState = ArmState.RETRACTED;
     private DutyCycleOut _dutyCycleOut = new DutyCycleOut(0.0);
+    private final Timer _stateTimer = new Timer();
 
     public Intake() {
         _intakeWheelMotor = new TalonFX(RobotMap.CAN.INTAKE_WHEEL);
@@ -59,6 +61,7 @@ public class Intake extends SubsystemBase {
         _intakeArmMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.MotorConfig.INTAKE_ARM_SUPPLY_CURRENT_LIMIT;
         _intakeArmMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         _intakeArmMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        _intakeArmMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2; // Ramps output to protect belt
         // _intakeArmMotorConfig.Slot0.kP = Constants.Intake.INTAKE_ARM_KP;
         // _intakeArmMotorConfig.Slot0.kI = Constants.Intake.INTAKE_ARM_KI;
         // _intakeArmMotorConfig.Slot0.kD = Constants.Intake.INTAKE_ARM_KD;
@@ -101,12 +104,14 @@ public class Intake extends SubsystemBase {
     public void extendArm() {
         if (_armState != ArmState.EXTENDED && _armState != ArmState.EXTENDING) {
             _armState = ArmState.EXTENDING;
+            _stateTimer.restart();
         }
     }
 
     public void retractArm() {
         if (_armState != ArmState.RETRACTED && _armState != ArmState.RETRACTING) {
             _armState = ArmState.RETRACTING;
+            _stateTimer.restart();
         }
     }
 
@@ -145,21 +150,21 @@ public class Intake extends SubsystemBase {
         switch (_armState) {
             case EXTENDING:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_EXTEND_POWER));
-                if (armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                if (_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
                     _armState = ArmState.EXTENDED;
                 }
                 break;
             case RETRACTING:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POWER));
-                if (armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                if (_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
                     _armState = ArmState.RETRACTED;
                 }
                 break;
             case EXTENDED:
-                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.0));
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.02));
                 break;
             case RETRACTED:
-                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.0));
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(-0.02));
                 break;
         }
         // _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));

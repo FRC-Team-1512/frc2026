@@ -39,7 +39,7 @@ public class SuperStructure extends SubsystemBase {
 
         _targetDistanceMeters = 0.0;
 
-        _defaultIdleState = SuperStructureState.IDLE_EXPANDED;
+        _defaultIdleState = SuperStructureState.IDLE;
 
         _activeStates.add(_defaultIdleState);
     }
@@ -88,13 +88,14 @@ public class SuperStructure extends SubsystemBase {
             // 0.6 sec period, Robot Mormonism
 
             boolean isExtended = (currentTime % 0.6) < 0.3;
-
+            /*
             if (isExtended) {
                 _intake.extendArm();
             } else {
                 // _intake.extendHalfArm(); // position mode is disabled
                 _intake.retractArm();
             }
+                */
 
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
