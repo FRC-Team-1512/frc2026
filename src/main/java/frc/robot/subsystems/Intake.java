@@ -156,6 +156,8 @@ public class Intake extends SubsystemBase {
                 }
                 break;
             case EXTENDED:
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.0));
+                break;
             case RETRACTED:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.0));
                 break;
