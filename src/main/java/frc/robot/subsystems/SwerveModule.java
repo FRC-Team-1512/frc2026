@@ -65,10 +65,12 @@ public class SwerveModule extends SubsystemBase {
 
         _steerMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.STEER_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.STEER_PEAK_VOLTAGE));
+        _steerMotorConfig.MotorOutput.NeutralMode = Constants.Drivetrain.STEER_MOTOR_NEUTRAL_MODE;
 
         TalonFXConfiguration _driveMotorConfig = new TalonFXConfiguration();
         _driveMotorConfig.Feedback.SensorToMechanismRatio = Constants.Drivetrain.Hardware.DRIVE_SENSOR_TO_MECHANISM_RATIO;
         _driveMotorConfig.Feedback.RotorToSensorRatio = Constants.Drivetrain.Hardware.DRIVE_ROTOR_TO_SENSOR_RATIO;
+        _driveMotorConfig.MotorOutput.NeutralMode = Constants.Drivetrain.DRIVE_MOTOR_NEUTRAL_MODE;
         _driveMotorConfig.Slot0.kS = Constants.Drivetrain.DRIVE_KS;
         _driveMotorConfig.Slot0.kV = Constants.Drivetrain.DRIVE_KV;
         _driveMotorConfig.Slot0.kP = Constants.Drivetrain.DRIVE_KP;

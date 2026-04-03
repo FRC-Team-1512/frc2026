@@ -1,5 +1,7 @@
 package frc.robot;
 
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.SwerveModule.ModuleConfiguration;
@@ -59,6 +61,7 @@ public class Constants {
         public static final double STEER_KI = 0.0;
         public static final double STEER_KD = 0.02;
         public static final double STEER_PEAK_VOLTAGE = 14.0;
+        public static final NeutralModeValue STEER_MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
         
         public static final double DRIVE_KS = 0.1;
         public static final double DRIVE_KV = 0.75;
@@ -66,6 +69,7 @@ public class Constants {
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.07;
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
+        public static final NeutralModeValue DRIVE_MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
 
         public static final double HEADING_COEFF = 1.2;
         public static final double HEADING_KP = 1.8;
