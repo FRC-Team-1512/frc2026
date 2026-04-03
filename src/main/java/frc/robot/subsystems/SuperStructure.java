@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -45,6 +46,12 @@ public class SuperStructure extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        if (DriverStation.isDisabled()) {
+            requestState(_defaultIdleState);
+            setIsManual(false);
+        }
+
         Pose2d currentPose = _poseSupplier.get();
 
         boolean _isRedAlliance = RobotContainer.isRedAlliance();
@@ -230,6 +237,10 @@ public class SuperStructure extends SubsystemBase {
 
     public Command requestIdleExpanded() {
         return runOnce(() -> requestState(SuperStructureState.IDLE_EXPANDED));
+    }
+
+    public Command requestDefaultIdle() {
+        return runOnce(() -> requestState(_defaultIdleState));
     }
 
     public Command revokeShoot() {
