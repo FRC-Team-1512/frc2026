@@ -96,6 +96,9 @@ public class RobotContainer {
 
 		driver.start().onTrue(_drivetrain.ForceReseed());
 
+		driver.back().onTrue(_superStructure.requestReverseIntake());
+		driver.back().onFalse(_superStructure.revokeReverseIntake());
+
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));
 		//operator.x().onTrue(new DecreaseHood(_shooter));

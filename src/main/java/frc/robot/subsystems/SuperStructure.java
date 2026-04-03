@@ -253,6 +253,10 @@ public class SuperStructure extends SubsystemBase {
         return runOnce(() -> revokeState(SuperStructureState.INTAKE));
     }
 
+    public Command revokeReverseIntake() {
+        return runOnce(() -> revokeState(SuperStructureState.REVERSE_INTAKE));
+    }
+
     public Command isManual() {
         return runOnce(() -> setIsManual(true));
     }

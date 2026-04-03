@@ -165,13 +165,18 @@
   "eventMarkers": [
     {
       "name": "requestIdleExpanded",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "requestIdleExpanded"
+        }
+      }
     },
     {
       "name": "requestIntake",
-      "waypointRelativePos": 1.4008413461538463,
+      "waypointRelativePos": 0.6531613372093019,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -193,10 +198,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 5.0,
-    "maxAngularVelocity": 100.0,
-    "maxAngularAcceleration": 5.0,
+    "maxVelocity": 1.75,
+    "maxAcceleration": 2.0,
+    "maxAngularVelocity": 50.0,
+    "maxAngularAcceleration": 2.5,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

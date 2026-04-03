@@ -77,11 +77,11 @@ public class Constants {
         public static final double HEADING_KD = 0.35;
 
         public static class Auto {
-            public static final double TRANSLATION_KP = 0.5;
+            public static final double TRANSLATION_KP = 2.0;
             public static final double TRANSLATION_KI = 0.0;
             public static final double TRANSLATION_KD = 0.0;
 
-            public static final double ROTATION_KP = 0.9;
+            public static final double ROTATION_KP = 2.5;
             public static final double ROTATION_KI = 0.0;
             public static final double ROTATION_KD = 0.0;
         }
@@ -105,7 +105,7 @@ public class Constants {
     //public static final Translation2d TARGET_BLUE = new Translation2d(0.0, 0.0);
     public static final Translation2d TARGET_RED = new Translation2d(4.612 + 7.290, 4.021);
 
-    public static final double DEFAULT_DISTANCE = 4.0; //meters
+    public static final double DEFAULT_DISTANCE = 7.0; //meters
 
     public static class Shooter {
         public static final double SHOOTER_KP = 0.5;
@@ -148,8 +148,8 @@ public class Constants {
         public static class MotorConfig {
             public static final int INTAKE_ARM_STATOR_CURRENT_LIMIT = 35;
             public static final int INTAKE_ARM_SUPPLY_CURRENT_LIMIT = 45;
-            public static final int INTAKE_WHEEL_STATOR_CURRENT_LIMIT = 60;
-            public static final int INTAKE_WHEEL_SUPPLY_CURRENT_LIMIT = 70;
+            public static final int INTAKE_WHEEL_STATOR_CURRENT_LIMIT = 80;
+            public static final int INTAKE_WHEEL_SUPPLY_CURRENT_LIMIT = 120;
         }
 
         // public static final double INTAKE_ARM_KP = 0.3;
