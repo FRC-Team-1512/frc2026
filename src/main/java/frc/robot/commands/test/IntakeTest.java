@@ -17,10 +17,10 @@ public class IntakeTest extends Command {
     @Override
     public void execute() {
         double v = -applyDeadband(RobotContainer.operator.getLeftY(), 0.15);
-        double w = -applyDeadband(RobotContainer.operator.getRightY(), 0.15);
+        // double w = -applyDeadband(RobotContainer.operator.getRightY(), 0.15);
 
         _intake.setIntakeWheel(-v);
-        _intake.setIntakeArm(Rotation2d.fromRotations(w * 0.2));
+        // _intake.setIntakeArm(Rotation2d.fromRotations(w * 0.2));
     }
 
     private static double applyDeadband(double input, double deadband) {

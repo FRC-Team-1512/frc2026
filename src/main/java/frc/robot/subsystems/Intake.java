@@ -2,16 +2,14 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import com.ctre.phoenix6.StatusCode;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+// import com.ctre.phoenix6.controls.PositionDutyCycle;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
+// import edu.wpi.first.math.MathUtil;
+// import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,9 +26,18 @@ public class Intake extends SubsystemBase {
     private final com.ctre.phoenix6.StatusSignal<edu.wpi.first.units.measure.Angle> _intakeArmPositionSignal;
 
     private double _wheelPower;
-    private Rotation2d _targetArmPosition;
+    // private Rotation2d _targetArmPosition;
+    // private PositionDutyCycle _intakeArmPositionDutyCycle;
 
-    private PositionDutyCycle _intakeArmPositionDutyCycle;
+    public enum ArmState {
+        EXTENDING,
+        EXTENDED,
+        RETRACTING,
+        RETRACTED
+    }
+
+    private ArmState _armState = ArmState.RETRACTED;
+    private DutyCycleOut _dutyCycleOut = new DutyCycleOut(0.0);
 
     public Intake() {
         _intakeWheelMotor = new TalonFX(RobotMap.CAN.INTAKE_WHEEL);
@@ -52,9 +59,9 @@ public class Intake extends SubsystemBase {
         _intakeArmMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.MotorConfig.INTAKE_ARM_SUPPLY_CURRENT_LIMIT;
         _intakeArmMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         _intakeArmMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        _intakeArmMotorConfig.Slot0.kP = Constants.Intake.INTAKE_ARM_KP;
-        _intakeArmMotorConfig.Slot0.kI = Constants.Intake.INTAKE_ARM_KI;
-        _intakeArmMotorConfig.Slot0.kD = Constants.Intake.INTAKE_ARM_KD;
+        // _intakeArmMotorConfig.Slot0.kP = Constants.Intake.INTAKE_ARM_KP;
+        // _intakeArmMotorConfig.Slot0.kI = Constants.Intake.INTAKE_ARM_KI;
+        // _intakeArmMotorConfig.Slot0.kD = Constants.Intake.INTAKE_ARM_KD;
 
         StatusCode wheelStatus = ApplyConfig.applyConfigWithRetry("Intake Wheel", getName(), () -> _intakeWheelMotor.getConfigurator().apply(_intakeWheelMotorConfig));
         if (!wheelStatus.isOK()) {
@@ -66,8 +73,8 @@ public class Intake extends SubsystemBase {
         }
 
         _wheelPower = 0.0;
-        _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION);
-        _intakeArmPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
+        // _targetArmPosition = Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION);
+        // _intakeArmPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
 
         _intakeArmPositionSignal = _intakeArmMotor.getPosition();
     }
@@ -77,29 +84,35 @@ public class Intake extends SubsystemBase {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_intakeArmPositionSignal);
         updateState();
         SmartDashboard.putNumber("Intake: Intake Arm Position", _intakeArmPositionSignal.getValueAsDouble());
-        SmartDashboard.putNumber("Intake: Intake Arm Desired Position", _targetArmPosition.getRotations());
+        SmartDashboard.putString("Intake: Arm State", _armState.toString());
+        SmartDashboard.putNumber("Intake: Arm Current", _intakeArmMotor.getStatorCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Intake: Intake Arm Desired Position", _targetArmPosition.getRotations());
     }
 
     public void setIntakeWheel(double power) {
         _wheelPower = power;
     }
 
-    public void setIntakeArm(Rotation2d position) {
-        double clampedPosition = MathUtil.clamp(position.getRotations(), Constants.Intake.Hardware.INTAKE_ARM_MIN, Constants.Intake.Hardware.INTAKE_ARM_MAX);
-        _targetArmPosition = Rotation2d.fromRotations(clampedPosition);
-    }
+    // public void setIntakeArm(Rotation2d position) {
+    //     double clampedPosition = MathUtil.clamp(position.getRotations(), Constants.Intake.Hardware.INTAKE_ARM_MIN, Constants.Intake.Hardware.INTAKE_ARM_MAX);
+    //     _targetArmPosition = Rotation2d.fromRotations(clampedPosition);
+    // }
 
     public void extendArm() {
-        setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION));
+        if (_armState != ArmState.EXTENDED && _armState != ArmState.EXTENDING) {
+            _armState = ArmState.EXTENDING;
+        }
     }
 
     public void retractArm() {
-        setIntakeArm(Rotation2d.fromRotations(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION));
+        if (_armState != ArmState.RETRACTED && _armState != ArmState.RETRACTING) {
+            _armState = ArmState.RETRACTING;
+        }
     }
 
-    public void extendHalfArm() {
-        setIntakeArm(Rotation2d.fromRotations((Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION + Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) / 2.0));
-    }
+    // public void extendHalfArm() {
+    //     setIntakeArm(Rotation2d.fromRotations((Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION + Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) / 2.0));
+    // }
 
     public void intake() {
         extendArm();
@@ -117,23 +130,44 @@ public class Intake extends SubsystemBase {
     }
 
     public boolean isAtIntakePosition() {
-        return Math.abs(_intakeArmPositionSignal.getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_INTAKE_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+        return _armState == ArmState.EXTENDED;
     }
 
     public boolean isAtRetractPosition() {
-        return Math.abs(_intakeArmPositionSignal.getValueAsDouble() - Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POSITION) < Constants.Intake.Hardware.INTAKE_ARM_ACCURACY_TOLERANCE;
+        return _armState == ArmState.RETRACTED;
     }
 
     private void updateState() {
         _intakeWheelMotor.set(_wheelPower);
-        _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));
+
+        double armCurrent = _intakeArmMotor.getStatorCurrent().getValueAsDouble();
+
+        switch (_armState) {
+            case EXTENDING:
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_EXTEND_POWER));
+                if (armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                    _armState = ArmState.EXTENDED;
+                }
+                break;
+            case RETRACTING:
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POWER));
+                if (armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                    _armState = ArmState.RETRACTED;
+                }
+                break;
+            case EXTENDED:
+            case RETRACTED:
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.0));
+                break;
+        }
+        // _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));
     }
 
     public Command runIntakeWheel(double power) {
         return run(() -> setIntakeWheel(power));
     }
 
-    public Command runIntakeArm(Rotation2d position) {
-        return run(() -> setIntakeArm(position));
-    }
+    // public Command runIntakeArm(Rotation2d position) {
+    //     return run(() -> setIntakeArm(position));
+    // }
 }

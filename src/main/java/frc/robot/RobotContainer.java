@@ -84,12 +84,12 @@ public class RobotContainer {
 		driver.rightBumper().onTrue(_superStructure.requestIntake());
 		driver.rightBumper().onFalse(_superStructure.revokeIntake());
 		driver.b().onTrue(_superStructure.requestIdleExpanded());
-		driver.a().onTrue(_superStructure.requestIdle());
+		driver.x().onTrue(_superStructure.requestIdle());
 
-		driver.x().onTrue(new ZeroIMU(_drivetrain));
+		//driver.x().onTrue(new ZeroIMU(_drivetrain));
 
-		driver.povUp().onTrue(new SnapHead(_drivetrain));
-		driver.povDown().onTrue(new SnapTail(_drivetrain));
+		driver.y().onTrue(new SnapHead(_drivetrain));
+		driver.a().onTrue(new SnapTail(_drivetrain));
 
 		driver.leftTrigger().onTrue(_superStructure.isManual());
 		driver.leftTrigger().onFalse(_superStructure.isNotManual());
