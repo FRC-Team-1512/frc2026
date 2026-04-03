@@ -358,12 +358,16 @@ public class Drivetrain extends SubsystemBase {
             speeds = new ChassisSpeeds();
         }
 
+        ChassisSpeeds limited = speeds; // acceleration limit temporalily disabled
+
+        /*
         ChassisSpeeds limited = limitChassisAcceleration(
                 speeds,
                 _previousDesiredChassisSpeeds,
                 getDeltaT(),
                 Constants.Drivetrain.MAX_TRANSLATOIN_ACCELERATION_METERS_PER_SECOND_SQUARED,
                 Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
+        */
 
         SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
         setModuleStates(desiredStates);

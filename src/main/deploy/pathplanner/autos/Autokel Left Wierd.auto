@@ -9,11 +9,71 @@
           "data": {
             "pathName": "Linus Swipe Left Wierd"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "isNotManual"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "requestShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "revokeShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Later Linus Swipe Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "isManual"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "requestShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "revokeShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "isNotManual"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
