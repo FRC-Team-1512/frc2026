@@ -171,6 +171,7 @@ public class Constants {
             public static final double INTAKE_ARM_EXTEND_POWER = 0.25; // Adjust carefully
             public static final double INTAKE_ARM_RETRACT_POWER = -0.25; // Adjust carefully
             public static final double INTAKE_ARM_CURRENT_THRESHOLD = 35.0; // Amps (Threshold for hard stop)
+            public static final double INTAKE_ARM_RETRACT_TIMEOUT_SEC = 2.5; // Auto-stop retracting after this time
 
             public static final double INTAKE_WHEEL_POWER = -1.0;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;

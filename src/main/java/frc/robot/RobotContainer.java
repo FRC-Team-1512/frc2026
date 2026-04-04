@@ -104,6 +104,9 @@ public class RobotContainer {
 		driver.start().onTrue(_drivetrain.ForceReseed());
 		operator.start().onTrue(_drivetrain.ForceReseed());
 
+		operator.leftTrigger().onTrue(_superStructure.requestReverseIntake());
+		operator.leftTrigger().onFalse(_superStructure.revokeReverseIntake());
+
 		driver.back().onTrue(_superStructure.requestReverseIntake());
 		driver.back().onFalse(_superStructure.revokeReverseIntake());
 

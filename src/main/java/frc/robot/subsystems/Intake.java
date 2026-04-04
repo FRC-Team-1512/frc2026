@@ -156,7 +156,8 @@ public class Intake extends SubsystemBase {
                 break;
             case RETRACTING:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POWER));
-                if (_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                if ((_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) || 
+                    _stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_TIMEOUT_SEC)) {
                     _armState = ArmState.RETRACTED;
                 }
                 break;
