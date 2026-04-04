@@ -144,7 +144,7 @@
     },
     {
       "name": "requestIdleExpanded",
-      "waypointRelativePos": 1.0440670590185677,
+      "waypointRelativePos": 1.0161430702917775,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -155,7 +155,7 @@
     },
     {
       "name": "requestIntake",
-      "waypointRelativePos": 1.260102370689655,
+      "waypointRelativePos": 1.1004849137931039,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -177,9 +177,9 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.75,
+    "maxVelocity": 1.5,
     "maxAcceleration": 2.0,
-    "maxAngularVelocity": 50.0,
+    "maxAngularVelocity": 25.0,
     "maxAngularAcceleration": 2.5,
     "nominalVoltage": 12.0,
     "unlimited": false

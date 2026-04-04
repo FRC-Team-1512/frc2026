@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
 import frc.robot.commands.SnapHead;
+import frc.robot.commands.SnapLeft;
+import frc.robot.commands.SnapRight;
 import frc.robot.commands.SnapTail;
 import frc.robot.commands.ZeroIMU;
 import frc.robot.commands.test.DecreaseFlyWheel;
@@ -83,18 +85,24 @@ public class RobotContainer {
 		driver.rightTrigger().onFalse(_superStructure.revokeShoot());
 		driver.rightBumper().onTrue(_superStructure.requestIntake());
 		driver.rightBumper().onFalse(_superStructure.revokeIntake());
-		driver.b().onTrue(_superStructure.requestIdleExpanded());
-		driver.x().onTrue(_superStructure.requestIdle());
+		driver.povUp().onTrue(_superStructure.requestIdleExpanded());
+		driver.povDown().onTrue(_superStructure.requestIdle());
+
+		operator.y().onTrue(_superStructure.requestIdleExpanded());
+		operator.a().onTrue(_superStructure.requestIdle());
 
 		//driver.x().onTrue(new ZeroIMU(_drivetrain));
 
 		driver.y().onTrue(new SnapHead(_drivetrain));
 		driver.a().onTrue(new SnapTail(_drivetrain));
+		driver.x().onTrue(new SnapLeft(_drivetrain));
+		driver.b().onTrue(new SnapRight(_drivetrain));
 
 		driver.leftTrigger().onTrue(_superStructure.isManual());
 		driver.leftTrigger().onFalse(_superStructure.isNotManual());
 
 		driver.start().onTrue(_drivetrain.ForceReseed());
+		operator.start().onTrue(_drivetrain.ForceReseed());
 
 		driver.back().onTrue(_superStructure.requestReverseIntake());
 		driver.back().onFalse(_superStructure.revokeReverseIntake());

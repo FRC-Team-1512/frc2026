@@ -72,6 +72,10 @@ public class SuperStructure extends SubsystemBase {
             _targetDistanceMeters = adjustedTarget.getDistance(currentPose.getTranslation());
         }
 
+        if (RobotContainer.operator.rightTrigger().getAsBoolean()) {
+            _targetDistanceMeters = 12;
+        }
+
         SmartDashboard.putNumber("SuperStructure: Distance Meters", _targetDistanceMeters);
 
         if (_activeStates.contains(SuperStructureState.INTAKE)) {

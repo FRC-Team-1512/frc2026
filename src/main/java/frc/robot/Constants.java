@@ -77,11 +77,11 @@ public class Constants {
         public static final double HEADING_KD = 0.35;
 
         public static class Auto {
-            public static final double TRANSLATION_KP = 2.0;
+            public static final double TRANSLATION_KP = 0.5;
             public static final double TRANSLATION_KI = 0.0;
             public static final double TRANSLATION_KD = 0.0;
 
-            public static final double ROTATION_KP = 2.5;
+            public static final double ROTATION_KP = 0.9;
             public static final double ROTATION_KI = 0.0;
             public static final double ROTATION_KD = 0.0;
         }
