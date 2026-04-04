@@ -160,6 +160,12 @@ public class Intake extends SubsystemBase {
                     _stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_TIMEOUT_SEC)) {
                     _armState = ArmState.RETRACTED;
                 }
+
+                /*
+                if ((_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD)) {
+                    _armState = ArmState.RETRACTED;
+                }
+                */
                 break;
             case EXTENDED:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.02));
