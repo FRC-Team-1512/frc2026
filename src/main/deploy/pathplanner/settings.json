@@ -6,7 +6,7 @@
   "autoFolders": [],
   "defaultMaxVel": 1.5,
   "defaultMaxAccel": 2.0,
-  "defaultMaxAngVel": 25.0,
+  "defaultMaxAngVel": 30.0,
   "defaultMaxAngAccel": 2.5,
   "defaultNominalVoltage": 12.0,
   "robotMass": 52.0,
