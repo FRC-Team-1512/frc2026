@@ -374,7 +374,9 @@ public class Drivetrain extends SubsystemBase {
                 Constants.Drivetrain.MAX_ROTATION_ACCELERATION_RADIANS_PER_SECOND_SQUARED);
         */
 
-        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(limited);
+        ChassisSpeeds discretizedSpeeds = ChassisSpeeds.discretize(limited, getDeltaT());
+
+        SwerveModuleState desiredStates[] = _kinematics.toSwerveModuleStates(discretizedSpeeds);
         setModuleStates(desiredStates);
 
         _previousDesiredChassisSpeeds = limited;
