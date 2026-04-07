@@ -4,11 +4,13 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -34,7 +36,7 @@ public class SwerveModule extends SubsystemBase {
     private final TalonFX _driveMotor;
     private final CANcoder _encoder;
 
-    private final PIDController _steerPositionSpeed;
+    private final PositionVoltage _steerPositionVoltage;
     private final VelocityVoltage _driveVelocityVoltage;
 
     private final Translation2d _moduleLocation;
@@ -63,9 +65,18 @@ public class SwerveModule extends SubsystemBase {
             _steerMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
+        _steerMotorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+        _steerMotorConfig.Feedback.FeedbackRemoteSensorID = _encoder.getDeviceID();
+        _steerMotorConfig.Feedback.SensorToMechanismRatio = Constants.Drivetrain.Hardware.STEER_SENSOR_TO_MECHANISM_RATIO;
+        _steerMotorConfig.Feedback.RotorToSensorRatio = Constants.Drivetrain.Hardware.STEER_ROTOR_TO_SENSOR_RATIO;
+        _steerMotorConfig.MotorOutput.NeutralMode = Constants.Drivetrain.STEER_MOTOR_NEUTRAL_MODE;
+        _steerMotorConfig.Slot0.kP = Constants.Drivetrain.STEER_KP;
+        _steerMotorConfig.Slot0.kI = Constants.Drivetrain.STEER_KI;
+        _steerMotorConfig.Slot0.kD = Constants.Drivetrain.STEER_KD;
+        _steerMotorConfig.ClosedLoopGeneral.ContinuousWrap = true;
+
         _steerMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.STEER_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.STEER_PEAK_VOLTAGE));
-        _steerMotorConfig.MotorOutput.NeutralMode = Constants.Drivetrain.STEER_MOTOR_NEUTRAL_MODE;
 
         TalonFXConfiguration _driveMotorConfig = new TalonFXConfiguration();
         _driveMotorConfig.Feedback.SensorToMechanismRatio = Constants.Drivetrain.Hardware.DRIVE_SENSOR_TO_MECHANISM_RATIO;
@@ -82,8 +93,6 @@ public class SwerveModule extends SubsystemBase {
         _driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 60;
         _driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         _driveMotorConfig.CurrentLimits.StatorCurrentLimit = 100;
-
-
         _driveMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.DRIVE_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.DRIVE_PEAK_VOLTAGE));
         
@@ -99,8 +108,7 @@ public class SwerveModule extends SubsystemBase {
 
         // -------------------------------------------------------------------------------------
 
-        _steerPositionSpeed = new PIDController(Constants.Drivetrain.STEER_KP, Constants.Drivetrain.STEER_KI, Constants.Drivetrain.STEER_KD);
-        _steerPositionSpeed.enableContinuousInput(-0.5, 0.5);
+        _steerPositionVoltage = new PositionVoltage(0).withSlot(0);
 
         _driveVelocityVoltage = new VelocityVoltage(0).withSlot(0);
 
@@ -172,11 +180,11 @@ public class SwerveModule extends SubsystemBase {
     }
 
     private void updateState() {
-        _steerMotor.set(_steerPositionSpeed.calculate(_steerPositionSignal.getValueAsDouble(), _desiredModuleState.angle.getRotations()));
+        double steerRotationPosition = _desiredModuleState.angle.getRotations();
+        _steerMotor.setControl(_steerPositionVoltage.withPosition(steerRotationPosition));
 
         double driveRotationsPerSecond = _desiredModuleState.speedMetersPerSecond 
             / (Constants.Drivetrain.Hardware.WHEEL_DIAMETER_METER * Math.PI);
-
         _driveMotor.setControl(_driveVelocityVoltage.withVelocity(driveRotationsPerSecond));
     }
 
