@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -28,9 +29,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -67,15 +66,12 @@ public class Drivetrain extends SubsystemBase {
     StructArrayPublisher<SwerveModuleState> _desiredSwerveStatePublisher;
     StructArrayPublisher<SwerveModuleState> _actualSwerveStatePublisher;
     StructArrayPublisher<Pose2d> _currentPosePublisher;
-    StructArrayPublisher<Pose2d> _visionPosePublisher;
-    StructArrayPublisher<Pose2d> _mt2PosePublisher;
-    StructArrayPublisher<Pose2d> _rightMt1PosePublisher;
-    StructArrayPublisher<Pose2d> _rightMt2PosePublisher;
-    StructArrayPublisher<Rotation2d> _visionHeading;
     StructArrayPublisher<Rotation2d> _desiredHeadingPublisher;
     IntegerPublisher _visionFiducialIDPublisher;
     StructArrayPublisher<Pose2d> _limelightLeftPosePublisher;
     StructArrayPublisher<Pose2d> _limelightRightPosePublisher;
+    StructArrayPublisher<Pose2d> _activePathPublisher;
+    StructArrayPublisher<Pose2d> _targetPosePublisher;
 
     private boolean _isSeed;
     private boolean _wasDisabled;
@@ -134,14 +130,11 @@ public class Drivetrain extends SubsystemBase {
         _headingPublisher = table.getStructArrayTopic("Heading", Rotation2d.struct).publish();
         _desiredHeadingPublisher = table.getStructArrayTopic("Desired Heading", Rotation2d.struct).publish();
         _timePublisher = table.getDoubleTopic("DeltaTime").publish();
-        _visionPosePublisher = table.getStructArrayTopic("VisionPose", Pose2d.struct).publish();
-        _mt2PosePublisher = table.getStructArrayTopic("mt2 Pose", Pose2d.struct).publish();
-        _rightMt1PosePublisher = table.getStructArrayTopic("Right Mt1 Pose", Pose2d.struct).publish();
-        _rightMt2PosePublisher = table.getStructArrayTopic("Right Mt2 Pose", Pose2d.struct).publish();
-        _visionHeading = table.getStructArrayTopic("vision heading", Rotation2d.struct).publish();
         _visionFiducialIDPublisher = table.getIntegerTopic("vision fiducial ID").publish();
         _limelightLeftPosePublisher = table.getStructArrayTopic("Limelight Left Pose", Pose2d.struct).publish();
         _limelightRightPosePublisher = table.getStructArrayTopic("Limelight Right Pose", Pose2d.struct).publish();
+        _activePathPublisher = table.getStructArrayTopic("ActivePath", Pose2d.struct).publish();
+        _targetPosePublisher = table.getStructArrayTopic("TargetPose", Pose2d.struct).publish();
 
         // -------------------------------------------------------------------------------------
 
@@ -168,6 +161,14 @@ public class Drivetrain extends SubsystemBase {
                 config,
                 () -> RobotContainer.isRedAlliance(),
                 this);
+
+        PathPlannerLogging.setLogActivePathCallback((poses) -> {
+            _activePathPublisher.set(poses.toArray(new Pose2d[0]));
+        });
+
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+            _targetPosePublisher.set(new Pose2d[] { pose });
+        });
 
         // -------------------------------------------------------------------------------------
 
@@ -264,16 +265,9 @@ public class Drivetrain extends SubsystemBase {
 
         boolean shouldSeed = !_isSeed && isLowAcceleration;
 
-        Pose2d leftPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-left");
-        Pose2d rightPose = LimelightHelpers.getBotPose2d_wpiBlue("limelight-right");
-        _limelightLeftPosePublisher.set(new Pose2d[] { leftPose });
-        _limelightRightPosePublisher.set(new Pose2d[] { rightPose });
-
-        SmartDashboard.putNumber("LL Left X", leftPose.getX());
-        SmartDashboard.putNumber("LL Left Y", leftPose.getY());
-        SmartDashboard.putNumber("LL Right X", rightPose.getX());
-        SmartDashboard.putNumber("LL Right Y", rightPose.getY());
-        SmartDashboard.putNumber("Pigeon Degrees", getHeading().getDegrees());
+        // Limelight raw wpiBlue pose fetches were here, but we now publish 
+        // the left and right poses strictly inside the fused functions 
+        // (attemptMT1Seed / updateMT2) below based on their evaluated tags.
 
         for (String limelightName : Constants.Drivetrain.Vision.LIMELIGHT_NAMES) {
             if (shouldSeed) {
@@ -304,11 +298,10 @@ public class Drivetrain extends SubsystemBase {
 
         resetPose(mt1.pose);
 
-        _visionHeading.set(new Rotation2d[] { visionHeading });
-        _visionPosePublisher.set(new Pose2d[] { mt1.pose });
-
-        if (limelightName.equals("limelight-right")) {
-            _rightMt1PosePublisher.set(new Pose2d[] { mt1.pose });
+        if (limelightName.equals("limelight-left")) {
+            _limelightLeftPosePublisher.set(new Pose2d[] { mt1.pose });
+        } else if (limelightName.equals("limelight-right")) {
+            _limelightRightPosePublisher.set(new Pose2d[] { mt1.pose });
         }
     }
 
@@ -349,10 +342,10 @@ public class Drivetrain extends SubsystemBase {
 
         _odometry.addVisionMeasurement(visionPoseWithGyroHeading, mt2.timestampSeconds, visionMeasurementStdDevs);
 
-        _mt2PosePublisher.set(new Pose2d[] { mt2.pose });
-
-        if (limelightName.equals("limelight-right")) {
-            _rightMt2PosePublisher.set(new Pose2d[] { mt2.pose });
+        if (limelightName.equals("limelight-left")) {
+            _limelightLeftPosePublisher.set(new Pose2d[] { mt2.pose });
+        } else if (limelightName.equals("limelight-right")) {
+            _limelightRightPosePublisher.set(new Pose2d[] { mt2.pose });
         }
     }
 

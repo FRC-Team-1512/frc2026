@@ -75,6 +75,12 @@ public class SwerveModule extends SubsystemBase {
         _steerMotorConfig.Slot0.kD = Constants.Drivetrain.STEER_KD;
         _steerMotorConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
+        //==== hard code ====
+        _steerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        _steerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        _steerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        _steerMotorConfig.CurrentLimits.StatorCurrentLimit = 60;
+
         _steerMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.STEER_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.STEER_PEAK_VOLTAGE));
 
