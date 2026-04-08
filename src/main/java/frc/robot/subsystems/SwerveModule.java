@@ -77,9 +77,9 @@ public class SwerveModule extends SubsystemBase {
 
         //==== hard code ====
         _steerMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        _steerMotorConfig.CurrentLimits.SupplyCurrentLimit = 40;
+        _steerMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Drivetrain.MotorConfig.STEER_SUPPLY_CURRENT_LIMIT;
         _steerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        _steerMotorConfig.CurrentLimits.StatorCurrentLimit = 60;
+        _steerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Drivetrain.MotorConfig.STEER_STATOR_CURRENT_LIMIT;
 
         _steerMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.STEER_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.STEER_PEAK_VOLTAGE));
@@ -96,9 +96,9 @@ public class SwerveModule extends SubsystemBase {
 
         //==== hard code ====
         _driveMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        _driveMotorConfig.CurrentLimits.SupplyCurrentLimit = 60;
+        _driveMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Drivetrain.MotorConfig.DRIVE_SUPPLY_CURRENT_LIMIT;
         _driveMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        _driveMotorConfig.CurrentLimits.StatorCurrentLimit = 100;
+        _driveMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.Drivetrain.MotorConfig.DRIVE_STATOR_CURRENT_LIMIT;
         _driveMotorConfig.Voltage.withPeakForwardVoltage(Volts.of(Constants.Drivetrain.DRIVE_PEAK_VOLTAGE))
             .withPeakReverseVoltage(Volts.of(-Constants.Drivetrain.DRIVE_PEAK_VOLTAGE));
         

@@ -121,7 +121,7 @@ public class SuperStructure extends SubsystemBase {
 
             _shooter.setShooterFromDistance(_targetDistanceMeters);
             if (_shooter.isReadyToShoot()) {
-                _indexer.setIndexer(1.8);
+                _indexer.setIndexer(Constants.Indexer.SHOOT_POWER);
             } else {
                 _indexer.setIndexer(0.0);
             }

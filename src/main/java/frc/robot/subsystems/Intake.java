@@ -68,7 +68,7 @@ public class Intake extends SubsystemBase {
         _intakeArmMotorConfig.CurrentLimits.SupplyCurrentLimit = Constants.Intake.MotorConfig.INTAKE_ARM_SUPPLY_CURRENT_LIMIT;
         _intakeArmMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         _intakeArmMotorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        _intakeArmMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.2; // Ramps output to protect belt
+        _intakeArmMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = Constants.Intake.MotorConfig.DUTY_CYCLE_OPEN_LOOP_RAMP_PERIOD; // Ramps output to protect belt
         // _intakeArmMotorConfig.Slot0.kP = Constants.Intake.INTAKE_ARM_KP;
         // _intakeArmMotorConfig.Slot0.kI = Constants.Intake.INTAKE_ARM_KI;
         // _intakeArmMotorConfig.Slot0.kD = Constants.Intake.INTAKE_ARM_KD;
@@ -162,28 +162,26 @@ public class Intake extends SubsystemBase {
         switch (_armState) {
             case EXTENDING:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_EXTEND_POWER));
-                if (_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
+                if (_stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_DEBOUNCE_SEC) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) {
                     _armState = ArmState.EXTENDED;
                 }
                 break;
             case RETRACTING:
                 _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_POWER));
-                if ((_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) || 
-                    _stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_TIMEOUT_SEC)) {
+                if ((_stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_DEBOUNCE_SEC) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD) ||
+                        _stateTimer.hasElapsed(Constants.Intake.Hardware.INTAKE_ARM_RETRACT_TIMEOUT_SEC)) {
                     _armState = ArmState.RETRACTED;
-                }
-
-                /*
+                }                /*
                 if ((_stateTimer.hasElapsed(0.25) && armCurrent > Constants.Intake.Hardware.INTAKE_ARM_CURRENT_THRESHOLD)) {
                     _armState = ArmState.RETRACTED;
                 }
                 */
                 break;
             case EXTENDED:
-                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(0.02));
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_KEEP_EXTENDED_POWER));
                 break;
             case RETRACTED:
-                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(-0.02));
+                _intakeArmMotor.setControl(_dutyCycleOut.withOutput(Constants.Intake.Hardware.INTAKE_ARM_KEEP_RETRACTED_POWER));
                 break;
         }
         // _intakeArmMotor.setControl(_intakeArmPositionDutyCycle.withPosition(_targetArmPosition.getRotations()));

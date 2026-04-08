@@ -111,8 +111,9 @@ public class Drivetrain extends SubsystemBase {
                 _modules[BL_IDX].getLocation(),
                 _modules[BR_IDX].getLocation());
 
-        _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose
-                , VecBuilder.fill(0.35, 0.35, 0.001), VecBuilder.fill(0.05, 0.05, 99999999.9));
+        _odometry = new SwerveDrivePoseEstimator(_kinematics, getHeading(), _measuredPositions, _currentPose, 
+                VecBuilder.fill(Constants.Drivetrain.Vision.STATE_STD_DEV_X, Constants.Drivetrain.Vision.STATE_STD_DEV_Y, Constants.Drivetrain.Vision.STATE_STD_DEV_THETA), 
+                VecBuilder.fill(Constants.Drivetrain.Vision.VISION_STD_DEV_X, Constants.Drivetrain.Vision.VISION_STD_DEV_Y, Constants.Drivetrain.Vision.VISION_STD_DEV_THETA));
 
         // -------------------------------------------------------------------------------------
         
@@ -254,7 +255,7 @@ public class Drivetrain extends SubsystemBase {
             _wasDisabled = false;
         }
 
-        if (!isDisabled && !_enableTimer.hasElapsed(0.5)) {
+        if (!isDisabled && !_enableTimer.hasElapsed(Constants.Drivetrain.Misc.ENABLE_TIMER_THRESHOLD_SEC)) {
             return;
         }
 
@@ -336,9 +337,9 @@ public class Drivetrain extends SubsystemBase {
                 getHeading());
 
         double avgDist = mt2.avgTagDist;
-        double xyStdDev = (Math.pow(avgDist, 2.0) / mt2.tagCount) * 0.015;
+        double xyStdDev = (Math.pow(avgDist, 2.0) / mt2.tagCount) * Constants.Drivetrain.Vision.XY_STD_DEV_COEFF;
 
-        Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStdDev, xyStdDev, 9999999.0);
+        Matrix<N3, N1> visionMeasurementStdDevs = VecBuilder.fill(xyStdDev, xyStdDev, Constants.Drivetrain.Vision.VISION_MEASUREMENT_STD_DEV_THETA);
 
         _odometry.addVisionMeasurement(visionPoseWithGyroHeading, mt2.timestampSeconds, visionMeasurementStdDevs);
 
@@ -544,7 +545,7 @@ public class Drivetrain extends SubsystemBase {
         }
         */
 
-        if (avgDistance > 5.0) {
+        if (avgDistance > Constants.Drivetrain.Misc.MAX_VISION_DISTANCE_METERS) {
             return true;
         }
 
@@ -553,7 +554,7 @@ public class Drivetrain extends SubsystemBase {
 
     public Command ForceReseed() {
         return runOnce(() -> {
-            if (getVelocityMagnitude() < 0.5) {
+            if (getVelocityMagnitude() < Constants.Drivetrain.Misc.RESEED_VELOCITY_THRESHOLD) {
                 forceReseed();
             }
         });

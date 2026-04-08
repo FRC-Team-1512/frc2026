@@ -23,6 +23,14 @@ public class Constants {
             public static final double STEER_ROTOR_TO_SENSOR_RATIO = 287.0 / 11.0; // around 26.09
         }
 
+        public static class MotorConfig {
+            public static final int STEER_SUPPLY_CURRENT_LIMIT = 40;
+            public static final int STEER_STATOR_CURRENT_LIMIT = 60;
+            
+            public static final int DRIVE_SUPPLY_CURRENT_LIMIT = 60;
+            public static final int DRIVE_STATOR_CURRENT_LIMIT = 100;
+        }
+
         public static final double FB_LENGTH = 0.55245; // 21.75 inches
         public static final double LR_LENGTH = 0.55245; // 21.75 inches
 
@@ -76,6 +84,12 @@ public class Constants {
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.35;
 
+        public static class Misc {
+            public static final double MAX_VISION_DISTANCE_METERS = 5.0;
+            public static final double ENABLE_TIMER_THRESHOLD_SEC = 0.5;
+            public static final double RESEED_VELOCITY_THRESHOLD = 0.5;
+        }
+
         public static class Auto {
             public static final double TRANSLATION_KP = 0.5;
             public static final double TRANSLATION_KI = 0.0;
@@ -91,6 +105,18 @@ public class Constants {
             public static final double MT1_AMBIGUITY_THRESHOLD = 0.75;
             public static final double MAX_ANGULAR_VELOCITY_DEG_PER_SEC = 360.0;
             public static final double SEED_ACCELERATION_THRESHOLD = 0.5;
+
+            // Optional standard deviations for odometry update
+            public static final double STATE_STD_DEV_X = 0.35;
+            public static final double STATE_STD_DEV_Y = 0.35;
+            public static final double STATE_STD_DEV_THETA = 0.001;
+
+            public static final double VISION_STD_DEV_X = 0.05;
+            public static final double VISION_STD_DEV_Y = 0.05;
+            public static final double VISION_STD_DEV_THETA = 99999999.9;
+
+            public static final double XY_STD_DEV_COEFF = 0.015;
+            public static final double VISION_MEASUREMENT_STD_DEV_THETA = 9999999.0;
 
             // setCameraPose_RobotSpace(name, forward, side, up, roll, pitch, yaw)
             //                                  forward  side     up      roll  pitch  yaw (meters, degrees)
@@ -138,6 +164,7 @@ public class Constants {
     }
 
     public static class Indexer {
+        public static final double SHOOT_POWER = 1.0;
         public static class MotorConfig {
             public static final int INDEXER_STATOR_CURRENT_LIMIT = 60;
             public static final int INDEXER_SUPPLY_CURRENT_LIMIT = 70;
@@ -146,6 +173,8 @@ public class Constants {
 
     public static class Intake {
         public static class MotorConfig {
+            public static final double DUTY_CYCLE_OPEN_LOOP_RAMP_PERIOD = 0.2;
+
             public static final int INTAKE_ARM_STATOR_CURRENT_LIMIT = 35;
             public static final int INTAKE_ARM_SUPPLY_CURRENT_LIMIT = 45;
             public static final int INTAKE_WHEEL_STATOR_CURRENT_LIMIT = 80;
@@ -171,6 +200,9 @@ public class Constants {
             public static final double INTAKE_ARM_EXTEND_POWER = 0.25; // Adjust carefully
             public static final double INTAKE_ARM_RETRACT_POWER = -0.25; // Adjust carefully
             public static final double INTAKE_ARM_CURRENT_THRESHOLD = 35.0; // Amps (Threshold for hard stop)
+            public static final double INTAKE_ARM_DEBOUNCE_SEC = 0.25; // Debounce for inrush current
+            public static final double INTAKE_ARM_KEEP_EXTENDED_POWER = 0.02;
+            public static final double INTAKE_ARM_KEEP_RETRACTED_POWER = -0.02;
             public static final double INTAKE_ARM_RETRACT_TIMEOUT_SEC = 0.8; // Auto-stop retracting after this time
 
             public static final double INTAKE_WHEEL_POWER = -1.0;
