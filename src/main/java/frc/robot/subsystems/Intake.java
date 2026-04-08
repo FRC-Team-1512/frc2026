@@ -12,7 +12,10 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 // import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -40,6 +43,10 @@ public class Intake extends SubsystemBase {
     private ArmState _armState = ArmState.RETRACTED;
     private DutyCycleOut _dutyCycleOut = new DutyCycleOut(0.0);
     private final Timer _stateTimer = new Timer();
+
+    private final DoublePublisher _armPositionPublisher;
+    private final StringPublisher _armStatePublisher;
+    private final DoublePublisher _armCurrentPublisher;
 
     public Intake() {
         _intakeWheelMotor = new TalonFX(RobotMap.CAN.INTAKE_WHEEL);
@@ -80,15 +87,20 @@ public class Intake extends SubsystemBase {
         // _intakeArmPositionDutyCycle = new PositionDutyCycle(0.0).withSlot(0);
 
         _intakeArmPositionSignal = _intakeArmMotor.getPosition();
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("Intake");
+        _armPositionPublisher = table.getDoubleTopic("ArmPosition").publish();
+        _armStatePublisher = table.getStringTopic("ArmState").publish();
+        _armCurrentPublisher = table.getDoubleTopic("ArmCurrent").publish();
     }
     
     @Override
     public void periodic() {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_intakeArmPositionSignal);
         updateState();
-        SmartDashboard.putNumber("Intake: Intake Arm Position", _intakeArmPositionSignal.getValueAsDouble());
-        SmartDashboard.putString("Intake: Arm State", _armState.toString());
-        SmartDashboard.putNumber("Intake: Arm Current", _intakeArmMotor.getStatorCurrent().getValueAsDouble());
+        _armPositionPublisher.set(_intakeArmPositionSignal.getValueAsDouble());
+        _armStatePublisher.set(_armState.toString());
+        _armCurrentPublisher.set(_intakeArmMotor.getStatorCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Intake: Intake Arm Desired Position", _targetArmPosition.getRotations());
     }
 

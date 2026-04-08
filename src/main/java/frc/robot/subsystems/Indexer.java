@@ -10,6 +10,9 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -23,6 +26,10 @@ public class Indexer extends SubsystemBase {
     private final Follower _indexerFollower;
 
     private double _motorPower;
+
+    private final DoublePublisher _motorPowerPublisher;
+    private final DoublePublisher _leftCurrentPublisher;
+    private final DoublePublisher _rightCurrentPublisher;
 
     public Indexer() {
         _indexerRightMotor = new TalonFX(RobotMap.CAN.RIGHT_INDEXER);
@@ -48,11 +55,20 @@ public class Indexer extends SubsystemBase {
 
         _motorPower = 0.0;
         _indexerFollower = new Follower(RobotMap.CAN.LEFT_INDEXER, MotorAlignmentValue.Opposed);
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("Indexer");
+        _motorPowerPublisher = table.getDoubleTopic("MotorPower").publish();
+        _leftCurrentPublisher = table.getDoubleTopic("LeftCurrent").publish();
+        _rightCurrentPublisher = table.getDoubleTopic("RightCurrent").publish();
     }
     
     @Override
     public void periodic() {
         updateState();
+
+        _motorPowerPublisher.set(_motorPower);
+        _leftCurrentPublisher.set(_indexerLeftMotor.getStatorCurrent().getValueAsDouble());
+        _rightCurrentPublisher.set(_indexerRightMotor.getStatorCurrent().getValueAsDouble());
     }
 
     public void setIndexer(double power) {

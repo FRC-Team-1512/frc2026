@@ -15,8 +15,11 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotMap;
@@ -39,6 +42,10 @@ public class Shooter extends SubsystemBase {
 
     private double _targetVelocity;
     private double _targetHoodAngleRotations;
+
+    private final DoublePublisher _rpsPublisher;
+    private final DoublePublisher _hoodPositionPublisher;
+    private final BooleanPublisher _isReadyPublisher;
 
     public Shooter() {
         _shooterRightMotor = new TalonFX(RobotMap.CAN.RIGHT_SHOOTER);
@@ -91,28 +98,26 @@ public class Shooter extends SubsystemBase {
 
         _hoodPositionSignal = _hoodMotor.getPosition();
         _shooterVelocitySignal = _shooterRightMotor.getVelocity();
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("Shooter");
+        _rpsPublisher = table.getDoubleTopic("RPS").publish();
+        _hoodPositionPublisher = table.getDoubleTopic("HoodPosition").publish();
+        _isReadyPublisher = table.getBooleanTopic("IsReady").publish();
     }
     
     @Override
     public void periodic() {
         com.ctre.phoenix6.BaseStatusSignal.refreshAll(_hoodPositionSignal, _shooterVelocitySignal);
         updateState();
-        SmartDashboard.putNumber("HOOD TARGET", _targetHoodAngleRotations);
-        SmartDashboard.putNumber("Shooter: FLYWHEEL VEL TARGET", _targetVelocity);
-        SmartDashboard.putNumber("Shooter: FLYWHEEL ACTUAL VELOCITY", getShooterVelocity());
-        SmartDashboard.putBoolean("Shooter: FLYWHEEL READY", isAtTargetVelocity());
-        SmartDashboard.putBoolean("Shooter: HOOD READY", isAtTargetHoodAngle());
+
+        _rpsPublisher.set(getShooterVelocity());
+        _hoodPositionPublisher.set(getHoodAngle());
+        _isReadyPublisher.set(isReadyToShoot());
     }
 
     public void setShooterFromDistance(double distance) {
         _targetVelocity = ShooterCalc.calculateRotorRPS(distance);
         setHoodAngleRotations(ShooterCalc.calculateRotorHoodAngleRotation(distance));
-
-        SmartDashboard.putNumber("Shooter: calc rps", _targetVelocity);
-        SmartDashboard.putNumber("Shooter: calc glob angle", ShooterCalc.calculateGlobalHoodAngle(distance).getDegrees());
-        SmartDashboard.putNumber("Shooter: calc glob angle rot", ShooterCalc.calculateGlobalHoodAngle(distance).getRotations());
-        SmartDashboard.putNumber("Shooter: calc angle", ShooterCalc.calculateRotorHoodAngleRotation(distance));
-        SmartDashboard.putBoolean("Shooter: shoot ready", isReadyToShoot());
     }
 
     public void setShooterVelocity(double velocity) {

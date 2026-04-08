@@ -6,8 +6,11 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.BooleanPublisher;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,6 +31,13 @@ public class SuperStructure extends SubsystemBase {
     private final EnumSet<SuperStructureState> _activeStates = EnumSet.noneOf(SuperStructureState.class);
     private SuperStructureState _defaultIdleState;
 
+    private final DoublePublisher _distancePublisher;
+    private final BooleanPublisher _idlePublisher;
+    private final BooleanPublisher _idleExpandedPublisher;
+    private final BooleanPublisher _intakePublisher;
+    private final BooleanPublisher _reverseIntakePublisher;
+    private final BooleanPublisher _shootPublisher;
+
     public final DirectControl direct = new DirectControl();
 
     public SuperStructure(Intake intake, Indexer indexer, Shooter shooter, Supplier<Pose2d> poseSupplier, Supplier<Translation2d> velocitySupplier) {
@@ -42,6 +52,14 @@ public class SuperStructure extends SubsystemBase {
         _defaultIdleState = SuperStructureState.IDLE;
 
         _activeStates.add(_defaultIdleState);
+
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("SuperStructure");
+        _distancePublisher = table.getDoubleTopic("DistanceMeters").publish();
+        _idlePublisher = table.getBooleanTopic("Idle").publish();
+        _idleExpandedPublisher = table.getBooleanTopic("IdleExpanded").publish();
+        _intakePublisher = table.getBooleanTopic("Intake").publish();
+        _reverseIntakePublisher = table.getBooleanTopic("ReverseIntake").publish();
+        _shootPublisher = table.getBooleanTopic("Shoot").publish();
     }
 
     @Override
@@ -76,7 +94,7 @@ public class SuperStructure extends SubsystemBase {
             _targetDistanceMeters = 12;
         }
 
-        SmartDashboard.putNumber("SuperStructure: Distance Meters", _targetDistanceMeters);
+        _distancePublisher.set(_targetDistanceMeters);
 
         if (_activeStates.contains(SuperStructureState.INTAKE)) {
             _intake.intake();
@@ -129,11 +147,11 @@ public class SuperStructure extends SubsystemBase {
     }
 
     public void publishState() {
-        SmartDashboard.putBoolean("SuperStructure: IDLE", _activeStates.contains(SuperStructureState.IDLE));
-        SmartDashboard.putBoolean("SuperStructure: IDLE EXPANDED", _activeStates.contains(SuperStructureState.IDLE_EXPANDED));
-        SmartDashboard.putBoolean("SuperStructure: INTAKE", _activeStates.contains(SuperStructureState.INTAKE));
-        SmartDashboard.putBoolean("SuperStructure: REVERSE_INTAKE", _activeStates.contains(SuperStructureState.REVERSE_INTAKE));
-        SmartDashboard.putBoolean("SuperStructure: SHOOT", _activeStates.contains(SuperStructureState.SHOOT));
+        _idlePublisher.set(_activeStates.contains(SuperStructureState.IDLE));
+        _idleExpandedPublisher.set(_activeStates.contains(SuperStructureState.IDLE_EXPANDED));
+        _intakePublisher.set(_activeStates.contains(SuperStructureState.INTAKE));
+        _reverseIntakePublisher.set(_activeStates.contains(SuperStructureState.REVERSE_INTAKE));
+        _shootPublisher.set(_activeStates.contains(SuperStructureState.SHOOT));
     }
 
     public void requestState(SuperStructureState state) {
