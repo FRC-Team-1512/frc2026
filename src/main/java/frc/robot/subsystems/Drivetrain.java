@@ -9,6 +9,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.util.PathPlannerLogging;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -505,6 +506,17 @@ public class Drivetrain extends SubsystemBase {
 
     public Translation2d getVelocity() {
         return getFieldRelativeVelocity();
+    }
+    
+    public Translation2d getDeadbandedVelocity() {
+        return getDeadbandedVelocity(0.5);
+    }
+
+    public Translation2d getDeadbandedVelocity(double deadband) {
+        return new Translation2d(
+            MathUtil.applyDeadband(getVelocity().getX(), deadband),
+            MathUtil.applyDeadband(getVelocity().getY(), deadband)
+        );
     }
 
     public Translation2d getFieldRelativeVelocity() {

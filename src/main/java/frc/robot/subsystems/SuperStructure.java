@@ -126,20 +126,20 @@ public class SuperStructure extends SubsystemBase {
                 _indexer.setIndexer(0.0);
             }
         } else if (!_activeStates.contains(SuperStructureState.IDLE) && !_activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
-            _shooter.setShooterVelocity(0.0);
+            _shooter.setShooterVelocity(Constants.Shooter.Hardware.SHOOTER_IDLE_SPEED);
             _indexer.setIndexer(0.0);
         }
         if (_activeStates.contains(SuperStructureState.IDLE)) {
             _intake.retract();
             _indexer.setIndexer(0.0);
-            _shooter.setShooterVelocity(0.0);
+            _shooter.setShooterVelocity(Constants.Shooter.Hardware.SHOOTER_IDLE_SPEED);
             _shooter.setHoodRest();
         }
         if (_activeStates.contains(SuperStructureState.IDLE_EXPANDED)) {
             _intake.extendArm();
             _intake.setIntakeWheel(0.0);
             _indexer.setIndexer(0.0);
-            _shooter.setShooterVelocity(0.0);
+            _shooter.setShooterVelocity(Constants.Shooter.Hardware.SHOOTER_IDLE_SPEED);
             _shooter.setHoodRest();
         }
 

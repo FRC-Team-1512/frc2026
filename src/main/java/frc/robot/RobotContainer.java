@@ -50,11 +50,11 @@ public class RobotContainer {
 	//Intake _intake;
 	SuperStructure _superStructure;
 	public RobotContainer() {
-        _drivetrain = new Drivetrain();
+		_drivetrain = new Drivetrain();
 		//_shooter = new Shooter();
 		//_indexer = new Indexer();
 		//_intake = new Intake();
-		_superStructure = new SuperStructure(new Intake(), new Indexer(), new Shooter(), _drivetrain::getPose, _drivetrain::getVelocity);
+		_superStructure = new SuperStructure(new Intake(), new Indexer(), new Shooter(), _drivetrain::getPose, () -> _drivetrain.getDeadbandedVelocity(0.5));
 
 		NamedCommands.registerCommand("requestShoot", _superStructure.requestShoot());
 		NamedCommands.registerCommand("requestIntake", _superStructure.requestIntake());
@@ -104,9 +104,10 @@ public class RobotContainer {
 		driver.start().onTrue(_drivetrain.ForceReseed());
 		operator.start().onTrue(_drivetrain.ForceReseed());
 
-		operator.leftTrigger().onTrue(_superStructure.requestReverseIntake());
-		operator.leftTrigger().onFalse(_superStructure.revokeReverseIntake());
-
+        operator.b().onTrue(_superStructure.requestReverseIntake());
+        operator.b().onFalse(_superStructure.revokeReverseIntake());
+		operator.x().onTrue(_superStructure.requestReverseIntake());
+        operator.x().onFalse(_superStructure.revokeReverseIntake());
 		driver.back().onTrue(_superStructure.requestReverseIntake());
 		driver.back().onFalse(_superStructure.revokeReverseIntake());
 

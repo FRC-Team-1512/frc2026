@@ -15,8 +15,8 @@ public class ShooterCalc {
 
     //===============================================================================================
 
-    static final double V_COEFF = 1.82; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
-    static final double H_MAX_FROM_GROUND = 2.75;
+    static final double V_COEFF = 1.74; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+    static final double H_MAX_FROM_GROUND = 3.0;
 
     //===============================================================================================
 

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.pathplanner.lib.config.RobotConfig;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -19,6 +20,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.RobotMap;
 import frc.robot.utils.ApplyConfig;
 
@@ -158,6 +160,14 @@ public class Intake extends SubsystemBase {
         _intakeWheelMotor.set(_wheelPower);
 
         double armCurrent = _intakeArmMotor.getStatorCurrent().getValueAsDouble();
+
+        double armOutput = RobotContainer.operator.getRightTriggerAxis() - RobotContainer.operator.getLeftTriggerAxis();
+        armOutput *= 0.15;
+        
+        if (Math.abs(armOutput) > 0.05) {
+            _intakeArmMotor.setControl(_dutyCycleOut.withOutput(armOutput));
+            return;
+        }
 
         switch (_armState) {
             case EXTENDING:

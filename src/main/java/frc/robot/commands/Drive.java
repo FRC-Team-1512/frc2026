@@ -51,7 +51,7 @@ public class Drive extends Command {
             target = Constants.TARGET_BLUE;
         }
 
-        Translation2d adjustedTarget = target.minus(_drivetrain.getVelocity().times(ShooterCalc.T_ETA));
+        Translation2d adjustedTarget = target.minus(_drivetrain.getDeadbandedVelocity(0.5).times(ShooterCalc.T_ETA));
         //Translation2d adjustedTarget = target; // when no shoot on move
 
         Rotation2d angleToTarget = adjustedTarget.minus(currentPose.getTranslation()).getAngle();
@@ -66,7 +66,7 @@ public class Drive extends Command {
         vy = Math.copySign(vy * vy, vy);
         rot = Math.copySign(rot * rot, rot);
 
-        double translationCoeff = isSlowMode ? 1.2 : 3.2;
+        double translationCoeff = isSlowMode ? 1.2 : 3.67;
         double rotationCoeff = isSlowMode ? 1.2 : 2.0;
 
         vx *= translationCoeff;

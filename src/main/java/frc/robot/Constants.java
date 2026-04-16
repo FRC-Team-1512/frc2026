@@ -65,7 +65,7 @@ public class Constants {
             BR_CONFIG.position = new Translation2d(-FB_LENGTH / 2, -LR_LENGTH / 2); // -,-
             BR_CONFIG.encoderOffset = Rotation2d.fromRotations(-0.0169);}
 
-        public static final double STEER_KP = 1.8;
+        public static final double STEER_KP = 2.2;
         public static final double STEER_KI = 0.0;
         public static final double STEER_KD = 0.02;
         public static final double STEER_PEAK_VOLTAGE = 14.0;
@@ -73,13 +73,13 @@ public class Constants {
         
         public static final double DRIVE_KS = 0.1;
         public static final double DRIVE_KV = 0.75;
-        public static final double DRIVE_KP = 0.3;
+        public static final double DRIVE_KP = 0.4;
         public static final double DRIVE_KI = 0.0;
         public static final double DRIVE_KD = 0.07;
         public static final double DRIVE_PEAK_VOLTAGE = 14.0;
         public static final NeutralModeValue DRIVE_MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
 
-        public static final double HEADING_COEFF = 1.2;
+        public static final double HEADING_COEFF = 1.6;
         public static final double HEADING_KP = 1.8;
         public static final double HEADING_KI = 0.0;
         public static final double HEADING_KD = 0.35;
@@ -91,13 +91,13 @@ public class Constants {
         }
 
         public static class Auto {
-            public static final double TRANSLATION_KP = 0.5;
+            public static final double TRANSLATION_KP = 1.2;
             public static final double TRANSLATION_KI = 0.0;
-            public static final double TRANSLATION_KD = 0.0;
+            public static final double TRANSLATION_KD = 0.2;
 
-            public static final double ROTATION_KP = 0.9;
+            public static final double ROTATION_KP = 5.6;
             public static final double ROTATION_KI = 0.0;
-            public static final double ROTATION_KD = 0.0;
+            public static final double ROTATION_KD = 0.6;
         }
 
         public static class Vision {
@@ -160,6 +160,8 @@ public class Constants {
 
             public static final double SHOOTER_ACCURACY_TOLERANCE =  4.0; // RPS
             public static final double HOOD_ACCURACY_TOLERANCE = 0.1; // Rotations
+
+            public static final double SHOOTER_IDLE_SPEED = 15.0;
         }
     }
 
@@ -205,7 +207,7 @@ public class Constants {
             public static final double INTAKE_ARM_KEEP_RETRACTED_POWER = -0.02;
             public static final double INTAKE_ARM_RETRACT_TIMEOUT_SEC = 0.8; // Auto-stop retracting after this time
 
-            public static final double INTAKE_WHEEL_POWER = -1.0;
+            public static final double INTAKE_WHEEL_POWER = -0.9;
             public static final double REVERSE_INTAKE_WHEEL_POWER = -INTAKE_WHEEL_POWER;
             public static final double RETRACT_WHEEL_POWER = 0.0;
         }
