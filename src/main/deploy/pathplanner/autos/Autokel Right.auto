@@ -25,7 +25,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 3.5
+            "waitTime": 7.0
           }
         },
         {
@@ -37,37 +37,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Later Linus Swipe Right Pass"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "isManual"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "requestShoot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "revokeShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "isNotManual"
+            "pathName": "after right finish looking"
           }
         }
       ]
