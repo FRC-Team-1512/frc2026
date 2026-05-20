@@ -80,12 +80,17 @@ public class Drive extends Command {
         vy = _vyLimiter.calculate(vy);
         rot = _rotLimiter.calculate(rot);
 
+
+        /*
         if (_superStructure.isShootingMode() && !RobotContainer.driver.leftTrigger().getAsBoolean()) {
             SmartDashboard.putNumber("angleToTarget", angleToTarget.getDegrees());
             _drivetrain.setFieldRelativeSpeedsWithHeading(vx, vy, angleToTarget);
         } else {
             _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
         }
+            */
+
+        _drivetrain.setFieldRelativeSpeeds(new ChassisSpeeds(vx, vy, rot));
 
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vy", vy);
