@@ -15,7 +15,7 @@ public class ShooterCalc {
 
     //===============================================================================================
 
-    static final double V_COEFF = 1.767; // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
+    static final double V_COEFF = 1.767;                // Coefficient to adjust the calculated velocity for real-world conditions (e.g., air resistance, friction)
     static final double H_MAX_FROM_GROUND = 3.0;
 
     //===============================================================================================
@@ -35,8 +35,7 @@ public class ShooterCalc {
     static public Rotation2d calculateGlobalHoodAngle (double distance) {
         distance -= robot_half_width;
         Rotation2d universalAngle = Rotation2d.fromRadians(Math.atan((2 * ALPHA) / distance));
-        //return Rotation2d.fromDegrees(90).minus(universalAngle);
-        return Rotation2d.fromDegrees(90);
+        return Rotation2d.fromDegrees(90).minus(universalAngle);
     }
 
     static public double calculateRotorHoodAngleRotation(double distance) {
@@ -49,8 +48,7 @@ public class ShooterCalc {
         double base = Math.sqrt(distance * distance + 4 * ALPHA * ALPHA) / (2.0 * ALPHA);
         double vel = base * Math.sqrt(2.0 * G * H_MAX) * V_COEFF;
         SmartDashboard.putNumber("Shooter: calc glob vel", vel);
-        //return vel;
-        return 40;
+        return vel;
     }
 
     static public double calculateRotorRPS(double distance) {
