@@ -161,7 +161,8 @@ public class Constants {
             public static final double SHOOTER_ACCURACY_TOLERANCE =  4.0; // RPS
             public static final double HOOD_ACCURACY_TOLERANCE = 0.1; // Rotations
 
-            public static final double SHOOTER_IDLE_SPEED = 15.0;
+            //public static final double SHOOTER_IDLE_SPEED = 15.0;
+            public static final double SHOOTER_IDLE_SPEED = 0.0;
         }
     }
 

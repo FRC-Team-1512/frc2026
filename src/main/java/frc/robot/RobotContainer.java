@@ -74,12 +74,16 @@ public class RobotContainer {
 
 	private void configureBindings() {
 		_drivetrain.setDefaultCommand(new Drive(_drivetrain, _superStructure));
+
+		driver.b().onTrue(new ZeroIMU(_drivetrain));
 		//_shooter.setDefaultCommand(new ShooterTest(_shooter));
 		//_indexer.setDefaultCommand(new IndexerTest(_indexer));
 		//_intake.setDefaultCommand(new IntakeTest(_intake));
 
 		//driver.y().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(180.0)));
 		//driver.x().onTrue(new Snap(_drivetrain, Rotation2d.fromDegrees(-45.0)));
+
+		/*
 
 		driver.rightTrigger().onTrue(_superStructure.requestShoot());
 		driver.rightTrigger().onFalse(_superStructure.revokeShoot());
@@ -91,7 +95,11 @@ public class RobotContainer {
 		operator.y().onTrue(_superStructure.requestIdleExpanded());
 		operator.a().onTrue(_superStructure.requestIdle());
 
+		*/
+
 		//driver.x().onTrue(new ZeroIMU(_drivetrain));
+
+		/*
 
 		driver.y().onTrue(new SnapHead(_drivetrain));
 		driver.a().onTrue(new SnapTail(_drivetrain));
@@ -110,6 +118,8 @@ public class RobotContainer {
         operator.x().onFalse(_superStructure.revokeReverseIntake());
 		driver.back().onTrue(_superStructure.requestReverseIntake());
 		driver.back().onFalse(_superStructure.revokeReverseIntake());
+
+		*/
 
 		//operator.a().onTrue(new DecreaseFlyWheel(_shooter));
 		//operator.y().onTrue(new IncreaseFlyWheel(_shooter));

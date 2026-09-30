@@ -66,8 +66,11 @@ public class Drive extends Command {
         vy = Math.copySign(vy * vy, vy);
         rot = Math.copySign(rot * rot, rot);
 
-        double translationCoeff = isSlowMode ? 1.2 : 3.67;
-        double rotationCoeff = isSlowMode ? 1.2 : 2.0;
+        //double translationCoeff = isSlowMode ? 1.2 : 3.67;
+        //double rotationCoeff = isSlowMode ? 1.2 : 2.0;
+
+        double translationCoeff = 1.2;
+        double rotationCoeff = 1.2;
 
         vx *= translationCoeff;
         vy *= translationCoeff;
